@@ -27,6 +27,7 @@ services:
       - ./mysql/db:/var/lib/mysql
     environment:
       MYSQL_DATABASE: tender
+      MYSQL_USER: root
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "8101:3306"
