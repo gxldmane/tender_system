@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\File;
+use App\Models\Tender;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
@@ -18,9 +21,11 @@ class FileController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store()
+    public function store(Request $request)
     {
-
+        $file = $request->file('file');
+        $path = Storage::disk('minio')->put('uploads', $file);
+        return $path;
     }
 
     /**

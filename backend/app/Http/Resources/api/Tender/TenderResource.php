@@ -14,6 +14,18 @@ class TenderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'startPrice' => $this->start_price,
+            'currentPrice' => $this->current_price,
+            'categoryId' => $this->category_id,
+            'customerId' => $this->customer_id,
+            'executorId' => $this->executor_id,
+            'untilDate' => $this->until_date,
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at
+        ];
     }
 }

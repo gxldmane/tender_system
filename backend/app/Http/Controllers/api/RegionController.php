@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\api\Region\RegionCollection;
+use App\Models\Region;
 use Illuminate\Http\Request;
 
 class RegionController extends Controller
@@ -12,7 +14,9 @@ class RegionController extends Controller
      */
     public function index()
     {
-        //
+        $regions = Region::all();
+
+        return new RegionCollection($regions);
     }
 
     /**

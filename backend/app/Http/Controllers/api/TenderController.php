@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\api\Tender\TenderCollection;
+use App\Models\Tender;
 use Illuminate\Http\Request;
 
 class TenderController extends Controller
@@ -12,7 +14,9 @@ class TenderController extends Controller
      */
     public function index()
     {
-        //
+        $tenders = Tender::query()->paginate(10);
+
+        return new TenderCollection($tenders);
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\api\Bid\BidCollection;
+use App\Models\Bid;
 use Illuminate\Http\Request;
 
 class BidController extends Controller
@@ -12,7 +14,9 @@ class BidController extends Controller
      */
     public function index()
     {
-        //
+        $bids = Bid::query()->paginate(10);
+
+        return new BidCollection($bids);
     }
 
     /**

@@ -4,7 +4,7 @@ namespace App\Http\Requests\File;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class FileStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

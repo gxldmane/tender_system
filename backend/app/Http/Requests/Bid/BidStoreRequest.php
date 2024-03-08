@@ -4,14 +4,14 @@ namespace App\Http\Requests\Bid;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class BidStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'tenderId' => ['exists:tenders,id'],
+            'userId' => ['exists:users,id']
         ];
     }
 }
