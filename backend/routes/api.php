@@ -23,8 +23,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('bids', BidController::class);
-Route::resource('categories', CategoryController::class);
-Route::resource('files', FileController::class);
-Route::resource('regions', RegionController::class);
-Route::resource('tenders', TenderController::class);
+Route::apiResource('bids', BidController::class);
+Route::apiResource('categories', CategoryController::class);
+Route::apiResource('files', FileController::class);
+Route::apiResource('regions', RegionController::class);
+Route::apiResource('tenders', TenderController::class);
