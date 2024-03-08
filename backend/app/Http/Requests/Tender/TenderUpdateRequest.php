@@ -11,7 +11,7 @@ class TenderUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class TenderUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'description' => ['sometimes', 'required', 'string'],
+            'startPrice' => ['sometimes', 'required', 'integer'],
+            'categoryId' => ['sometimes', 'required', 'exists:categories,id'],
+            'regionId' => ['sometimes', 'required', 'exists:regions,id'],
+            'untilDate' => ['sometimes', 'required', 'date']
         ];
     }
 }

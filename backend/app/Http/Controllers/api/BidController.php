@@ -3,51 +3,47 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Bid\BidStoreRequest;
 use App\Http\Resources\api\Bid\BidCollection;
+use App\Http\Resources\api\Bid\BidResource;
 use App\Models\Bid;
+use App\Models\Tender;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BidController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Tender $tender)
     {
-        $bids = Bid::query()->paginate(10);
+        $bids = $tender->bids()->paginate(10);
 
         return new BidCollection($bids);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(BidStoreRequest $request)
     {
-        //
+        $data = $request->validated();
+        $user = Auth::user();
+        $data['userId'] = $user->id;
+
+        $bid = Bid::query()->create($data);
+
+        return new BidResource($bid);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Bid $bid)
     {
-        //
+        return new BidResource($bid);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Bid $bid)
     {
-        //
-    }
+        $bid->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json(
+            [
+                'message' => 'Bid deleted successfully'
+            ],
+        );
     }
 }

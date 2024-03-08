@@ -23,7 +23,6 @@ class BidStoreRequest extends FormRequest
     {
         return [
             'tenderId' => ['exists:tenders,id'],
-            'userId' => ['exists:users,id']
         ];
     }
 }

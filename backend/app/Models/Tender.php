@@ -47,4 +47,9 @@ class Tender extends Model
     {
         return User::query()->where('id', $this->executor_id);
     }
+
+    public function bids(): HasMany
+    {
+        return $this->hasMany(Bid::class);
+    }
 }
