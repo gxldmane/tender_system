@@ -24,8 +24,17 @@ class FileController extends Controller
     public function store(Request $request)
     {
         $file = $request->file('file');
-        $path = Storage::disk('minio')->put('uploads', $file);
-        return $path;
+        $path = Storage::put('/files', $file);
+
+        $model = new File();
+
+        $model->tender_id = 1;
+        $model->user_id = 1;
+        $model->url = Storage::url($path);
+
+        $model->save();
+
+        return $model;
     }
 
     /**

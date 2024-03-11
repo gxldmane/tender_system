@@ -25,4 +25,9 @@ class Bid extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function companies(): BelongsToMany
+    {
+        return $this->belongsToMany(Company::class);
+    }
 }

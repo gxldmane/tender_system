@@ -32,14 +32,14 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app'),
+            'root' => storage_path('app/uploads'),
             'throw' => false,
         ],
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'root' => storage_path('app/public/files'),
+            'url' => env('APP_URL').'/storage/files',
             'visibility' => 'public',
             'throw' => false,
         ],
@@ -52,7 +52,7 @@ return [
             'bucket' => env('MINIO_BUCKET'),
             'url' => env('MINIO_URL'),
             'endpoint' => env('MINIO_ENDPOINT'),
-            'use_path_style_endpoint' => false,
+            'use_path_style_endpoint' => true,
         ],
 
     ],

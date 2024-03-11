@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Tender;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,8 @@ class FileFactory extends Factory
     {
         return [
             'tender_id' => Tender::query()->inRandomOrder()->first()->id,
-            'url' => $this->faker->url
+            'url' => $this->faker->url,
+            'user_id' => User::query()->inRandomOrder()->first()->id,
         ];
     }
 }
