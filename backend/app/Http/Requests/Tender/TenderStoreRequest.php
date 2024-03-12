@@ -24,10 +24,11 @@ class TenderStoreRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'startPrice' => ['required', 'integer'],
-            'categoryId' => ['required', 'exists:categories,id'],
-            'regionId' => ['required', 'exists:regions,id'],
-            'untilDate' => ['required', 'date']
+            'start_price' => ['required', 'integer'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'region_id' => ['required', 'exists:regions,id'],
+            'until_date' => ['required', 'date'],
+            'files.*' => ['file']
         ];
     }
 }

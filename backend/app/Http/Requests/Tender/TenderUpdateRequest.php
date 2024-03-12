@@ -22,12 +22,13 @@ class TenderUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'description' => ['sometimes', 'required', 'string'],
-            'startPrice' => ['sometimes', 'required', 'integer'],
-            'categoryId' => ['sometimes', 'required', 'exists:categories,id'],
-            'regionId' => ['sometimes', 'required', 'exists:regions,id'],
-            'untilDate' => ['sometimes', 'required', 'date']
+            'name' => ['sometimes','required', 'string', 'max:255'],
+            'description' => ['sometimes','required', 'string'],
+            'start_price' => ['sometimes','required', 'integer'],
+            'category_id' => ['sometimes','required', 'exists:categories,id'],
+            'region_id' => ['sometimes','required', 'exists:regions,id'],
+            'until_date' => ['sometimes','required', 'date'],
+            'files.*' => ['sometimes','file']
         ];
     }
 }

@@ -28,7 +28,11 @@ Route::controller(BidController::class)->group(function () {
     Route::get('bids/{tender}', 'index');
 });
 
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('files', FileController::class);
-Route::apiResource('regions', RegionController::class);
-Route::apiResource('tenders', TenderController::class);
+
+Route::group([''], function () {
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('files', FileController::class);
+    Route::apiResource('regions', RegionController::class);
+    Route::apiResource('tenders', TenderController::class);
+});
+

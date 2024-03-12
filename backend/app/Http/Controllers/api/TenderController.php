@@ -7,9 +7,12 @@ use App\Http\Requests\Tender\TenderStoreRequest;
 use App\Http\Requests\Tender\TenderUpdateRequest;
 use App\Http\Resources\api\Tender\TenderCollection;
 use App\Http\Resources\api\Tender\TenderResource;
+use App\Models\File;
 use App\Models\Tender;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TenderController extends Controller
 {
@@ -23,9 +26,20 @@ class TenderController extends Controller
     public function store(TenderStoreRequest $request)
     {
         $data = $request->validated();
-        $data['customerId'] = Auth::id();
+        $files = $data['files'];
+        unset($data['files']);
+        $data['customer_id'] = User::query()->inRandomOrder()->first()->id;
 
         $tender = Tender::query()->create($data);
+
+        foreach ($files as $file) {
+            $path = Storage::disk('public')->put('', $file);
+            $file = new File();
+            $file->tender_id = $tender->id;
+            $file->url = Storage::url($path);
+            $file->user_id = $data['customer_id'];
+            $file->save();
+        }
 
         return new TenderResource($tender);
     }
@@ -54,6 +68,8 @@ class TenderController extends Controller
     public function destroy(Tender $tender)
     {
         if ($tender->customer_id === Auth::id()) {
+            $tender->files->delete();
+            $tender->bids->delete();
             $tender->delete();
 
             return response()->json([
