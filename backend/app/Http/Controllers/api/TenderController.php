@@ -46,7 +46,7 @@ class TenderController extends Controller
 
     public function show(Tender $tender)
     {
-        return new TenderResource($tender);
+        return new TenderResource($tender->load('files'));
     }
 
     public function update(TenderUpdateRequest $request, Tender $tender)

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\BidController;
 use App\Http\Controllers\api\CategoryController;
 use App\Http\Controllers\api\FileController;
@@ -23,6 +24,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::controller(AuthController::class)->group(function () {
+   Route::post('register', 'register');
+   Route::post('login', 'login');
+});
 
 Route::controller(BidController::class)->group(function () {
     Route::get('bids/{tender}', 'index');
@@ -31,7 +36,6 @@ Route::controller(BidController::class)->group(function () {
 
 Route::group([''], function () {
     Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('files', FileController::class);
     Route::apiResource('regions', RegionController::class);
     Route::apiResource('tenders', TenderController::class);
 });

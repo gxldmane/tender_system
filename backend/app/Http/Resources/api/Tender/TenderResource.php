@@ -3,6 +3,7 @@
 namespace App\Http\Resources\api\Tender;
 
 use App\Http\Resources\api\File\FileCollection;
+use App\Http\Resources\api\File\FileResource;
 use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -22,7 +23,7 @@ class TenderResource extends JsonResource
             'description' => $this->description,
             'start_price' => $this->start_price,
             'currentPrice' => $this->current_price,
-            'files' => new FileCollection($this->files),
+            'files' => FileResource::collection($this->whenLoaded('files')),
             'categoryId' => $this->category_id,
             'customerId' => $this->customer_id,
             'executorId' => $this->executor_id,
