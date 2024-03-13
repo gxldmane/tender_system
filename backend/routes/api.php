@@ -38,5 +38,7 @@ Route::group([''], function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('regions', RegionController::class);
     Route::apiResource('tenders', TenderController::class);
+    Route::post('/tenders/{tender}/bids', [BidController::class, 'store']);
+    Route::delete('/tenders/{tender}/bids', [BidController::class, 'destroy']);
 });
 

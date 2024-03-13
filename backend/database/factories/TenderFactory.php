@@ -23,7 +23,6 @@ class TenderFactory extends Factory
             'name' => $this->faker->word,
             'description' => $this->faker->sentence(5),
             'start_price' => $this->faker->numberBetween(100, 1000),
-            'current_price' => $this->faker->numberBetween(100, 1000),
             'category_id' => Category::query()->inRandomOrder()->first()->id,
             'region_id' => Region::query()->inRandomOrder()->first()->id,
             'customer_id' => User::query()->inRandomOrder()->first()->id,

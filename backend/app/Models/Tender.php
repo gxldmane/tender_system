@@ -15,7 +15,6 @@ class Tender extends Model
         'name',
         'description',
         'start_price',
-        'current_price',
         'category_id',
         'region_id',
         'customer_id',

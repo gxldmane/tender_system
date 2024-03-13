@@ -14,6 +14,8 @@ class Bid extends Model
     protected $fillable = [
         'tender_id',
         'user_id',
+        'company_id',
+        'price',
     ];
 
     public function tender(): BelongsTo

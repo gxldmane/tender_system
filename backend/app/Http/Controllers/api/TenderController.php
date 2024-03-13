@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Bid\BidStoreRequest;
 use App\Http\Requests\Tender\TenderStoreRequest;
 use App\Http\Requests\Tender\TenderUpdateRequest;
 use App\Http\Resources\api\Tender\TenderCollection;
 use App\Http\Resources\api\Tender\TenderResource;
+use App\Models\Bid;
 use App\Models\File;
 use App\Models\Tender;
 use App\Models\User;
@@ -61,8 +63,6 @@ class TenderController extends Controller
                 'message' => 'access denied'
             ], 401);
         }
-
-
     }
 
     public function destroy(Tender $tender)
@@ -80,6 +80,5 @@ class TenderController extends Controller
                 'message' => 'access denied'
             ], 401);
         }
-
     }
 }

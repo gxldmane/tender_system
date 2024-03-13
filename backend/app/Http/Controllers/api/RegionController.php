@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\api\Region\RegionCollection;
 use App\Http\Resources\api\Region\RegionResource;
 use App\Models\Region;
-use Illuminate\Http\Request;
 
 class RegionController extends Controller
 {

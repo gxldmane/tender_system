@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->unsignedBigInteger('start_price');
-            $table->unsignedBigInteger('current_price')->nullable();
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->foreignId('region_id')->constrained('regions')->onDelete('cascade');
             $table->foreignId('customer_id')->constrained('users')->onDelete('cascade');

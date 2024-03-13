@@ -22,7 +22,7 @@ class BidStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tenderId' => ['exists:tenders,id'],
+            'price' => ['required', 'integer'],
         ];
     }
 }
