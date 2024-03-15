@@ -26,6 +26,12 @@ class TenderController extends Controller
         return new TenderCollection($tenders);
     }
 
+    public function myTenders()
+    {
+        $tenders = Auth::user()->tenders();
+        return new TenderCollection($tenders);
+    }
+
     public function store(TenderStoreRequest $request)
     {
         $data = $request->validated();

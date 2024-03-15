@@ -18,6 +18,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::apiResource('regions', RegionController::class);
     Route::controller(TenderController::class)->group(function () {
         Route::get('/tenders', 'index');
+        Route::get('/tenders/my', 'myTenders')->middleware('ability:customer');
         Route::post('/tenders', 'store')->middleware('ability:customer');
         Route::get('/tenders/{tender}', 'show');
         Route::patch('/tenders/{tender}','update')->middleware('ability:customer');

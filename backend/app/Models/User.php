@@ -49,9 +49,9 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function tenders(): HasMany
+    public function tenders()
     {
-        return $this->hasMany(Tender::class);
+        return Tender::query()->where('customer_id', $this->id)->get();
     }
 
     public function bids(): HasMany
