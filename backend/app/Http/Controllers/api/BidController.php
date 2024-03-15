@@ -9,10 +9,11 @@ use App\Http\Resources\api\Bid\BidResource;
 use App\Http\Resources\api\Tender\TenderResource;
 use App\Models\Bid;
 use App\Models\Tender;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class BidController extends Controller
 {
+
     public function index(Tender $tender)
     {
         $bids = $tender->bids()->paginate(10);
@@ -23,7 +24,7 @@ class BidController extends Controller
     public function store(BidStoreRequest $request, Tender $tender)
     {
         $data = $request->validated();
-        $user = User::query()->find(1);
+        $user = Auth::user();
 
         $existingBid = Bid::query()->where('user_id', $user->id)->where('tender_id', $tender->id)->first();
         if ($existingBid) {
@@ -35,7 +36,9 @@ class BidController extends Controller
         $data['user_id'] = $user->id;
         $data['company_id'] = $user->company->id;
         $tender->bids()->create($data);
-        return new TenderResource($tender->bids);
+        return response()->json([
+            'message' => 'bid created successfully',
+        ]);
     }
 
     public function show(Bid $bid)
@@ -45,13 +48,13 @@ class BidController extends Controller
 
     public function destroy(Tender $tender)
     {
-        $user = User::query()->find(1);
-        $bid = Bid::query()->where('user_id', $user->id)->where('tender_id', $tender->id)->first();
 
+        $user = Auth::user();
+        $bid = Bid::query()->where('user_id', $user->id)->where('tender_id', $tender->id)->first();
         if (!$bid) {
             return response([
-                'message' => 'you dont have permission'
-            ], 401);
+                'message' => 'Not found'
+            ], 404);
         }
 
         $bid->delete();

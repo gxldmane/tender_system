@@ -18,6 +18,11 @@ use Illuminate\Support\Facades\Storage;
 
 class TenderController extends Controller
 {
+    public function __construct() {
+        $this->authorizeResource(Tender::class, 'tender');
+    }
+
+
     public function index()
     {
         $tenders = Tender::query()->paginate(10);
@@ -55,30 +60,19 @@ class TenderController extends Controller
     {
         $data = $request->validated();
 
-        if ($tender->customer_id === Auth::id()) {
-            $tender = $tender->update($data);
-            return new TenderResource($tender);
-        } else {
-            return response([
-                'message' => 'access denied'
-            ], 401);
-        }
+        $tender = $tender->update($data);
+
+        return new TenderResource($tender);
     }
 
     public function destroy(Tender $tender)
     {
-        if ($tender->customer_id === Auth::id()) {
-            $tender->files->delete();
-            $tender->bids->delete();
-            $tender->delete();
+        $tender->files->delete();
+        $tender->bids->delete();
+        $tender->delete();
 
-            return response()->json([
-                'message' => 'tender deleted successfully'
-            ]);
-        } else {
-            return response([
-                'message' => 'access denied'
-            ], 401);
-        }
+        return response()->json([
+            'message' => 'tender deleted successfully'
+        ]);
     }
 }
