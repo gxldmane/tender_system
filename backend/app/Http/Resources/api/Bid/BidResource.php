@@ -20,6 +20,7 @@ class BidResource extends JsonResource
             'companyId' => $this->company_id,
             'userId' => $this->user_id,
             'price' => $this->price,
+            'status' => $this->status,
             'createdAt' => $this->created_at,
         ];
     }

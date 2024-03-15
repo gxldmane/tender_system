@@ -3,16 +3,12 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Bid\BidStoreRequest;
 use App\Http\Requests\Tender\TenderStoreRequest;
 use App\Http\Requests\Tender\TenderUpdateRequest;
 use App\Http\Resources\api\Tender\TenderCollection;
 use App\Http\Resources\api\Tender\TenderResource;
-use App\Models\Bid;
 use App\Models\File;
 use App\Models\Tender;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -33,9 +29,19 @@ class TenderController extends Controller
     public function store(TenderStoreRequest $request)
     {
         $data = $request->validated();
+
+        $tender = Tender::query()->where('customer_id', Auth::user()->id)->where('name', $data['name'])->first();
+
+        if ($tender) {
+            return response([
+                'message' => 'tender already exists'
+            ], 401);
+        }
+
         $files = $data['files'];
         unset($data['files']);
-        $data['customer_id'] = User::query()->inRandomOrder()->first()->id;
+
+        $data['customer_id'] = Auth::user()->id;
 
         $tender = Tender::query()->create($data);
 
@@ -47,8 +53,7 @@ class TenderController extends Controller
             $file->user_id = $data['customer_id'];
             $file->save();
         }
-
-        return new TenderResource($tender);
+        return new TenderResource($tender->load('files'));
     }
 
     public function show(Tender $tender)
@@ -60,15 +65,15 @@ class TenderController extends Controller
     {
         $data = $request->validated();
 
-        $tender = $tender->update($data);
+        $tender->update($data);
 
-        return new TenderResource($tender);
+        return new TenderResource($tender->load('files'));
     }
 
     public function destroy(Tender $tender)
     {
-        $tender->files->delete();
-        $tender->bids->delete();
+        $tender->files()->delete();
+        $tender->bids()->delete();
         $tender->delete();
 
         return response()->json([

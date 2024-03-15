@@ -5,7 +5,6 @@ use App\Http\Controllers\api\BidController;
 use App\Http\Controllers\api\CategoryController;
 use App\Http\Controllers\api\RegionController;
 use App\Http\Controllers\api\TenderController;
-use Illuminate\Http\Request;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
@@ -21,13 +20,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('/tenders', 'index');
         Route::post('/tenders', 'store')->middleware('ability:customer');
         Route::get('/tenders/{tender}', 'show');
-        Route::put('/tenders/{tender}','update')->middleware('ability:customer');
+        Route::patch('/tenders/{tender}','update')->middleware('ability:customer');
         Route::delete('/tenders/{tender}','destroy')->middleware('ability:customer');
     });
     Route::controller(BidController::class)->group(function () {
         Route::post('/tenders/{tender}/bids', 'store')->middleware('ability:executor');
         Route::delete('/tenders/{tender}/bids', 'destroy')->middleware('ability:executor');
-        Route::get('bids/{tender}', 'index');
+        Route::get('bids/{tender}', 'getTenderBids')->middleware('ability:customer');
+        Route::get('bids', 'getSendedBids')->middleware('ability:executor');
     });
 });
 

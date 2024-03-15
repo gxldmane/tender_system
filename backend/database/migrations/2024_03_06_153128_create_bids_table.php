@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->unsignedBigInteger('price');
+            $table->string('status');
             $table->timestamps();
         });
     }

@@ -14,10 +14,24 @@ use Illuminate\Support\Facades\Auth;
 class BidController extends Controller
 {
 
-    public function index(Tender $tender)
+    public function getTenderBids(Tender $tender)
     {
+        $user = Auth::user();
+        if ($tender->customer_id != $user->id) {
+            return response([
+                'message' => 'Not found'
+            ], 404);
+        }
+
         $bids = $tender->bids()->paginate(10);
 
+        return new BidCollection($bids);
+    }
+    
+    public function getSendedBids()
+    {
+        $user = Auth::user();
+        $bids = $user->bids()->paginate(10);
         return new BidCollection($bids);
     }
 
@@ -32,10 +46,13 @@ class BidController extends Controller
                 'message' => 'bid already exists'
             ], 401);
         }
+
         $data['tender_id'] = $tender->id;
         $data['user_id'] = $user->id;
         $data['company_id'] = $user->company->id;
+        $data['status'] = 'pending';
         $tender->bids()->create($data);
+
         return response()->json([
             'message' => 'bid created successfully',
         ]);

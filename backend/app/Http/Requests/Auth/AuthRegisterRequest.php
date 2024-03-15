@@ -28,6 +28,7 @@ class AuthRegisterRequest extends FormRequest
             'email' => ['required', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', 'string', Password::defaults()],
             'role' => ['required', Rule::in(['executor', 'customer'])],
+            'company_id' => ['required', 'exists:companies,id'],
         ];
     }
 }

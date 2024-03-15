@@ -20,7 +20,6 @@ class CompanyFactory extends Factory
         return [
             'name' => $this->faker->word,
             'description' => $this->faker->sentence(5),
-            'user_id' => User::query()->inRandomOrder()->first()->id
         ];
     }
 }

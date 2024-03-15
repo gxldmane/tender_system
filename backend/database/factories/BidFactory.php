@@ -19,12 +19,12 @@ class BidFactory extends Factory
      */
     public function definition(): array
     {
-        $company = Company::query()->inRandomOrder()->first();
         return [
             'tender_id' => Tender::query()->inRandomOrder()->first()->id,
-            'company_id' => $company->id,
-            'user_id' => $company->user_id,
-            'price' => $this->faker->randomElement([1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000],)
+            'company_id' => Company::query()->inRandomOrder()->first()->id,
+            'user_id' => User::query()->inRandomOrder()->first()->id,
+            'price' => $this->faker->randomElement([1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000]),
+            'status' => $this->faker->randomElement(['pending', 'accepted', 'rejected']),
         ];
 
     }

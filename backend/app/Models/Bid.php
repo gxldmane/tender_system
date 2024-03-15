@@ -16,6 +16,7 @@ class Bid extends Model
         'user_id',
         'company_id',
         'price',
+        'status'
     ];
 
     public function tender(): BelongsTo

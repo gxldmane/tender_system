@@ -17,9 +17,9 @@ class Company extends Model
         'description'
     ];
 
-    public function user(): BelongsTo
+    public function users(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(User::class);
     }
 
     public function bids(): HasMany

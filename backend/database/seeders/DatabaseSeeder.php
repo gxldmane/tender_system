@@ -19,12 +19,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        Company::factory(20)->create();
         User::factory(20)->create();
         Category::factory(10)->create();
         Region::factory(25)->create();
         Tender::factory(50)->create();
         File::factory(25)->create();
-        Company::factory(20)->create();
         Bid::factory(20)->create();
     }
 }
