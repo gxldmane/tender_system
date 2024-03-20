@@ -5,6 +5,7 @@ use App\Http\Controllers\api\BidController;
 use App\Http\Controllers\api\CategoryController;
 use App\Http\Controllers\api\RegionController;
 use App\Http\Controllers\api\TenderController;
+use App\Http\Controllers\api\CompanyController;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,7 @@ Route::controller(AuthController::class)->group(function () {
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('regions', RegionController::class);
+    Route::apiResource('companies', CompanyController::class);
     Route::controller(TenderController::class)->group(function () {
         Route::get('/tenders', 'index');
         Route::get('/tenders/my', 'myTenders')->middleware('ability:customer');

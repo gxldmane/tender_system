@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Resources\Company;
+namespace App\Http\Resources\api\Company;
 
+use App\Http\Resources\api\User\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,7 +19,7 @@ class CompanyResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'user_id' => $this->user_id,
+            'users' => UserResource::collection($this->whenLoaded('users')),
         ];
     }
 }
