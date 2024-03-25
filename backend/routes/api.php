@@ -14,10 +14,11 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login')->middleware(StartSession::class);;
  });
 
+ Route::apiResource('categories', CategoryController::class);
+ Route::apiResource('regions', RegionController::class);
+ Route::apiResource('companies', CompanyController::class);
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('regions', RegionController::class);
-    Route::apiResource('companies', CompanyController::class);
     Route::controller(TenderController::class)->group(function () {
         Route::get('/tenders', 'index');
         Route::get('/tenders/my', 'myTenders')->middleware('ability:customer');
