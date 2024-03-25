@@ -16,14 +16,8 @@ import {
 
 const Header = () => {
   return (
-    <header className="bg-white py-4">
+    <header className="py-4">
       <div className="container mx-auto flex items-center justify-between">
-        {/*<div className="invisible md:visible md:flex md:w-1/6">*/}
-        {/*  <Link href="/">*/}
-        {/*    <Image src="/logo.svg" alt="Logo" width={450} height={200}/>*/}
-        {/*  </Link>*/}
-        {/*</div>*/}
-
         <div className="invisible md:visible md:flex md:w-1/5">
           <Link href="/">
             <Image src="/logo.svg" alt="Logo" width={0} height={0} layout="responsive"/>
