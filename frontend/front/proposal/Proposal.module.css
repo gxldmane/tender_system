@@ -1,0 +1,31 @@
+.proposal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 476px;
+    padding: 17px;
+    margin-bottom: 12px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.proposal:last-child {
+    margin-bottom: 0;
+}
+
+.check {
+    display: none;
+    border: 0;
+    background-color: #fff;
+}
+
+.proposal:hover .check {
+    display: block;
+} 
+
+.name {
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+

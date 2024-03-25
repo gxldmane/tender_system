@@ -1,0 +1,33 @@
+.header {
+    margin-bottom: 40px;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.headerContainer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.menu__item {
+    display: inline-block;
+    padding-right: 32px;
+}
+
+.menu__item:last-child {
+    padding-right: 0;
+}
+
+.headerButton {
+    padding: 10px 16px;
+    background-color: black;
+    border-radius: 6px;
+    color: white;
+}
