@@ -5,7 +5,7 @@ import {Button} from "@/components/ui/button";
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const { saveToken } = useAuth();
+  const { saveAuthToken } = useAuth();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,7 +21,7 @@ function Login() {
       });
       const data = await response.json();
       if (data.token) {
-        saveToken(data.token);
+        saveAuthToken(data.token);
         alert(data.message);
       } else {
         alert('Login failed');

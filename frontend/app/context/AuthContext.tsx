@@ -1,28 +1,35 @@
 "use client"
-import {createContext, useContext, useState} from 'react';
+import {createContext, ReactNode, useContext, useState} from 'react';
+import httpClient from "@/app/http";
 
-const AuthContext = createContext(undefined);
+interface AuthContextType {
+  authToken: string;
+  saveAuthToken: (token: string) => void;
+}
 
-export function useAuth() {
+const AuthContext = createContext<AuthContextType>(null);
+
+export function useAuth(): AuthContextType {
   return useContext(AuthContext);
 }
 
-export const AuthProvider = ({ children }) => {
+export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [authToken, setAuthToken] = useState(() => {
     if (typeof window !== "undefined") {
-      return window.localStorage.getItem('authToken');
+      return window.localStorage.getItem('auth_token');
     }
   });
 
-  const saveToken = (token) => {
+  const saveAuthToken = (token: string) => {
     setAuthToken(token);
+    httpClient.setToken(token);
     if (typeof window !== "undefined") {
-      window.localStorage.setItem('authToken', token);
+      window.localStorage.setItem('auth_token', token);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ authToken, saveToken }}>
+    <AuthContext.Provider value={{ authToken, saveAuthToken }}>
       {children}
     </AuthContext.Provider>
   );
