@@ -41,3 +41,9 @@ export interface Company {
 export interface CompaniesResponse {
   data: Company[]
 }
+
+export interface TendersResponse {
+  data: any
+  links: any
+  meta: any
+}

@@ -65,7 +65,7 @@ const Header = () => {
 
         <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
           <Button asChild>
-            <Link href="/register">
+            <Link href="/register" className='ml-auto'>
               Регистрация
             </Link>
           </Button>
