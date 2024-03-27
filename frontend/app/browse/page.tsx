@@ -1,8 +1,9 @@
 "use client"
 import React, {useEffect, useState} from 'react';
 import TenderCard from '../components/TenderCard'; // Assuming TenderCard.tsx is in the same directory
-import { useQuery } from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 import httpClient from '../http';
+import {Skeleton} from "@/components/ui/skeleton";
 
 export default function Browse() {
   const [tenders, setTenders] = useState([]); // Create state for tenders
@@ -23,16 +24,14 @@ export default function Browse() {
 
     fetchData(); // Fetch data on component mount
   }, []);
-  
 
   return (
     <div className='container'>
-      Котей
-      <div className="container mx-auto md:w-1/2 space-y-6 p-10 pb-16 bg-white border-2 rounded-md">
-        {isLoading ? (
-          <p>Loading tenders...</p>
+      <div className="container mx-auto md:w-1/2 space-y-6 p-10 bg-white border-2 rounded-md">
+        {isLoading || !tenders ? (
+          <Skeleton className="h-24 w-full rounded-md"/>
         ) : (
-          <TenderCard items={tenders} />
+          <TenderCard items={tenders}/>
         )}
       </div>
     </div>
