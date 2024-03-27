@@ -19,18 +19,22 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
     <body className={`${inter.className}`}>
     <StrictMode>
-      <QueryProvider>
-        <AuthContextProvider>
+      <AuthContextProvider>
+
           <span className={"dot-mask"}>
              <div
                className="absolute inset-0 h-full w-full bg-white dark:bg-stone-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#0f172a_1px,transparent_1px)] [background-size:16px_16px]">
+        <QueryProvider>
+
                 <Header/>
-               {children}
+          {children}
+        </QueryProvider>
+
              </div>
             <Toaster/>
           </span>
-        </AuthContextProvider>
-      </QueryProvider>
+
+      </AuthContextProvider>
     </StrictMode>
     </body>
     </html>
