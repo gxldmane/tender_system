@@ -106,4 +106,8 @@ export default class TendersHttpClient {
     return await this.request("GET", "/tenders");
   }
 
+  async getCategoryById(categoryId: number): Promise<CompaniesResponse | ErrorResponse | any> {
+    return await this.request("GET", `/categories/${categoryId}`);
+  }
+
 }
