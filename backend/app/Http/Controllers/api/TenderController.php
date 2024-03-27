@@ -5,62 +5,35 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tender\TenderStoreRequest;
 use App\Http\Requests\Tender\TenderUpdateRequest;
-use App\Http\Resources\api\Tender\TenderCollection;
 use App\Http\Resources\api\Tender\TenderResource;
-use App\Models\File;
 use App\Models\Tender;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use function Symfony\Component\String\s;
+use App\Services\Tender\TenderService;
 
 class TenderController extends Controller
 {
-    public function __construct() {
+    protected TenderService $tenderService;
+
+    public function __construct(TenderService $tenderService) {
         $this->authorizeResource(Tender::class, 'tender');
+        $this->tenderService = $tenderService;
     }
 
 
     public function index()
     {
-        $tenders = Tender::query()->paginate(10);
-        return new TenderCollection($tenders);
+        return $this->tenderService->index();
     }
 
     public function myTenders()
     {
-        $tenders = Auth::user()->tenders();
-        return new TenderCollection($tenders);
+        return $this->tenderService->myTenders();
     }
 
     public function store(TenderStoreRequest $request)
     {
         $data = $request->validated();
 
-        $tender = Tender::query()->where('customer_id', Auth::user()->id)->where('name', $data['name'])->first();
-
-        if ($tender) {
-            return response([
-                'message' => 'tender already exists'
-            ], 401);
-        }
-
-        $files = $data['files'];
-        unset($data['files']);
-
-        $data['customer_id'] = Auth::user()->id;
-
-        $tender = Tender::query()->create($data);
-
-        foreach ($files as $file) {
-            $path = Storage::disk('public')->put('', $file);
-            $file = new File();
-            $file->tender_id = $tender->id;
-            $file->url = Storage::url($path);
-            $file->user_id = $data['customer_id'];
-            $file->save();
-        }
-        return new TenderResource($tender->load('files'));
+        return $this->tenderService->store($data);
     }
 
     public function show(Tender $tender)
@@ -79,12 +52,6 @@ class TenderController extends Controller
 
     public function destroy(Tender $tender)
     {
-        $tender->files()->delete();
-        $tender->bids()->delete();
-        $tender->delete();
-
-        return response()->json([
-            'message' => 'tender deleted successfully'
-        ]);
+        return $this->tenderService->destroy($tender);
     }
 }
