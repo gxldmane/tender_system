@@ -36,6 +36,9 @@ import {ToastAction} from "@/components/ui/toast";
 import joinValues = util.joinValues;
 import {PasswordInput} from "@/app/components/PasswordInput";
 import {Separator} from "@/components/ui/separator";
+import {redirect} from "next/navigation";
+import { useRouter } from 'next/navigation'
+
 
 const formSchema = z.object({
   name: z.string().trim().min(1, 'Укажите свое ФИО').max(100, 'Слишком длинное ФИО'),
@@ -56,6 +59,7 @@ type OutputSchema = z.infer<typeof formSchema>;
 
 export default function Register() {
   const { saveAuthToken } = useAuth();
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const form = useForm<InputSchema>({
     resolver: zodResolver(formSchema),
@@ -95,6 +99,7 @@ export default function Register() {
     }
     if (response?.token) {
       saveAuthToken(response.token);
+      router.push("/dashboard")
     }
   }
 

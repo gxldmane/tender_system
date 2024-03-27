@@ -32,6 +32,12 @@ export default class TendersHttpClient {
   ): Promise<AxiosResponse<any, any> | undefined> {
     console.log(`[HTTP] ${method} ${path} ${JSON.stringify(payload)}`);
     let response: AxiosResponse<any, any> | undefined;
+    if (typeof window !== "undefined") {
+      let token = window.localStorage.getItem('auth_token');
+      if (token) {
+        this.setToken(token);
+      }
+    }
 
     try {
       response = await this.client.request({
