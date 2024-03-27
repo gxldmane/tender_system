@@ -24,7 +24,6 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Textarea} from "@/components/ui/textarea";
-import {Separator} from "@radix-ui/react-menu";
 import {AlertCircle, ArrowDown01, CheckIcon, ChevronsUpDown, Loader2} from "lucide-react";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Switch} from "@/components/ui/switch";
@@ -36,6 +35,10 @@ import {toast} from "@/components/ui/use-toast";
 import {ToastAction} from "@/components/ui/toast";
 import joinValues = util.joinValues;
 import {PasswordInput} from "@/app/components/PasswordInput";
+import {Separator} from "@/components/ui/separator";
+import {redirect} from "next/navigation";
+import {useRouter} from 'next/navigation'
+
 
 const formSchema = z.object({
   name: z.string().trim().min(1, 'Укажите свое ФИО').max(100, 'Слишком длинное ФИО'),
@@ -56,6 +59,7 @@ type OutputSchema = z.infer<typeof formSchema>;
 
 export default function Register() {
   const { saveAuthToken } = useAuth();
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const form = useForm<InputSchema>({
     resolver: zodResolver(formSchema),
@@ -95,6 +99,7 @@ export default function Register() {
     }
     if (response?.token) {
       saveAuthToken(response.token);
+      router.push("/dashboard")
     }
   }
 
@@ -141,7 +146,6 @@ export default function Register() {
                       </FormItem>
                     )}
                   />
-                  <Separator/>
                   <FormField
                     control={form.control}
                     name="email"
@@ -155,6 +159,7 @@ export default function Register() {
                       </FormItem>
                     )}
                   />
+                  <Separator/>
                   <FormField
                     control={form.control}
                     name="password"
@@ -191,6 +196,7 @@ export default function Register() {
                       </FormItem>
                     )}
                   />
+                  <Separator/>
                   <FormField
                     control={form.control}
                     name="company_id"
@@ -295,46 +301,5 @@ export default function Register() {
         </CardContent>
       </Card>
     </div>
-    // <div className={"flex flex-col items-center justify-center h-screen w-screen p-4 bg-stone-50"}>
-    //   <h1 className={"text-2xl font-bold mb-4 text-center"}>Регистрация</h1>
-    //   <div className={"w-full max-w-[500px] space-x-4 rounded-md border p-10"}>
-    //     <form onSubmit={handleSubmit}>
-    //       <Label>Имя</Label>
-    //       <Input placeholder="Имя" name="name" onChange={handleChange}/>
-    //       <Label>Email</Label>
-    //       <Input placeholder="Email" name="email" type="email" onChange={handleChange}/>
-    //       <Label>Пароль</Label>
-    //       <Input placeholder="Пароль" name="password" type="password" onChange={handleChange}/>
-    //       <Label>Роль</Label>
-    //       <Select onValueChange={handleRoleChange}>
-    //         <SelectTrigger className="w-[180px]">
-    //           <SelectValue placeholder="Выберите роль"/>
-    //         </SelectTrigger>
-    //         <SelectContent>
-    //           <SelectGroup>
-    //             <SelectItem value="customer">Заказчик</SelectItem>
-    //             <SelectItem value="executor">Подрядчик</SelectItem>
-    //           </SelectGroup>
-    //         </SelectContent>
-    //       </Select>
-    //       <Label>Компания</Label>
-    //       {isLoading || !companies?.data ? <Skeleton className="h-10 w-[180px]"/> :
-    //         <Select disabled={companies.data.length === 0} onValueChange={handleCompanyChange}>
-    //           <SelectTrigger className="h-10 w-[180px]">
-    //             <SelectValue placeholder="Выберите компанию"/>
-    //           </SelectTrigger>
-    //           <SelectContent>
-    //             <SelectGroup>
-    //               {companies.data?.map(value => (
-    //                 <SelectItem key={value.id.toString()} value={value.id.toString()}>{value.name}</SelectItem>
-    //               ))}
-    //             </SelectGroup>
-    //           </SelectContent>
-    //         </Select>}
-    //       <Button className={"mt-3"} type="submit">Зарегистрироваться</Button>
-    //     </form>
-    //   </div>
-    // </div>
-
   );
 }

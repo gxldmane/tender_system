@@ -13,17 +13,20 @@ import {
   NavigationMenuTrigger, navigationMenuTriggerStyle,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
+import {useAuth} from "@/app/context/AuthContext";
+import {useEffect, useState} from "react";
 
 const Header = () => {
-  return (
-    <header className="bg-white py-4">
-      <div className="container mx-auto flex items-center justify-between">
-        {/*<div className="invisible md:visible md:flex md:w-1/6">*/}
-        {/*  <Link href="/">*/}
-        {/*    <Image src="/logo.svg" alt="Logo" width={450} height={200}/>*/}
-        {/*  </Link>*/}
-        {/*</div>*/}
+  const { authToken } = useAuth();
+  const [token, setToken] = useState(null);
 
+  useEffect(() => {
+    setToken(authToken);
+  }, []);
+
+  return (
+    <header className="py-4">
+      <div className="container mx-auto flex items-center justify-between">
         <div className="invisible md:visible md:flex md:w-1/5">
           <Link href="/">
             <Image src="/logo.svg" alt="Logo" width={0} height={0} layout="responsive"/>
@@ -59,16 +62,30 @@ const Header = () => {
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/dashboard" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Личный кабинет
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
-        <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
-          <Button asChild>
-            <Link href="/register">
-              Регистрация
-            </Link>
-          </Button>
-        </div>
+        {!token ?
+          <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
+            <Button asChild>
+              <Link href="/register" className='ml-auto'>
+                Регистрация
+              </Link>
+            </Button>
+          </div> : <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
+            <Button asChild>
+              <Link href="/dashboard" className='ml-auto'>
+                Личный кабинет
+              </Link>
+            </Button>
+          </div>}
       </div>
     </header>
   );

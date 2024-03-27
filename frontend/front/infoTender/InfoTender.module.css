@@ -1,0 +1,71 @@
+.InfoTender {
+    width: 560px;
+    padding: 25px;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 40px;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.inputContainer {
+    margin-bottom: 8px;
+}
+
+.inputContainer:last-of-type {
+    margin-bottom: 16px;
+}
+
+.label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.input {
+    display: block;
+    width: 536px;
+    padding: 8px 12px;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.button {
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 6px;
+    margin-right: 16px;
+}
+
+.button:last-child {
+    margin-right: 0;
+}
+
+.buttonSave{
+    background-color: #0F172A;
+    color: white;
+}
+
+.buttonDownload {
+    background-color: #F1F5F9;
+}
+
+.buttonAdd {
+    background-color: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 50%;
+    padding: 8px 12px;
+}
+
+.buttonDelete {
+    background-color: #EF4444;
+    color: white;
+}
