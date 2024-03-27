@@ -9,8 +9,10 @@ use App\Http\Resources\api\Tender\TenderCollection;
 use App\Http\Resources\api\Tender\TenderResource;
 use App\Models\File;
 use App\Models\Tender;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use function Symfony\Component\String\s;
 
 class TenderController extends Controller
 {
@@ -22,7 +24,6 @@ class TenderController extends Controller
     public function index()
     {
         $tenders = Tender::query()->paginate(10);
-
         return new TenderCollection($tenders);
     }
 

@@ -5,8 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Bid\BidStoreRequest;
 use App\Http\Resources\api\Bid\BidCollection;
-use App\Http\Resources\api\Bid\BidResource;
-use App\Http\Resources\api\Tender\TenderResource;
+use App\Http\Resources\api\Bid\BidResource; 
 use App\Models\Bid;
 use App\Models\Tender;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +26,7 @@ class BidController extends Controller
 
         return new BidCollection($bids);
     }
-    
+
     public function getSendedBids()
     {
         $user = Auth::user();
