@@ -216,7 +216,6 @@ export default function ViewMore() {
                     </div>
                     </TabsContent>
                 </Tabs>
-                <TabsContent value="overview" className="space-y-4"></TabsContent>
             </div>
     </div>
     )}
