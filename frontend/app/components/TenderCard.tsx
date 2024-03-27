@@ -30,7 +30,7 @@ export default function TenderCard({ items, ...props }: TenderCardProps) {
   return (
     <>
       {items.map((item) => (
-        <div className="flex justify-between items-center" key={item.id}> {/* Use item.id for unique keys */}
+        <div className="flex justify-between items-center pb-4" key={item.id}> {/* Use item.id for unique keys */}
           <div>
             <p>Название: {item.name}</p>
             <p>Установленная цена: {item.start_price}₽</p>

@@ -1,5 +1,12 @@
 import axios, {AxiosInstance, AxiosResponse, AxiosError} from "axios";
-import {CompaniesResponse, LoginData, LoginResponse, RegisterData, RegisterResponse, TendersResponse} from "@/app/http/types";
+import {
+  CompaniesResponse,
+  LoginData,
+  LoginResponse,
+  RegisterData,
+  RegisterResponse,
+  TendersResponse
+} from "@/app/http/types";
 
 interface RequestPayload {
   data?: FormData | Record<string, any>;
@@ -108,8 +115,12 @@ export default class TendersHttpClient {
     // return await this.request("GET", "/companies");
   }
 
-  async getAllTenders(): Promise<TendersResponse | ErrorResponse | any> {
-    return await this.request("GET", "/tenders");
+  async getAllTenders(page: number = 1): Promise<TendersResponse | ErrorResponse | any> {
+    return await this.request("GET", "/tenders", {
+      params: {
+        page: page,
+      }
+    });
   }
 
   async getCategoryById(categoryId: number): Promise<CompaniesResponse | ErrorResponse | any> {

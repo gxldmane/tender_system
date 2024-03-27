@@ -37,7 +37,7 @@ import joinValues = util.joinValues;
 import {PasswordInput} from "@/app/components/PasswordInput";
 import {Separator} from "@/components/ui/separator";
 import {redirect} from "next/navigation";
-import { useRouter } from 'next/navigation'
+import {useRouter} from 'next/navigation'
 
 
 const formSchema = z.object({

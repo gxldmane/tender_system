@@ -14,10 +14,6 @@ const sidebarNavItems = [
       title: "Уведомления",
       href: "/dashboard/notifications",
     },
-    {
-      title: "Избранное",
-      href: "/favourite",
-    }
   ]
 
 interface SettingsLayoutProps {
