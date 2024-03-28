@@ -13,7 +13,8 @@ class TenderController extends Controller
 {
     protected TenderService $tenderService;
 
-    public function __construct(TenderService $tenderService) {
+    public function __construct(TenderService $tenderService)
+    {
         $this->authorizeResource(Tender::class, 'tender');
         $this->tenderService = $tenderService;
     }

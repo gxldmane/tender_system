@@ -10,12 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function register(AuthRegisterRequest $request) {
+    public function register(AuthRegisterRequest $request)
+    {
         $data = $request->validated();
 
         $user = User::query()->create($data);
 
-        if ($user->role=='customer') {
+        if ($user->role == 'customer') {
             $token = $user->createToken('customer', ['customer'])->plainTextToken;
         } else {
             $token = $user->createToken('executor', ['executor'])->plainTextToken;
@@ -31,7 +32,8 @@ class AuthController extends Controller
 
     }
 
-    public function login(AuthLoginRequest $request) {
+    public function login(AuthLoginRequest $request)
+    {
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
