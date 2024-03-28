@@ -12,7 +12,8 @@ class File extends Model
 
     protected $fillable = [
         'url',
-        'tender_id'
+        'tender_id',
+        'user_id'
     ];
 
     public function tender(): BelongsTo

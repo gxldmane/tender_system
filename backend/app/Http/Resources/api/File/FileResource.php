@@ -17,6 +17,7 @@ class FileResource extends JsonResource
         return [
             'id' => $this->id,
             'tenderId' => $this->tender_id,
+            'userId' => $this->user_id,
             'url' => $this->url,
         ];
     }
