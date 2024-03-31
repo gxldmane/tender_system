@@ -47,3 +47,13 @@ export interface TendersResponse {
   links: any
   meta: any
 }
+
+export interface TenderInfoResponse {
+  id: number;
+  name: string;
+  description: string;
+  start_price: number;
+  categoryId: number;
+  createdAt: string;
+  untilDate: string;
+}

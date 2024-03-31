@@ -1,4 +1,5 @@
-import React from "react"
+import React, { useState } from "react"
+
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import {
@@ -27,6 +28,11 @@ interface TenderCardProps {
 }
 
 export default function TenderCard({ items, ...props }: TenderCardProps) {
+  const [tenderId, setTenderId] = useState<number | null>(null);
+
+  const handleClick = (item) => {
+    setTenderId(item.id);
+  };
   return (
     <>
       {items.map((item) => (
@@ -36,7 +42,11 @@ export default function TenderCard({ items, ...props }: TenderCardProps) {
             <p>Установленная цена: {item.start_price}₽</p>
           </div>
           <Button>
-            <Link href="/register">Дополнительно</Link>
+            <Link href={`/view-more?tenderId=${item.id}`}>
+              <Button>
+                Дополнительно
+              </Button>
+            </Link>
           </Button>
         </div>
       ))}
