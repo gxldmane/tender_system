@@ -49,7 +49,7 @@ export interface TendersResponse {
 }
 
 export interface TenderInfoResponse {
-  id: number;
+  id: string;
   name: string;
   description: string;
   start_price: number;
@@ -57,3 +57,14 @@ export interface TenderInfoResponse {
   createdAt: string;
   untilDate: string;
 }
+
+export interface CreateBidData {
+  price: string;
+}
+
+export interface CreateBidResponse {
+  message: string;
+}
+
+
+

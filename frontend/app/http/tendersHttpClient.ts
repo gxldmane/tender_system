@@ -5,7 +5,10 @@ import {
   LoginResponse,
   RegisterData,
   RegisterResponse,
-  TendersResponse
+  TendersResponse,
+  TenderInfoResponse, 
+  CreateBidData, 
+  CreateBidResponse
 } from "@/app/http/types";
 
 interface RequestPayload {
@@ -80,6 +83,17 @@ export default class TendersHttpClient {
     return await this.request("POST", "/register", { data });
   }
 
+  async createBid(tenderId: string, request: CreateBidData | any): Promise<CreateBidResponse | ErrorResponse | any>{
+    console.log("request: " + JSON.stringify(request));
+    const data = new FormData();
+    for (const key in request) {
+      data.append(key, request[key]);
+    }
+    console.log(data);
+
+    return await this.request("POST", '/tenders/' + tenderId + '/bids', { data });
+  }
+
   async login(request: LoginData): Promise<LoginResponse | ErrorResponse | any> {
     const data = new FormData();
     for (const key in request) {
@@ -127,7 +141,7 @@ export default class TendersHttpClient {
     return await this.request("GET", `/categories/${categoryId}`);
   }
 
-  async getTenderInfo(tenderId: number): Promise<TenderInfoResponse | ErrorResponse | any> {
+  async getTenderInfo(tenderId: string): Promise<TenderInfoResponse | ErrorResponse | any> {
     return await this.request("GET", `/tenders/${tenderId}`);
   }
 }

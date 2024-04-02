@@ -64,9 +64,7 @@ function getRemainingTime(untilDate: string): string {
 }
 
 
-const AuthUserRole = "customer"; // Заменить на "executor" для исполнителя
-const AuthIsBidSended = false;
-const AuthIsCreator = true; // Заменить на false, если заявка не отправлена
+// Заменить на false, если заявка не отправлена
 
 interface TenderData {
   name: string;
@@ -78,8 +76,14 @@ interface TenderData {
 }
 
 export default function ViewMore() {
+  const AuthUserRole = "executor"; // Заменить на "executor" для исполнителя
+  const [authIsBidded, setAuthIsBidded] = useState(false);
+  const handleBidChange = (newBiddedValue) => {
+    setAuthIsBidded(newBiddedValue);
+  };
+  const AuthIsCreator = true;
   const searchParams = useSearchParams();
-  const tenderId = parseInt(searchParams.get('tenderId') as string);
+  const tenderId = searchParams.get('tenderId') as string;
   const [tenderData, setTenderData] = useState<TenderData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -199,7 +203,7 @@ export default function ViewMore() {
                     </CardHeader>
                     <CardContent>
                       <div className='flex items-center gap-x-2.5'>
-                        <ActionList userRole={AuthUserRole} isBidded={AuthIsBidSended} isCreator={AuthIsCreator} />
+                        <ActionList tenderId={tenderId} userRole={AuthUserRole} isBidded={authIsBidded} onbidChange={handleBidChange} isCreator={AuthIsCreator} />
                       </div>
                     </CardContent>
                   </Card>
