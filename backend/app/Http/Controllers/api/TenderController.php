@@ -47,7 +47,7 @@ class TenderController extends Controller
         $data = $request->validated();
 
         $tender->update($data);
-
+        
         return new TenderResource($tender->load('files'));
     }
 

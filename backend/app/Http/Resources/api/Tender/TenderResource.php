@@ -22,6 +22,7 @@ class TenderResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'start_price' => $this->start_price,
+            'status' => $this->status,
             'files' => FileResource::collection($this->whenLoaded('files')),
             'categoryId' => $this->category_id,
             'customerId' => $this->customer_id,

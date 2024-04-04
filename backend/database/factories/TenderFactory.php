@@ -25,9 +25,10 @@ class TenderFactory extends Factory
             'start_price' => $this->faker->numberBetween(100, 1000),
             'category_id' => Category::query()->inRandomOrder()->first()->id,
             'region_id' => Region::query()->inRandomOrder()->first()->id,
+            'status' => $this->faker->randomElement(['active', 'pending']),
             'customer_id' => User::query()->inRandomOrder()->first()->id,
             'executor_id' => User::query()->inRandomOrder()->first()->id,
-            'until_date' => $this->faker->date
+            'until_date' => $this->faker->dateTimeBetween('now', '+1 year'),
         ];
     }
 }

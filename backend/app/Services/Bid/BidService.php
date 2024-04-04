@@ -36,6 +36,10 @@ class BidService
 
     public function store($data, User $user, Tender $tender)
     {
+        if ($tender->status === 'closed' || $tender->status === 'pending') {
+            return response()->json(['message' => 'Tender is pending or closed.'], 403);
+        }
+
         $existingBid = Bid::query()->where('user_id', $user->id)->where('tender_id', $tender->id)->first();
 
         if ($existingBid) {

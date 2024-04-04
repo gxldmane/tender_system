@@ -27,7 +27,7 @@ class TenderStoreRequest extends FormRequest
             'start_price' => ['required', 'integer'],
             'category_id' => ['required', 'exists:categories,id'],
             'region_id' => ['required', 'exists:regions,id'],
-            'until_date' => ['required', 'date'],
+            'until_date' => ['required', 'date', 'after:today'],
             'files.*' => ['file']
         ];
     }

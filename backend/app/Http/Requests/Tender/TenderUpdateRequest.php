@@ -27,7 +27,7 @@ class TenderUpdateRequest extends FormRequest
             'start_price' => ['sometimes','required', 'integer'],
             'category_id' => ['sometimes','required', 'exists:categories,id'],
             'region_id' => ['sometimes','required', 'exists:regions,id'],
-            'until_date' => ['sometimes','required', 'date'],
+            'until_date' => ['sometimes','required', 'date', 'after:today'],
             'files.*' => ['sometimes','file']
         ];
     }
