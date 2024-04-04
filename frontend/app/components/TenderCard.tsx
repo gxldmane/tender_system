@@ -13,7 +13,7 @@ import {
 
 interface TenderCardProps {
   items: {
-    id: number; // Уникальный идентификатор
+    id: string; // Уникальный идентификатор
     name: string;
     description: string; // Описание тендера
     start_price: number; // Начальная цена

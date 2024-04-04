@@ -1,6 +1,9 @@
 "use client"
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 import {
   Tabs,
@@ -19,6 +22,8 @@ import {
 } from "@/components/ui/card"
 
 import httpClient from '../http';
+import { Car } from 'lucide-react';
+import ActionList from '../components/ActionList';
 
 function daysSinceTenderCreation(createdAt) {
   const tenderDate = new Date(createdAt);
@@ -59,8 +64,7 @@ function getRemainingTime(untilDate: string): string {
 }
 
 
-const userRole = "customer"; // Заменить на "executor" для исполнителя
-const isBidSended = true; // Заменить на false, если заявка не отправлена
+// Заменить на false, если заявка не отправлена
 
 interface TenderData {
   name: string;
@@ -72,8 +76,14 @@ interface TenderData {
 }
 
 export default function ViewMore() {
+  const AuthUserRole = "executor"; // Заменить на "executor" для исполнителя
+  const [authIsBidded, setAuthIsBidded] = useState(false);
+  const handleBidChange = (newBiddedValue) => {
+    setAuthIsBidded(newBiddedValue);
+  };
+  const AuthIsCreator = true;
   const searchParams = useSearchParams();
-  const tenderId = parseInt(searchParams.get('tenderId') as string);
+  const tenderId = searchParams.get('tenderId') as string;
   const [tenderData, setTenderData] = useState<TenderData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -93,78 +103,113 @@ export default function ViewMore() {
     };
     fetchTenderInfo();
   }, [tenderId]);
-  if (!tenderData) return <div>Loading...</div>;
   return (
     <div className="container hidden flex-col md:flex">
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">Тендер: {tenderData.name}</h2>
+          {isLoading || !tenderData ? (
+            <Skeleton className="h-24 w-full rounded-md" />
+          ) : (
+            <h2 className="text-3xl font-bold tracking-tight">Тендер: {tenderData.name}</h2>
+          )}
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Начальная цена
-                  </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">₽ {(tenderData.start_price).toLocaleString('ru')}</div>
-                  <p className="text-xs text-muted-foreground">
-                    Цена установленая заказчиком
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Категория тендера
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">category_name</div>
-                  <p className="text-xs text-muted-foreground">
-                    Категория №{tenderData.categoryId}
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Создан:</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{new Date(tenderData.createdAt).toLocaleDateString()}</div>
-                  <p className="text-xs text-muted-foreground">
-                    {daysSinceTenderCreation(tenderData.createdAt)}
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    До окончания:
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xl font-bold">{getRemainingTime(tenderData.untilDate)}</div>
-                  <p className="text-xs text-muted-foreground">
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+            {isLoading || !tenderData ? (
+              <Skeleton className="h-24 w-full rounded-md" />
+            ) : (
+              <>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Начальная цена
+                      </CardTitle>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        className="h-4 w-4 text-muted-foreground"
+                      >
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                      </svg>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">₽ {(tenderData.start_price).toLocaleString('ru')}</div>
+                      <p className="text-xs text-muted-foreground">
+                        Цена установленая заказчиком
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Категория тендера
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">category_name</div>
+                      <p className="text-xs text-muted-foreground">
+                        Категория №{tenderData.categoryId}
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Создан:</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{new Date(tenderData.createdAt).toLocaleDateString()}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {daysSinceTenderCreation(tenderData.createdAt)}
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        До окончания:
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-xl font-bold">{getRemainingTime(tenderData.untilDate)}</div>
+                      <p className="text-xs text-muted-foreground">
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 min-h-40">
+                  <Card>
+                    <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                      <CardTitle className='text-sm font-medium'>
+                        Описание тендера
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className=''>
+                      <div className='text-xl font-medium break-words'>
+                        {tenderData.description}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                      <CardTitle className='text-sm font-medium'>
+                        Действия
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className='flex items-center gap-x-2.5'>
+                        <ActionList tenderId={tenderId} userRole={AuthUserRole} isBidded={authIsBidded} onbidChange={handleBidChange} isCreator={AuthIsCreator} />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </>
+            )}
           </TabsContent>
         </Tabs>
       </div>
