@@ -38,35 +38,7 @@ class BidController extends Controller
 
     public function acceptBid(Tender $tender, Bid $bid)
     {
-        // TODO выести в сервис
-
-        if ($tender->status === "closed" || $tender->status === "active") {
-            return response()->json(['message' => 'Tender is closed or active.'], 403);
-        }
-        if ($tender->customer_id !== Auth::id() || !$tender->bids->contains($bid)) {
-            return response()->json(['message' => 'You are not allowed.'], 403);
-        }
-
-        $bid->status = "accepted";
-        $tender->status = "closed";
-        $tender->executor_id = $bid->user_id;
-
-        $bid->save();
-
-        // TODO: send notification to executor
-
-        $tender->save();
-
-        $otherBids = $tender->bids;
-        foreach ($otherBids as $otherBid) {
-            if ($otherBid->id != $bid->id) {
-                $otherBid->status = "rejected";
-                $otherBid->save();
-
-                // TODO: send notification to all rejected bids
-            }
-        }
-        return $bid;
+        return $this->bidService->acceptBid($tender, $bid);
     }
 
     public function destroy(Tender $tender)

@@ -30,7 +30,7 @@ class TenderService
 
     public function myTenders(): TenderCollection
     {
-        $tenders = Auth::user()->tenders();
+        $tenders = Tender::query()->where('customer_id', Auth::user()->id)->paginate(10);
         return new TenderCollection($tenders);
     }
 

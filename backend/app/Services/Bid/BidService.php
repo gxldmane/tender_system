@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Auth;
 
 class BidService
 {
+    protected OtherBidsService $otherBidsService;
+
+    public function __construct(OtherBidsService $otherBidsService)
+    {
+        $this->otherBidsService = $otherBidsService;
+    }
+
+
     public function getTenderBids(Tender $tender): Application|Response|BidCollection|\Illuminate\Contracts\Foundation\Application|ResponseFactory
     {
         $user = Auth::user();
@@ -58,6 +66,37 @@ class BidService
             'message' => 'bid created successfully',
         ]);
     }
+
+    public function acceptBid(Tender $tender, Bid $bid)
+    {
+        if ($tender->status === "closed" || $tender->status === "active") {
+            return response()->json(['message' => 'Tender is closed or active.'], 403);
+        }
+        if ($tender->customer_id !== Auth::id() || !$tender->bids->contains($bid)) {
+            return response()->json(['message' => 'You are not allowed.'], 403);
+        }
+
+        $bid->status = "accepted";
+        $tender->status = "closed";
+        $tender->executor_id = $bid->user_id;
+
+        $bid->save();
+
+        // TODO: send notification to executor
+
+        $tender->save();
+
+        $otherBids = $tender->bids;
+
+        $this->otherBidsService->rejectBids($bid, $otherBids);
+
+        return response()->json([
+            'message' => 'bid accepted successfully',
+        ], 200) ;
+
+
+    }
+
 
     public function destroy(Tender $tender, User $user)
     {
