@@ -1,43 +1,24 @@
 "use client"
-import React, {FC, useEffect, useState} from "react";
-import {useAuth} from '../context/AuthContext';
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {Label} from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import useArray from "@/app/components/useArray";
-import axios from "axios";
-import {CompaniesResponse, Company, RegisterData} from "@/app/http/types";
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import httpClient from "@/app/http";
-import {useQuery} from "@tanstack/react-query";
-import {Skeleton} from "@/components/ui/skeleton";
-import {util, z} from "zod";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {Textarea} from "@/components/ui/textarea";
-import {AlertCircle, ArrowDown01, CheckIcon, ChevronsUpDown, Loader2} from "lucide-react";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Switch} from "@/components/ui/switch";
-import Link from "next/link";
-import {cn} from "@/lib/utils";
-import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList} from "@/components/ui/command";
-import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert";
-import {toast} from "@/components/ui/use-toast";
-import {ToastAction} from "@/components/ui/toast";
-import joinValues = util.joinValues;
-import {PasswordInput} from "@/app/components/PasswordInput";
-import {Separator} from "@/components/ui/separator";
-import {redirect} from "next/navigation";
-import {useRouter} from 'next/navigation'
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { CheckIcon, ChevronsUpDown, Loader2 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { toast } from "@/components/ui/use-toast";
+import { PasswordInput } from "@/app/components/PasswordInput";
+import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/navigation";
 
 
 const formSchema = z.object({
@@ -55,12 +36,11 @@ const formSchema = z.object({
 });
 
 type InputSchema = z.input<typeof formSchema>;
-type OutputSchema = z.infer<typeof formSchema>;
 
 export default function Register() {
-  const { saveAuthToken } = useAuth();
-  const router = useRouter()
-  const [open, setOpen] = useState(false)
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
   const form = useForm<InputSchema>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
@@ -71,40 +51,46 @@ export default function Register() {
       confirm: '',
     }
   });
-  const { data: companies, isLoading, isError } = useQuery({
+  const { data: companies, isFetching, isError } = useQuery({
     queryKey: ['companies'],
-    queryFn: httpClient.getCompanies
+    queryFn: () => httpClient.getCompanies(),
+    select: data => data?.data?.data,
   });
 
   async function onSubmit(values: InputSchema) {
     console.log(JSON.stringify(values));
-    const response = await httpClient.register(values);
-    await new Promise<void>((resolve) => {
-      setTimeout(resolve, 1000);
+    const response = await queryClient.fetchQuery({
+      queryKey: ['register'],
+      queryFn: () => httpClient.register(values),
     });
+
     console.log("responsik: " + JSON.stringify(response));
-    if (response?.errors) {
-      for (const [field, messages] of Object.entries(response.errors)) {
+    if (response.status === 200) {
+      if (!response?.data?.data?.token) return;
+      queryClient.setQueryData(['user_data'], response?.data?.data?.details);
+      router.push("/dashboard");
+      return;
+    }
+    if (response?.data?.errors) {
+      // Highlight form errors
+      for (const [field, messages] of Object.entries(response?.data?.errors)) {
         form.setError(field as any, {
           type: 'manual',
           message: (messages as string[]).join(", ")
         }, { shouldFocus: true });
       }
-      toast({
-        variant: "destructive",
-        title: "Что-то пошло не так",
-        description: response.message,
-      });
-      return;
     }
-    if (response?.token) {
-      saveAuthToken(response.token);
-      router.push("/dashboard")
-    }
+    // General error message toast
+    toast({
+      variant: "destructive",
+      title: "Что-то пошло не так",
+      description: response?.data?.message,
+    });
+    return;
   }
 
   console.log(form.formState.errors)
-  console.log(companies?.data)
+  console.log(companies)
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -114,7 +100,7 @@ export default function Register() {
           <CardTitle className={cn(form.formState.isSubmitting && "animate-bounce")}>Регистрация</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-8">
-          {isLoading || form.formState.isSubmitting || !companies?.data ? (
+          {isFetching || form.formState.isSubmitting ? (
               <div className="p-4">
                 <div className="flex items-center justify-between gap-4">
                   <Skeleton className="h-10 w-full max-w-xs"/>
@@ -215,7 +201,7 @@ export default function Register() {
                                     !field.value && "text-muted-foreground"
                                   )}
                                 >
-                                  {field.value ? companies.data.find((company) => company.id === field.value)?.name : "Выберите компанию"}
+                                  {field.value ? companies.find((company) => company.id === field.value)?.name : "Выберите компанию"}
                                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
                                 </Button>
                               </FormControl>
@@ -229,7 +215,7 @@ export default function Register() {
                                 <CommandEmpty>Компаний не найдено</CommandEmpty>
                                 <CommandList>
                                   <CommandGroup>
-                                    {companies.data.map((company) => (
+                                    {companies.map((company) => (
                                       <CommandItem
                                         value={company.id}
                                         key={company.id}
@@ -256,7 +242,7 @@ export default function Register() {
                           </Popover>
                         </div>
                         <FormDescription>
-                          {companies.data[form.getValues('company_id')]?.description}
+                          {companies[form.getValues('company_id')]?.description}
                         </FormDescription>
                         <FormMessage/>
                       </FormItem>

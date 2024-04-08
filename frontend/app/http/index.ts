@@ -1,5 +1,5 @@
-import TendersHttpClient from "./tendersHttpClient";
+import HttpClient from "./httpClient";
 
-const httpClient = new TendersHttpClient();
+const httpClient = new HttpClient();
 
 export default httpClient;

@@ -20,6 +20,9 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { util, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast"
+import { useQueryClient } from "@tanstack/react-query";
+import { CreateBidResponse } from "@/app/http/types";
+import { IErrorResponse } from "@/app/http/httpClient";
 
 const formSchema = z.object({
   price: z.string().regex(/^[-]?\d*\.?\d+$/, "Must be a number").pipe(z.coerce.number().int("Must be an integer").positive("Must be a positive number"))
@@ -31,12 +34,14 @@ interface ActionListProps {
   tenderId: string;
   userRole: string;
   isBidded: boolean;
-  onbidChange: (newBiddedValue: boolean) => void;
+  onBidChange: (newBiddedValue: boolean) => void;
   isCreator: boolean;
 }
 
-export default function ActionList({ tenderId, userRole, isBidded, onbidChange, isCreator }: ActionListProps) {
+export default function ActionList({ tenderId, userRole, isBidded, onBidChange, isCreator }: ActionListProps) {
 
+  console.log("userRole="  + userRole);
+  let queryClient = useQueryClient();
   const actions = () => {
     switch (userRole) {
       case 'customer':
@@ -94,7 +99,7 @@ export default function ActionList({ tenderId, userRole, isBidded, onbidChange, 
             );
           case 'apply':
             const handleBid = () => {
-              onbidChange(true);
+              onBidChange(true);
             };
             const [open, setOpen] = useState(false);
             const form = useForm<InputSchema>({
@@ -108,10 +113,11 @@ export default function ActionList({ tenderId, userRole, isBidded, onbidChange, 
             async function onSubmit(values: InputSchema) {
               console.log(JSON.stringify(values));
               console.log(tenderId);
-              const response = await httpClient.createBid(tenderId, values);
-              await new Promise<void>((resolve) => {
-                setTimeout(resolve, 1001);
-              });
+              const response = await queryClient.fetchQuery({
+                queryKey: ['create-bid'],
+                queryFn: () => httpClient.createBid(tenderId, values),
+              }).then<CreateBidResponse | IErrorResponse | any>(value => value?.data);
+
               console.log("responsik: " + JSON.stringify(response));
               if (response?.errors) {
                 console.log("Ошибка")

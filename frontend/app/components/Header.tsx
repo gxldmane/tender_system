@@ -2,32 +2,25 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger, navigationMenuTriggerStyle,
-  NavigationMenuViewport,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import {useAuth} from "@/app/context/AuthContext";
-import {useEffect, useState} from "react";
+import useUser from "@/app/components/useUser";
+import { cn } from "@/lib/utils";
 
-const Header = () => {
-  const { authToken } = useAuth();
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    setToken(authToken);
-  }, []);
-
+export default function Header() {
+  const { userDetails, isLoading } = useUser();
+  console.log("USER ======== ", userDetails);
+  console.log("isLoading ======== ", isLoading);
   return (
     <header className="py-4">
       <div className="container mx-auto flex items-center justify-between">
-        <div className="invisible md:visible md:flex md:w-1/5">
+        <div className={cn("invisible md:visible md:flex md:w-1/5")}>
           <Link href="/">
             <Image src="/logo.svg" alt="Logo" width={0} height={0} layout="responsive"/>
           </Link>
@@ -72,7 +65,11 @@ const Header = () => {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {!token ?
+        {isLoading ? <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
+          <Button disabled className='ml-auto'>
+            Личный кабинет
+          </Button>
+        </div> : !userDetails ?
           <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
             <Button asChild>
               <Link href="/register" className='ml-auto'>
@@ -85,10 +82,9 @@ const Header = () => {
                 Личный кабинет
               </Link>
             </Button>
-          </div>}
+          </div>
+        }
       </div>
     </header>
   );
 };
-
-export default Header;
