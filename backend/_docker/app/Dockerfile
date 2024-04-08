@@ -1,5 +1,7 @@
 FROM php:8.3-fpm
 
+WORKDIR /var/www
+
 RUN apt-get update && apt-get install -y \
       apt-utils \
       libpq-dev \
@@ -22,4 +24,4 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
     --filename=composer \
     --install-dir=/usr/local/bin
 
-WORKDIR /var/www
+CMD php-fpm  & php artisan schedule:work
