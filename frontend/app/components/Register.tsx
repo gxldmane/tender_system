@@ -19,6 +19,8 @@ import { toast } from "@/components/ui/use-toast";
 import { PasswordInput } from "@/app/components/PasswordInput";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
+import useUser from "@/app/components/useUser";
+import useToken from "@/app/components/useToken";
 
 
 const formSchema = z.object({
@@ -41,6 +43,8 @@ export default function Register() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { saveUserData } = useUser();
+  const { saveAuthToken } = useToken();
   const form = useForm<InputSchema>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
@@ -61,7 +65,7 @@ export default function Register() {
     console.log(JSON.stringify(values));
     const response = await queryClient.fetchQuery({
       queryKey: ['register'],
-      queryFn: () => httpClient.register(values),
+      queryFn: () => httpClient.register(values, saveUserData, saveAuthToken),
     });
 
     console.log("responsik: " + JSON.stringify(response));

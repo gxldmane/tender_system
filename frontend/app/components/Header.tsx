@@ -14,9 +14,9 @@ import useUser from "@/app/components/useUser";
 import { cn } from "@/lib/utils";
 
 export default function Header() {
-  const { userDetails, isLoading } = useUser();
+  const { userDetails, isFetching } = useUser();
   console.log("USER ======== ", userDetails);
-  console.log("isLoading ======== ", isLoading);
+  console.log("isFetching ======== ", isFetching);
   return (
     <header className="py-4">
       <div className="container mx-auto flex items-center justify-between">
@@ -65,7 +65,7 @@ export default function Header() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {isLoading ? <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
+        {isFetching ? <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
           <Button disabled className='ml-auto'>
             Личный кабинет
           </Button>

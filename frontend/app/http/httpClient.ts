@@ -8,7 +8,7 @@ import {
   IAuthResponse,
   ILoginData,
   IRegisterData,
-  ITendersResponse, ITenderResponse
+  ITendersResponse, ITenderResponse, IUserDetails
 } from "@/app/http/types";
 
 interface RequestPayload {
@@ -73,33 +73,31 @@ export default class HttpClient {
     return response;
   }
 
-  private saveTokenData(response: AxiosResponse<any, any>) {
-    if (!response?.data?.data?.token) return;
-    Cookies.set("auth_token", response?.data?.data?.token, {
-      sameSite: "strict"
-    });
-    Cookies.set("user_data", JSON.stringify(response?.data?.data?.user), {
-      sameSite: "strict"
-    });
+  private saveTokenData(response: AxiosResponse<any, any>, saveUserData: (userDetails: IUserDetails) => void, saveAuthToken: (authToken: string) => void) {
+    let authToken = response?.data?.data?.token;
+    if (!authToken) return;
+    saveAuthToken(authToken);
+    this.setToken(authToken);
+    saveUserData(response?.data?.data?.user)
   }
 
-  async register(request: IRegisterData | any): Promise<AxiosResponse<IAuthResponse | IErrorResponse | any>> {
+  async register(request: any, saveUserData: (userDetails: IUserDetails) => void, saveAuthToken: (authToken: string) => void): Promise<AxiosResponse<any>> {
     const data = new FormData();
     for (const key in request) {
       data.append(key, request[key]);
     }
     const response = await this.request("POST", "/register", { data });
-    this.saveTokenData(response);
+    this.saveTokenData(response, saveUserData, saveAuthToken);
     return response;
   }
 
-  async login(request: ILoginData): Promise<AxiosResponse<IAuthResponse | IErrorResponse | any>> {
+  async login(request: ILoginData, saveUserData: (userDetails: IUserDetails) => void, saveAuthToken: (authToken: string) => void): Promise<AxiosResponse<IAuthResponse | IErrorResponse | any>> {
     const data = new FormData();
     for (const key in request) {
       data.append(key, request[key]);
     }
     const response = await this.request("POST", "/login", { data });
-    this.saveTokenData(response);
+    this.saveTokenData(response, saveUserData, saveAuthToken);
     return response;
   }
 

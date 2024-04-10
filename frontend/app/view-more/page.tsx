@@ -59,7 +59,7 @@ function getRemainingTime(untilDate: string): string {
 export default function ViewMore() {
   const searchParams = useSearchParams();
   const currentTenderId = searchParams.get('tenderId');
-  const { userDetails, isLoading } = useUser();
+  const { userDetails, isFetching: isUserFetching } = useUser();
 
   // Это крутая обертка над аксиосом, которая умеет кэшировать ответы от бэка и НЕ ТОЛЬКО
   // Читай доки, пж https://tanstack.com/query/latest/docs/framework/react/guides/queries
@@ -97,7 +97,7 @@ export default function ViewMore() {
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsContent value="overview" className="space-y-4">
-            {isLoading || isFetching || !tenderDetails ? (
+            {isUserFetching || isFetching || !tenderDetails ? (
               <Skeleton className="h-24 w-full rounded-md"/>
             ) : (
               <>
