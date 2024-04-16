@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Notifications\TenderClosed;
 use Illuminate\Console\Command;
 use App\Models\Tender;
 use Carbon\Carbon;
@@ -19,6 +20,9 @@ class CheckTendersExpiration extends Command
         foreach ($tenders as $tender) {
             $tender->status = 'pending';
             $tender->save();
+
+            $user = $tender->customer()->first();
+            $user->notify(new TenderClosed($tender));
         }
 
         $this->info('Tenders expiration checked and updated successfully.');

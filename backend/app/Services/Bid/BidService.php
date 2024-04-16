@@ -6,6 +6,7 @@ use App\Http\Resources\api\Bid\BidCollection;
 use App\Models\Bid;
 use App\Models\Tender;
 use App\Models\User;
+use App\Notifications\BidAccepted;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
@@ -82,17 +83,19 @@ class BidService
 
         $bid->save();
 
-        // TODO: send notification to executor
-
         $tender->save();
 
-        $otherBids = $tender->bids;
+        $user = $bid->user;
 
-        $this->otherBidsService->rejectBids($bid, $otherBids);
+        $user->notify(new BidAccepted($bid));
+
+        $otherBids = $tender->bids->where('id', '!=', $bid->id);
+
+        $this->otherBidsService->rejectBids($otherBids);
 
         return response()->json([
             'message' => 'bid accepted successfully',
-        ], 200) ;
+        ], 200);
 
 
     }

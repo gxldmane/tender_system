@@ -6,6 +6,7 @@ use App\Http\Controllers\api\CategoryController;
 use App\Http\Controllers\api\RegionController;
 use App\Http\Controllers\api\TenderController;
 use App\Http\Controllers\api\CompanyController;
+use App\Http\Controllers\api\UserController;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('/bids/{tender}', 'getTenderBids')->middleware('ability:customer');
         Route::get('/bids/{tender}/{bid}', 'acceptBid')->middleware('ability:customer');
         Route::get('/bids', 'getSendedBids')->middleware('ability:executor');
+    });
+
+    Route::controller(UserController::class)->group(function () {
+        Route::get('profile/notifications', 'getNotifications');
+        Route::get('profile/unread', 'getUnreadNotifications');
+        Route::get('profile/notifications/{id}', 'getNotification');
+        Route::delete('profile/notifications/{id}', 'deleteNotification');
     });
 });
 

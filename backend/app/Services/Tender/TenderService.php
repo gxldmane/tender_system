@@ -54,6 +54,7 @@ class TenderService
 
         $this->fileService->store($files, $tender, $data);
 
+
         return new TenderResource($tender->load('files'));
     }
 
