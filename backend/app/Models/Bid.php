@@ -24,9 +24,9 @@ class Bid extends Model
         return $this->belongsTo(Tender::class);
     }
 
-    public function users(): BelongsToMany
+    public function user(): BelongsTo
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function companies(): BelongsToMany

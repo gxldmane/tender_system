@@ -3,17 +3,22 @@
 namespace App\Services\Bid;
 
 use App\Models\Bid;
+use App\Notifications\BidRejected;
+use Illuminate\Support\Collection;
+
+/**
+ * @param Collection|Bid[] $bids
+ */
 
 class OtherBidsService
 {
-    public function rejectBids(Bid $bid, Bid $otherBids)
+    public function rejectBids($bids)
     {
-        foreach ($otherBids as $otherBid) {
-            if ($otherBid->id != $bid->id) {
-                $otherBid->status = "rejected";
-                $otherBid->save();
-                // TODO: send notification to all rejected bids
-            }
+        foreach ($bids as $bid) {
+            $bid->status = "rejected";
+            $bid->save();
+            $user = $bid->user;
+            $user->notify(new BidRejected($bid));
         }
     }
 }

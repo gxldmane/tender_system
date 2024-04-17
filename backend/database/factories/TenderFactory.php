@@ -28,7 +28,7 @@ class TenderFactory extends Factory
             'status' => $this->faker->randomElement(['active', 'pending']),
             'customer_id' => User::query()->inRandomOrder()->first()->id,
             'executor_id' => User::query()->inRandomOrder()->first()->id,
-            'until_date' => $this->faker->dateTimeBetween('now', '+1 year'),
+            'until_date' => $this->faker->date('Y-m-d', 'now'),
         ];
     }
 }
