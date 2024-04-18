@@ -78,13 +78,14 @@ export default function ViewMore() {
     select: response => response?.data?.data as ITenderDetails & { files: string[] },
   });
 
-  // todo: получать с бэка инфу об этом?
-  const [authIsBidded, setAuthIsBidded] = useState(false);
-  const handleBidChange = (newBiddedValue: boolean) => {
-    setAuthIsBidded(newBiddedValue);
-  };
+  const { data: hasBid, isFetching: isHasBidFetching, isError: isHasBidErrors } = useQuery({
+    queryKey: ['hasBid'],
+    queryFn: () => httpClient.getHasBid(currentTenderId),
+    select: response => response?.data as boolean,
+  });
+  console.log('has bid: ' + hasBid)
 
-  const { isFetching: isTokenFetching , authToken } = useToken();
+  const { isFetching: isTokenFetching, authToken } = useToken();
   if (isTokenFetching) return;
   if (!authToken) {
     // if user is not authenticated
@@ -92,14 +93,13 @@ export default function ViewMore() {
     return;
   }
 
-  console.log("user = ", userDetails);
 
   return (
     <div className="container hidden flex-col md:flex">
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           {isFetching || !tenderDetails ? (
-            <Skeleton className="h-24 w-full rounded-md"/>
+            <Skeleton className="h-24 w-full rounded-md" />
           ) : (
             <h2 className="text-3xl font-bold tracking-tight">Тендер: {tenderDetails.name}</h2>
           )}
@@ -107,7 +107,7 @@ export default function ViewMore() {
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsContent value="overview" className="space-y-4">
             {isUserFetching || isFetching || !tenderDetails ? (
-              <Skeleton className="h-24 w-full rounded-md"/>
+              <Skeleton className="h-24 w-full rounded-md" />
             ) : (
               <>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -169,7 +169,7 @@ export default function ViewMore() {
                         Описание тендера
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className=''>
+                    <CardContent className='h-24 overflow-y-auto p-4'>
                       <div className='text-xl font-medium break-words'>
                         {tenderDetails.description}
                       </div>
@@ -181,14 +181,15 @@ export default function ViewMore() {
                         Действия
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className='px-6 py-0'>
                       <div className='flex items-center gap-x-2.5'>
-                        <ActionList tenderId={currentTenderId} userRole={userDetails?.role} isBidded={authIsBidded}
-                                    onBidChange={handleBidChange} isCreator={tenderDetails.customerId === userDetails?.id}/>
+                        <ActionList tenderId={currentTenderId} userRole={userDetails?.role} isBidded={hasBid}
+                          isCreator={tenderDetails.customerId === userDetails?.id} />
                       </div>
                     </CardContent>
                   </Card>
                 </div>
+
               </>
             )}
           </TabsContent>

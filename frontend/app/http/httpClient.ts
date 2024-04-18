@@ -109,6 +109,10 @@ export default class HttpClient {
     return await this.request("POST", `/tenders/${tenderId}/bids`, { data });
   }
 
+  async deleteBid(tenderId: string): Promise<AxiosResponse<CreateBidResponse | IErrorResponse | any>>{
+    return await this.request("DELETE", `/tenders/${tenderId}/bids`);
+  }
+
   async getCompanies(): Promise<AxiosResponse<ICompaniesResponse | IErrorResponse | any>> {
     return await this.request("GET", "/companies");
   }
@@ -127,6 +131,10 @@ export default class HttpClient {
 
   async getTenderInfo(tenderId: string): Promise<AxiosResponse<ITenderResponse | IErrorResponse | any>> {
     return await this.request("GET", `/tenders/${tenderId}`);
+  }
+
+  async getHasBid(tenderId: string): Promise<AxiosResponse<boolean | IErrorResponse | any>> {
+    return await this.request("GET", `/have-bid/${tenderId}`);
   }
 
 }
