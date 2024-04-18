@@ -36,7 +36,7 @@ class BidService
         return new BidCollection($bids);
     }
 
-    public function getSendedBids(): BidCollection
+    public function getSendBids(): BidCollection
     {
         $user = Auth::user();
         $bids = $user->bids()->paginate(10);
@@ -118,11 +118,11 @@ class BidService
         ], 200);
     }
 
-    public function hasBid(Tender $tender)
+    public function haveBid(Tender $tender)
     {
         $user = Auth::user();
-
-        if ($tender->bids()->where('user_id', $user->id)->exists()) {
+        $bid = $tender->bids()->where('user_id', $user->id)->first();
+        if ($bid) {
             return true;
         }
         return false;

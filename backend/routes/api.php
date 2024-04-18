@@ -35,7 +35,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('/bids/{tender}', 'getTenderBids')->middleware('ability:customer');
         Route::get('/bids/{tender}/{bid}', 'acceptBid')->middleware('ability:customer');
         Route::get('/bids', 'getSendBids')->middleware('ability:executor');
-        Route::get('/bids/hasBid/{tender}', 'isBid')->middleware('ability:executor');
+        Route::get('/have-bid/{tender}', 'haveBid')->middleware('ability:executor');
     });
 
     Route::controller(UserController::class)->group(function () {

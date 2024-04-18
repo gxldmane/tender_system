@@ -7,6 +7,7 @@ use App\Http\Requests\Bid\BidStoreRequest;
 use App\Models\Bid;
 use App\Models\Tender;
 use App\Services\Bid\BidService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BidController extends Controller
@@ -23,9 +24,9 @@ class BidController extends Controller
         return $this->bidService->getTenderBids($tender);
     }
 
-    public function getSendedBids()
+    public function getSendBids()
     {
-        return $this->bidService->getSendedBids();
+        return $this->bidService->getSendBids();
     }
 
     public function store(BidStoreRequest $request, Tender $tender)
@@ -48,8 +49,8 @@ class BidController extends Controller
         return $this->bidService->destroy($tender, $user);
     }
 
-    public function hasBid(Tender $tender)
+    public function haveBid(Tender $tender)
     {
-        return $this->bidService->hasBid($tender);
+        return $this->bidService->haveBid($tender);
     }
 }
