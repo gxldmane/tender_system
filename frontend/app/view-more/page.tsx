@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { Tabs, TabsContent, } from "@/components/ui/tabs"
@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ITenderDetails } from "@/app/http/types";
 import useUser from "@/app/components/useUser";
 import { DollarSign } from "lucide-react";
+import useToken from "@/app/components/useToken";
 
 function daysSinceTenderCreation(createdAt) {
   const tenderDate = new Date(createdAt);
@@ -59,8 +60,8 @@ function getRemainingTime(untilDate: string): string {
 export default function ViewMore() {
   const searchParams = useSearchParams();
   const currentTenderId = searchParams.get('tenderId');
+  const router = useRouter();
   const { userDetails, isFetching: isUserFetching } = useUser();
-
   // Это крутая обертка над аксиосом, которая умеет кэшировать ответы от бэка и НЕ ТОЛЬКО
   // Читай доки, пж https://tanstack.com/query/latest/docs/framework/react/guides/queries
   // Он может обрабатывать ошибки и НЕ ТОЛЬКО, все в документации
@@ -82,6 +83,14 @@ export default function ViewMore() {
   const handleBidChange = (newBiddedValue: boolean) => {
     setAuthIsBidded(newBiddedValue);
   };
+
+  const { isFetching: isTokenFetching , authToken } = useToken();
+  if (isTokenFetching) return;
+  if (!authToken) {
+    // if user is not authenticated
+    router.push("/login");
+    return;
+  }
 
   console.log("user = ", userDetails);
 

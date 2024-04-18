@@ -21,14 +21,15 @@ import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import useUser from "@/app/components/useUser";
 import useToken from "@/app/components/useToken";
+import Link from "next/link";
 
 
 const formSchema = z.object({
   name: z.string().trim().min(1, 'Укажите свое ФИО').max(100, 'Слишком длинное ФИО'),
   email: z.string().trim().email({ message: "Указан неверный email-адрес" }).endsWith(".ru", { message: 'Требуется российский email-адрес' }).toLowerCase().min(1, 'Укажите email-адрес').max(100, 'Слишком длинный email-адрес'),
   password: z.string().min(8, "Пароль должен содержать не менее 8 символов.")
-    .max(40, "Пароль должен состоять не более чем из 40 символов.")
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])(.{8,})$/, "Пароль должен состоять как минимум из одной строчной буквы, как минимум одной прописной буквы, как минимум одной цифры и как минимум одного специального символа."),
+    .max(40, "Пароль должен состоять не более чем из 40 символов."),
+    // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])(.{8,})$/, "Пароль должен состоять как минимум из одной строчной буквы, как минимум одной прописной буквы, как минимум одной цифры и как минимум одного специального символа."),
   confirm: z.string(),
   role: z.string(),
   company_id: z.number(),
@@ -101,7 +102,15 @@ export default function Register() {
       <Card
         className={cn("w-screen max-w-lg h-screen border-none", form.formState.isSubmitting && "animate-pulse")}>
         <CardHeader>
-          <CardTitle className={cn(form.formState.isSubmitting && "animate-bounce")}>Регистрация</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className={cn(form.formState.isSubmitting && "animate-bounce")}>
+              Регистрация
+            </CardTitle>
+            или
+            <Link href="/login">
+              <Button variant={"link"}>Уже есть аккаунт?</Button>
+            </Link>
+          </div>
         </CardHeader>
         <CardContent className="grid gap-8">
           {isFetching || form.formState.isSubmitting ? (
@@ -270,7 +279,7 @@ export default function Register() {
                           </SelectContent>
                         </Select>
                         <FormDescription>
-                          {form.getValues('role') === 'customer' && "Заказчик может выполнять тендеры"}
+                          {form.getValues('role') === 'customer' && "Заказчик может размещать тендеры"}
                           {form.getValues('role') === 'executor' && "Подрядчик может исполнять тендеры"}
                         </FormDescription>
                         <FormMessage/>
