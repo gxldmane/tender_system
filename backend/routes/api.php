@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\BidController;
 use App\Http\Controllers\api\CategoryController;
+use App\Http\Controllers\api\DownloadController;
 use App\Http\Controllers\api\RegionController;
 use App\Http\Controllers\api\TenderController;
 use App\Http\Controllers\api\CompanyController;
@@ -33,7 +34,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::delete('/tenders/{tender}/bids', 'destroy')->middleware('ability:executor');
         Route::get('/bids/{tender}', 'getTenderBids')->middleware('ability:customer');
         Route::get('/bids/{tender}/{bid}', 'acceptBid')->middleware('ability:customer');
-        Route::get('/bids', 'getSendedBids')->middleware('ability:executor');
+        Route::get('/bids', 'getSendBids')->middleware('ability:executor');
+        Route::get('/bids/hasBid/{tender}', 'isBid')->middleware('ability:executor');
     });
 
     Route::controller(UserController::class)->group(function () {
@@ -42,5 +44,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::get('profile/notifications/{id}', 'getNotification');
         Route::delete('profile/notifications/{id}', 'deleteNotification');
     });
+
+    Route::get('download', [DownloadController::class, 'download']);
 });
 

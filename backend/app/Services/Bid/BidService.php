@@ -117,4 +117,14 @@ class BidService
             'message' => 'bid deleted successfully'
         ], 200);
     }
+
+    public function hasBid(Tender $tender)
+    {
+        $user = Auth::user();
+
+        if ($tender->bids()->where('user_id', $user->id)->exists()) {
+            return true;
+        }
+        return false;
+    }
 }

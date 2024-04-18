@@ -28,7 +28,7 @@ class TenderStoreRequest extends FormRequest
             'category_id' => ['required', 'exists:categories,id'],
             'region_id' => ['required', 'exists:regions,id'],
             'until_date' => ['required', 'date', 'after:today'],
-            'files.*' => ['file']
+            'files.*' => ['file', 'max:2048'],
         ];
     }
 }

@@ -47,4 +47,9 @@ class BidController extends Controller
 
         return $this->bidService->destroy($tender, $user);
     }
+
+    public function hasBid(Tender $tender)
+    {
+        return $this->bidService->hasBid($tender);
+    }
 }

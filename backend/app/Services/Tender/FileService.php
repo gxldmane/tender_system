@@ -15,7 +15,7 @@ class FileService
             $path = Storage::disk('public')->put('', $file);
             $file = new File();
             $file->tender_id = $tender->id;
-            $file->url = Storage::url($path);
+            $file->url = $path;
             $file->user_id = $data['customer_id'];
             $file->save();
         }
