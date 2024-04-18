@@ -9,11 +9,13 @@ class DownloadController extends Controller
 {
     public function download(Request $request)
     {
-        $user = auth()->user();
-
         $data = $request->query();
 
         $file = '/storage/'. $data['file'];
+
+        if (!file_exists(public_path($file))) {
+            return response()->json(['message' => 'File not found'], 404);
+        }
 
         $file = public_path($file);
 
