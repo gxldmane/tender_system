@@ -13,6 +13,17 @@ import {
   DialogTrigger,
   DialogClose
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useForm } from "react-hook-form";
@@ -34,13 +45,12 @@ interface ActionListProps {
   tenderId: string;
   userRole: string;
   isBidded: boolean;
-  onBidChange: (newBiddedValue: boolean) => void;
   isCreator: boolean;
 }
 
-export default function ActionList({ tenderId, userRole, isBidded, onBidChange, isCreator }: ActionListProps) {
+export default function ActionList({ tenderId, userRole, isBidded, isCreator }: ActionListProps) {
 
-  console.log("userRole="  + userRole);
+  console.log("userRole=" + userRole);
   let queryClient = useQueryClient();
   const actions = () => {
     switch (userRole) {
@@ -56,6 +66,7 @@ export default function ActionList({ tenderId, userRole, isBidded, onBidChange, 
       default:
         return [];
     }
+
   };
   return (
     <div className="flex items-center gap-4 pt-4 flex-wrap">
@@ -65,7 +76,7 @@ export default function ActionList({ tenderId, userRole, isBidded, onBidChange, 
         switch (action) {
           case 'download':
             return (
-              <Button className='min-w-36' key={action}>
+              <Button variant="default" className='min-w-36' key={action}>
                 Скачать файлы
               </Button>
             );
@@ -90,17 +101,59 @@ export default function ActionList({ tenderId, userRole, isBidded, onBidChange, 
               </Link>
             );
           case 'withdraw':
-            return (
-              <Link href={href}>
-                <Button className='min-w-36' key={action}>
-                  Отозвать заявку
-                </Button>
-              </Link>
-            );
+            const handleClick = async (event) => {
+              const response = await queryClient.fetchQuery({
+                queryKey: ['delete-bid'],
+                queryFn: () => httpClient.deleteBid(tenderId),
+              }).then<CreateBidResponse | IErrorResponse | any>(value => value?.data);
+              console.log("responsik: " + JSON.stringify(response));
+              if (response?.errors) {
+                console.log("Ошибка")
+                for (const [field, messages] of Object.entries(response.errors)) {
+                  form.setError(field as any, {
+                    type: 'manual',
+                    message: (messages as string[]).join(", ")
+                  }, { shouldFocus: true });
+                }
+                toast({
+                  variant: "destructive",
+                  title: "Что-то пошло не так",
+                  description: response.message,
+                });
+                return;
+              }
+              toast({
+                variant: "default",
+                title: "Заявка успешно отменена",
+                description: "Вы можете подать ее снова, нажав на кнопку 'Подать заявку'",
+              });
+              await queryClient.refetchQueries({ queryKey: ['hasBid'], type: 'active' })
+            }
+
+              return (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button className="min-w-1/2" variant="default">Отозвать заявку</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Вы уверены, что хотите отменить заявку?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Вы сможете заново подать заявку в карточке тендера, но дата изменится.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="min-w-16">Нет</AlertDialogCancel>
+                      <AlertDialogAction asChild>
+                        <Button className="min-w-16" variant="default" onClick={handleClick}>
+                          Да
+                        </Button>
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              );
           case 'apply':
-            const handleBid = () => {
-              onBidChange(true);
-            };
             const [open, setOpen] = useState(false);
             const form = useForm<InputSchema>({
               resolver: zodResolver(formSchema),
@@ -135,14 +188,14 @@ export default function ActionList({ tenderId, userRole, isBidded, onBidChange, 
                 return;
               }
               setOpen(false);
-              handleBid()
+              await queryClient.refetchQueries({ queryKey: ['hasBid'], type: 'active' })
             }
 
             return (
               <Form {...form}>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
-                    <Button key={href}>Подать заявку</Button>
+                    <Button className="min-w-1/2" variant='secondary' key={href}>Подать заявку</Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
