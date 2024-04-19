@@ -13,11 +13,12 @@ class FileService
     {
         foreach ($files as $file) {
             $path = Storage::disk('public')->put('', $file);
-            $file = new File();
-            $file->tender_id = $tender->id;
-            $file->url = $path;
-            $file->user_id = $data['customer_id'];
-            $file->save();
+            $newFile = new File();
+            $newFile->tender_id = $tender->id;
+            $newFile->name = ucfirst($file->getClientOriginalName());
+            $newFile->url = $path;
+            $newFile->user_id = $data['customer_id'];
+            $newFile->save();
         }
     }
 }

@@ -21,6 +21,7 @@ class FileFactory extends Factory
         return [
             'tender_id' => Tender::query()->inRandomOrder()->first()->id,
             'url' => $this->faker->url,
+            'name' => $this->faker->word,
             'user_id' => User::query()->inRandomOrder()->first()->id,
         ];
     }

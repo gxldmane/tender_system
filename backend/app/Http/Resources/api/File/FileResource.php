@@ -19,6 +19,7 @@ class FileResource extends JsonResource
             'tenderId' => $this->tender_id,
             'userId' => $this->user_id,
             'url' => $this->url,
+            'name' => $this->name
         ];
     }
 }

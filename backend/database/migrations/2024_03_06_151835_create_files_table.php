@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('tender_id')->constrained('tenders')->onDelete('cascade');
             $table->string('url');
+            $table->string('name');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
