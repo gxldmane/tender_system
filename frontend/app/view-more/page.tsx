@@ -75,7 +75,7 @@ export default function ViewMore() {
   const { data: tenderDetails, isFetching, isError } = useQuery({
     queryKey: ['tender'],
     queryFn: () => httpClient.getTenderInfo(currentTenderId),
-    select: response => response?.data?.data as ITenderDetails & { files: string[] },
+    select: response => response?.data?.data as ITenderDetails & { files: {id: string, tenderId: string, url: string, name:string;}[] },
   });
 
   const { data: hasBid, isFetching: isHasBidFetching, isError: isHasBidErrors } = useQuery({
@@ -92,7 +92,6 @@ export default function ViewMore() {
     router.push("/login");
     return;
   }
-
 
   return (
     <div className="container hidden flex-col md:flex">
@@ -184,7 +183,7 @@ export default function ViewMore() {
                     <CardContent className='px-6 py-0'>
                       <div className='flex items-center gap-x-2.5'>
                         <ActionList tenderId={currentTenderId} userRole={userDetails?.role} isBidded={hasBid}
-                          isCreator={tenderDetails.customerId === userDetails?.id} />
+                          isCreator={tenderDetails.customerId === userDetails?.id} filesList={tenderDetails.files} />
                       </div>
                     </CardContent>
                   </Card>

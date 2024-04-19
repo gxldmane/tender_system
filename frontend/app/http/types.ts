@@ -40,7 +40,7 @@ export interface ICompaniesResponse {
 }
 
 export interface ITenderResponse {
-  data: ITenderDetails & { files: string[] }
+  data: ITenderDetails & { files: {id: string, tenderId: string, url: string, name: string}[] }
 }
 
 export interface IPaginated {

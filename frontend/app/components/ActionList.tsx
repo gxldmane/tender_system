@@ -34,6 +34,9 @@ import { toast } from "@/components/ui/use-toast"
 import { useQueryClient } from "@tanstack/react-query";
 import { CreateBidResponse } from "@/app/http/types";
 import { IErrorResponse } from "@/app/http/httpClient";
+import { Download } from "lucide-react";
+import { File } from "lucide-react";
+
 
 const formSchema = z.object({
   price: z.string().regex(/^[-]?\d*\.?\d+$/, "Must be a number").pipe(z.coerce.number().int("Must be an integer").positive("Must be a positive number"))
@@ -41,16 +44,40 @@ const formSchema = z.object({
 
 type InputSchema = z.input<typeof formSchema>;
 
+function getFileNameFromUrl(url) {
+  var parts = url.split('/');
+  var filenameWithExtension = parts.pop();
+  var filenameWithoutQuery = filenameWithExtension.split('?')[0];
+  console.log(filenameWithoutQuery);
+  return filenameWithoutQuery;
+}
+
+function getFileTypeIconFromUrl(url) {
+  const extension = url.split('.').pop().toLowerCase();
+  console.log(extension + " Extension")
+  console.log(url + " url")
+
+  if (['pdf'].includes(extension)) {
+    return <File className="h-9 w-9"/>
+  }
+  return <File className="h-9 w-9"/>; //todo: найти норм картинки pdf docx / починить чтобы работало иф элсе это
+}
+
 interface ActionListProps {
   tenderId: string;
   userRole: string;
   isBidded: boolean;
   isCreator: boolean;
+  filesList: {
+    id: string;
+    tenderId: string;
+    url: string;
+    name: string;
+  }[];
 }
 
-export default function ActionList({ tenderId, userRole, isBidded, isCreator }: ActionListProps) {
-
-  console.log("userRole=" + userRole);
+export default function ActionList({ tenderId, userRole, isBidded, isCreator, filesList }: ActionListProps) {
+  console.log(filesList)
   let queryClient = useQueryClient();
   const actions = () => {
     switch (userRole) {
@@ -67,6 +94,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator }: 
         return [];
     }
 
+
   };
   return (
     <div className="flex items-center gap-4 pt-4 flex-wrap">
@@ -75,10 +103,69 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator }: 
 
         switch (action) {
           case 'download':
+            const downloadFile = (file, fileName) => {
+              const url = window.URL.createObjectURL(new Blob([file]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', fileName); // или любое другое имя файла
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }
+
+            const handleDownloadClick = async (event, url, fileName) => {
+              const response = await queryClient.fetchQuery({
+                queryKey: ['download-file'],
+                queryFn: () => httpClient.downloadFile(url),
+              }).then<Blob | IErrorResponse | any>(value => value?.data);
+              console.log("responsik: " + JSON.stringify(response));
+              if (response?.errors) {
+                console.log("Ошибка")
+                for (const [field, messages] of Object.entries(response.errors)) {
+                  form.setError(field as any, {
+                    type: 'manual',
+                    message: (messages as string[]).join(", ")
+                  }, { shouldFocus: true });
+                }
+                toast({
+                  variant: "destructive",
+                  title: "Что-то пошло не так",
+                  description: response.message,
+                });
+                return;
+              }
+              downloadFile(response, fileName); // добавлено
+            }
             return (
-              <Button variant="default" className='min-w-36' key={action}>
-                Скачать файлы
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="default" className='min-w-36' key={action}>Скачать файлы</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Скачать файлы</DialogTitle>
+                    <DialogDescription>
+                      Выберите файл прикрепленный к тендеру заказчиком
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="pt-5 flex flex-col gap-y-2">
+                    {filesList.map((file) => {
+                      return (
+                        <div className="flex justify-between align-center">
+                          <div className="flex items-center gap-x-2.5">
+                            {getFileTypeIconFromUrl(file.url)}
+                            <p>{file.name}</p>
+                          </div>
+                          <div>
+                            <Button size="icon" onClick={(event) => handleDownloadClick(event, file.url, file.name)}><Download className="h-5 w-5" /></Button>
+                          </div>
+                        </div>
+                      )
+                    }
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
             );
           case 'applications':
             return (
@@ -130,29 +217,29 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator }: 
               await queryClient.refetchQueries({ queryKey: ['hasBid'], type: 'active' })
             }
 
-              return (
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button className="min-w-1/2" variant="default">Отозвать заявку</Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Вы уверены, что хотите отменить заявку?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Вы сможете заново подать заявку в карточке тендера, но дата изменится.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel className="min-w-16">Нет</AlertDialogCancel>
-                      <AlertDialogAction asChild>
-                        <Button className="min-w-16" variant="default" onClick={handleClick}>
-                          Да
-                        </Button>
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              );
+            return (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button className="min-w-1/2" variant="default">Отозвать заявку</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Вы уверены, что хотите отменить заявку?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Вы сможете заново подать заявку в карточке тендера, но дата изменится.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="min-w-16">Нет</AlertDialogCancel>
+                    <AlertDialogAction asChild>
+                      <Button className="min-w-16" variant="default" onClick={handleClick}>
+                        Да
+                      </Button>
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            );
           case 'apply':
             const [open, setOpen] = useState(false);
             const form = useForm<InputSchema>({

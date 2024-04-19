@@ -137,4 +137,9 @@ export default class HttpClient {
     return await this.request("GET", `/have-bid/${tenderId}`);
   }
 
+  async downloadFile(fileName: string): Promise<AxiosResponse<Blob | IErrorResponse | any>> {
+    return this.request("GET", `/download?file=${fileName}`);
+  }
+  
+
 }
