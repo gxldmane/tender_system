@@ -83,7 +83,6 @@ export default function ViewMore() {
     queryFn: () => httpClient.getHasBid(currentTenderId),
     select: response => response?.data as boolean,
   });
-  console.log('has bid: ' + hasBid)
 
   const { isFetching: isTokenFetching, authToken } = useToken();
   if (isTokenFetching) return;

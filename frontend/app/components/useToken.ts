@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 
 async function fetchAuthToken(): Promise<string> {
   const authToken = Cookies.get('auth_token');
-  console.log("asd " + authToken);
   if (!authToken) {
     return null;
   }

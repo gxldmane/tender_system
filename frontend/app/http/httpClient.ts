@@ -8,7 +8,13 @@ import {
   IAuthResponse,
   ILoginData,
   IRegisterData,
-  ITendersResponse, ITenderResponse, IUserDetails
+  ITendersResponse,
+  ITenderResponse,
+  IUserDetails,
+  ICreateTenderRequest,
+  ICreateTenderResponse,
+  IRegionsResponse,
+  ICategoriesResponse
 } from "@/app/http/types";
 
 interface RequestPayload {
@@ -40,11 +46,8 @@ export default class HttpClient {
     path: string,
     payload?: RequestPayload
   ): Promise<AxiosResponse<any, any> | undefined> {
-    console.log(`[HTTP] ${method} ${path} ${JSON.stringify(payload)}`);
-
     if (!this.token) {
       this.setToken(Cookies.get("auth_token"));
-      console.log(`[HTTP] Set token from cookies ${this.token}`)
     }
 
     let response: AxiosResponse<any, any> | undefined;
@@ -65,10 +68,6 @@ export default class HttpClient {
         throw error;
       }
     }
-
-    console.log(
-      `[HTTP] Received a response with status code: ${response?.status}`
-    );
 
     return response;
   }
@@ -113,12 +112,43 @@ export default class HttpClient {
     return await this.request("DELETE", `/tenders/${tenderId}/bids`);
   }
 
+  async createTender(request: ICreateTenderRequest | any): Promise<AxiosResponse<ICreateTenderResponse | IErrorResponse | any>> {
+    const data = new FormData();
+    for (const key in request) {
+      if (key === "files") {
+        for (let i = 0; i < request.files.length; i++){
+          data.append("files[]", request.files[i], request.files[i].name);
+        }
+        continue;
+      }
+      data.append(key, request[key]);
+    }
+
+    return await this.request("POST", `/tenders`, { data });
+  }
+
   async getCompanies(): Promise<AxiosResponse<ICompaniesResponse | IErrorResponse | any>> {
     return await this.request("GET", "/companies");
   }
 
+  async getRegions(): Promise<AxiosResponse<IRegionsResponse | IErrorResponse | any>> {
+    return await this.request("GET", "/regions");
+  }
+
+  async getCategories(): Promise<AxiosResponse<ICategoriesResponse | IErrorResponse | any>> {
+    return await this.request("GET", "/categories");
+  }
+
   async getAllTenders(page: number = 1): Promise<AxiosResponse<ITendersResponse | IErrorResponse | any>> {
     return await this.request("GET", "/tenders", {
+      params: {
+        page: page,
+      }
+    });
+  }
+
+  async getMyTenders(page: number = 1): Promise<AxiosResponse<ITendersResponse | IErrorResponse | any>> {
+    return await this.request("GET", "/tenders/my", {
       params: {
         page: page,
       }

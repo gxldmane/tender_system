@@ -19,9 +19,7 @@ export default function TendersCard({ items, ...props }: TenderCardProps) {
           </div>
           <Button>
             <Link href={`/view-more?tenderId=${item.id}`}>
-              <Button>
-                Дополнительно
-              </Button>
+              Дополнительно
             </Link>
           </Button>
         </div>

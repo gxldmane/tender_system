@@ -15,8 +15,6 @@ import { cn } from "@/lib/utils";
 
 export default function Header() {
   const { userDetails, isFetching } = useUser();
-  console.log("USER ======== ", userDetails);
-  console.log("isFetching ======== ", isFetching);
   return (
     <header className="py-4">
       <div className="container mx-auto flex items-center justify-between">
@@ -38,27 +36,6 @@ export default function Header() {
               <Link href="/browse" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   Каталог
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/create-tender" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Разместить
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/contact-us" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Контакты
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/dashboard" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Личный кабинет
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>

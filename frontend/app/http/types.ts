@@ -35,8 +35,27 @@ export interface Company {
   description: string;
 }
 
+export interface Region {
+  id: number;
+  name: string;
+}
+
+
+export interface Category {
+  id: number;
+  name: string;
+}
+
 export interface ICompaniesResponse {
   data: Company[]
+}
+
+export interface IRegionsResponse {
+  data: Region[]
+}
+
+export interface ICategoriesResponse {
+  data: Category[]
 }
 
 export interface ITenderResponse {
@@ -91,5 +110,36 @@ export interface CreateBidResponse {
   message: string;
 }
 
+export interface ICreateTenderRequest {
+  name: string;
+  description: string;
+  start_price: string;
+  category_id: string;
+  region_id: string;
+  until_date: string;
+  files: File[];
+}
 
+export interface ICreatedTenderDetails {
+  id: string; // Уникальный идентификатор
+  name: string;
+  description: string; // Описание тендера
+  start_price: string; // Начальная цена
+  status: 'pending' | 'active' | 'closed';
+  files: {
+    id: number,
+    tenderId: number,
+    userId: number,
+    url: string
+  }[];
+  categoryId: string; // Идентификатор категории
+  customerId: string; // Идентификатор заказчика
+  executorId?: number; // Идентификатор исполнителя (опционально)
+  untilDate: string; // Дата окончания тендера
+  createdAt: string; // Дата создания тендера
+  updatedAt: string; // Дата обновления тендера
+}
 
+export interface ICreateTenderResponse {
+  data: ICreatedTenderDetails
+}

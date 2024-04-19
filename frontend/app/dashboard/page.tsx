@@ -42,8 +42,6 @@ export default function DashboardPage(props) {
     router.push("/");
     location.reload();
   }
-  { console.log(companies.find(c => c.id == userDetails.companyId)) }
-
 
   return (
     <div className="relative left-13">

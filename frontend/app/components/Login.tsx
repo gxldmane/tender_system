@@ -54,13 +54,11 @@ export default function Register() {
   });
 
   async function onSubmit(values: InputSchema) {
-    console.log(JSON.stringify(values));
     const response = await queryClient.fetchQuery({
       queryKey: ['login'],
       queryFn: () => httpClient.login(values, saveUserData, saveAuthToken),
     });
 
-    console.log("responsik: " + JSON.stringify(response));
     if (response.status === 200) {
       if (!response?.data?.data?.token) return;
       queryClient.setQueryData(['user_data'], response?.data?.data?.details);
@@ -84,8 +82,6 @@ export default function Register() {
     });
     return;
   }
-
-  console.log(form.formState.errors)
 
   return (
     <div className="flex flex-col items-center justify-center">

@@ -1,5 +1,7 @@
 import React from "react"
 import { SidebarNav } from "../components/SideBar"
+import useToken from "@/app/components/useToken";
+import { router } from "next/client";
 
 const sidebarNavItems = [
     {
@@ -8,7 +10,7 @@ const sidebarNavItems = [
     },
     {
       title: "Мои тендеры",
-      href: "/tenders",
+      href: "/dashboard/tenders",
     },
     {
       title: "Уведомления",
@@ -19,7 +21,7 @@ const sidebarNavItems = [
 interface SettingsLayoutProps {
     children: React.ReactNode
   }
-  
+
 
 export default function SettingsLayout({ children }: SettingsLayoutProps) {
     return (
