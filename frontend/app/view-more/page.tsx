@@ -93,7 +93,7 @@ export default function ViewMore() {
   }
 
   return (
-    <div className="container hidden flex-col md:flex">
+    <div className="container flex flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           {isFetching || !tenderDetails ? (
@@ -173,7 +173,7 @@ export default function ViewMore() {
                       </div>
                     </CardContent>
                   </Card>
-                  <Card>
+                  <Card className={"pb-8"}>
                     <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                       <CardTitle className='text-sm font-medium'>
                         Действия

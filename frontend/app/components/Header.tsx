@@ -18,42 +18,36 @@ export default function Header() {
   return (
     <header className="py-4">
       <div className="container mx-auto flex items-center justify-between">
-        <div className={cn("invisible md:visible md:flex md:w-1/5")}>
+        <div>
           <Link href="/">
             <Image src="/logo.svg" alt="Logo" width={0} height={0} layout="responsive"/>
           </Link>
         </div>
 
-        <div className="md:hidden flex-1 flex justify-center">
-          <Link href="/">
-            <Image src="/hammer.svg" alt="Logo" width={60} height={60}/>
-          </Link>
-        </div>
+        {/*<NavigationMenu className={"flex-1 justify-center hidden md:flex space-x-4"}>*/}
+        {/*  <NavigationMenuList>*/}
+        {/*    <NavigationMenuItem>*/}
+        {/*      <Link href="/browse" legacyBehavior passHref>*/}
+        {/*        <NavigationMenuLink className={navigationMenuTriggerStyle()}>*/}
+        {/*          Каталог*/}
+        {/*        </NavigationMenuLink>*/}
+        {/*      </Link>*/}
+        {/*    </NavigationMenuItem>*/}
+        {/*  </NavigationMenuList>*/}
+        {/*</NavigationMenu>*/}
 
-        <NavigationMenu className={"flex-1 justify-center hidden md:flex space-x-4"}>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <Link href="/browse" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Каталог
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        {isFetching ? <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
+        {isFetching ? <div className="md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
           <Button disabled className='ml-auto'>
             Личный кабинет
           </Button>
         </div> : !userDetails ?
-          <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
+          <div className="md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
             <Button asChild>
               <Link href="/register" className='ml-auto'>
                 Регистрация
               </Link>
             </Button>
-          </div> : <div className="invisible md:visible md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
+          </div> : <div className="md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
             <Button asChild>
               <Link href="/dashboard" className='ml-auto'>
                 Личный кабинет

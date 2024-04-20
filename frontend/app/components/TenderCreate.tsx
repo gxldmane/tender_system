@@ -133,7 +133,7 @@ export default function TenderCreate() {
 
         <div className="flex items-center space-x-4 rounded-md border p-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-screen max-w-lg border-none space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-lg border-none space-y-8">
               <FormField
                 control={form.control}
                 name="name"

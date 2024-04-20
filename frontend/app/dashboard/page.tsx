@@ -10,12 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import httpClient from "@/app/http";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip"
 import { InfoIcon } from "lucide-react";
 
 export default function DashboardPage(props) {
@@ -28,7 +23,7 @@ export default function DashboardPage(props) {
   });
   const { isFetching: isTokenFetching, authToken, invalidateToken } = useToken();
 
-  if (isTokenFetching || isCompaniesFetching || isFetching) return <Skeleton className="h-24 w-full rounded-md" />;
+  if (isTokenFetching || isCompaniesFetching || isFetching) return <Skeleton className="h-24 w-full rounded-md"/>;
 
   if (!authToken) {
     // if user is not authenticated
@@ -49,19 +44,22 @@ export default function DashboardPage(props) {
         <div>
           <h3 className="text-lg font-semibold">Профиль</h3>
         </div>
-        <Separator />
+        <Separator/>
         <div className="w-full space-y-5">
           <div>
             <h3 className="text-lg font-medium pb-2">Имя</h3>
-            <p className="px-3 py-2 border-2 text-m ring-offset-background my-0 w-full rounded-md border break-words">{userDetails.name.toUpperCase()}</p>
+            <p
+              className="px-3 py-2 border-2 text-m ring-offset-background my-0 w-full rounded-md border break-words">{userDetails.name.toUpperCase()}</p>
           </div>
           <div>
             <h3 className="text-lg font-medium pb-2">E-mail</h3>
-            <p className="px-3 py-2 border-2 text-m ring-offset-background my-0 w-full rounded-md border break-words">{userDetails.email}</p>
+            <p
+              className="px-3 py-2 border-2 text-m ring-offset-background my-0 w-full rounded-md border break-words">{userDetails.email}</p>
           </div>
           <div>
             <h3 className="text-lg font-medium pb-2">Роль</h3>
-            <p className="px-3 py-2 border-2 text-m ring-offset-background my-0 w-full rounded-md border break-words">{userDetails.role === 'executor' ? 'Подрядчик' : userDetails.role === 'customer' ? 'Заказчик' : ''}</p>
+            <p
+              className="px-3 py-2 border-2 text-m ring-offset-background my-0 w-full rounded-md border break-words">{userDetails.role === 'executor' ? 'Подрядчик' : userDetails.role === 'customer' ? 'Заказчик' : ''}</p>
           </div>
           <div>
             <div>
@@ -69,16 +67,19 @@ export default function DashboardPage(props) {
                 <h3 className="text-lg font-medium">Компания</h3>
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger asChild >
+                    <TooltipTrigger asChild>
                       <InfoIcon className="h-4 cursor-pointer"></InfoIcon>
                     </TooltipTrigger>
-                    <TooltipContent side="right" align="end" alignOffset={100} >
-                      <p className="max-w-96 px-3 py-2 text-m break-words">{companies.find(c => c.id == userDetails.companyId).description}</p>
-                    </TooltipContent>
+                    <TooltipContent side="right" align="end" alignOffset={100}>{
+                      !isCompaniesFetching &&
+                      <p
+                        className="max-w-96 px-3 py-2 text-m break-words">{companies.find(c => c.id == userDetails.companyId).description}</p>
+                    }</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <p className="px-3 py-2 border-2 text-m ring-offset-background my-0 w-full rounded-md border break-words">{companies.find(c => c.id == userDetails.companyId).name}</p>
+              <p
+                className="px-3 py-2 border-2 text-m ring-offset-background my-0 w-full rounded-md border break-words">{companies.find(c => c.id == userDetails.companyId).name}</p>
             </div>
           </div>
         </div>

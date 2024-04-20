@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import TenderCreate from "@/app/components/TenderCreate";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function MyTenders() {
   const pathname = usePathname();
@@ -54,27 +56,27 @@ export default function MyTenders() {
 
   if (!isFetching && response.data.length <= 0) {
     return <div>
-      <Dialog>
-        <DialogTrigger asChild>
+      <Sheet>
+        <SheetTrigger asChild>
           <Button className='min-w-36' variant={"default"}>
             <CirclePlus className="mr-2 h-4 w-4"/>
             Создать новый
           </Button>
-        </DialogTrigger>
-        <DialogContent className={"p-8 min-w-fit"}>
-          <DialogHeader>
-            <DialogTitle>Создание нового тендера</DialogTitle>
-          </DialogHeader>
+        </SheetTrigger>
+        <SheetContent className={"p-8 min-w-fit"}>
+          <SheetHeader>
+            <SheetTitle>Создание нового тендера</SheetTitle>
+          </SheetHeader>
           <TenderCreate/>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   }
 
   return (
     <div className={"flex flex-col justify-center items-center"}>
       {!isFetching &&
-          <span className="text-2xl font-semibold mx-auto mb-4">Мои
+        <span className="text-2xl font-semibold mx-auto mb-4">Мои
           тендеры {response.meta.from ?? 0}-{response.meta.to ?? 0} из {response.meta.total}</span>
       }
       <div className="md:w-full space-y-6 p-10 bg-white border-2 rounded-md">
@@ -118,11 +120,13 @@ export default function MyTenders() {
             Создать новый
           </Button>
         </DialogTrigger>
-        <DialogContent className={"p-8 min-w-fit"}>
+        <DialogContent className={"p-8 min-w-fit h-screen"}>
           <DialogHeader>
             <DialogTitle>Создание нового тендера</DialogTitle>
           </DialogHeader>
-          <TenderCreate/>
+          <ScrollArea>
+            <TenderCreate/>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
 
