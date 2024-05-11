@@ -14,7 +14,9 @@ import {
   ICreateTenderRequest,
   ICreateTenderResponse,
   IRegionsResponse,
-  ICategoriesResponse
+  ICategoriesResponse,
+  Category,
+  ICategoryResponse
 } from "@/app/http/types";
 
 interface RequestPayload {
@@ -155,9 +157,13 @@ export default class HttpClient {
     });
   }
 
-  // async getCategoryById(categoryId: number): Promise<AxiosResponse<ICompaniesResponse | IErrorResponse | any>> {
-  //   return await this.request("GET", `/categories/${categoryId}`);
-  // }
+  async getCategoryById(categoryId: number): Promise<AxiosResponse<ICategoryResponse | IErrorResponse | any>> {
+    return await this.request("GET", `/categories/${categoryId}`);
+  }
+
+  async getRegionById(regionId: number): Promise<AxiosResponse<ICategoryResponse | IErrorResponse | any>> {
+    return await this.request("GET", `/regions/${regionId}`);
+  }
 
   async getTenderInfo(tenderId: string): Promise<AxiosResponse<ITenderResponse | IErrorResponse | any>> {
     return await this.request("GET", `/tenders/${tenderId}`);

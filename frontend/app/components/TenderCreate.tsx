@@ -113,7 +113,7 @@ export default function TenderCreate() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center ">
+    <div className="flex flex-col items-center justify-center overflow-y-auto">
       {isCategoriesFetching || isRegionsFetching || form.formState.isSubmitting ? (
           <div className="p-4">
             <div className="flex items-center justify-between gap-4">

@@ -63,7 +63,7 @@ export default function MyTenders() {
             Создать новый
           </Button>
         </SheetTrigger>
-        <SheetContent className={"p-8 min-w-fit"}>
+        <SheetContent className={"p-8 min-w-fit overflow-y-scroll"}>
           <SheetHeader>
             <SheetTitle>Создание нового тендера</SheetTitle>
           </SheetHeader>
