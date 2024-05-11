@@ -167,7 +167,7 @@ export default function ViewMore() {
                         Описание тендера
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className='h-24 overflow-y-auto p-4'>
+                    <CardContent className='h-24 overflow-y-auto pt-4 pb-1 pl-6 pr-2'>
                       <div className='text-xl font-medium break-words'>
                         {tenderDetails.description}
                       </div>

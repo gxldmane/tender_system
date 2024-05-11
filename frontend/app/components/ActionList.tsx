@@ -97,7 +97,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
 
   };
   return (
-    <div className="flex items-center gap-4 pt-4 flex-wrap">
+    <div className="flex items-center gap-4 pt-4 flex-wrap pb-4">
       {actions().map((action) => {
         const href = `/${action}`;
 
@@ -149,7 +149,8 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
                     </DialogDescription>
                   </DialogHeader>
                   <div className="pt-5 flex flex-col gap-y-2">
-                    {filesList.map((file) => {
+                    {
+                    filesList.map((file) => {
                       return (
                         <div className="flex justify-between align-center">
                           <div className="flex items-center gap-x-2.5">
