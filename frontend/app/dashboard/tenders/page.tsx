@@ -67,7 +67,7 @@ export default function MyTenders() {
           <SheetHeader>
             <SheetTitle>Создание нового тендера</SheetTitle>
           </SheetHeader>
-          <TenderCreate/>
+          <TenderCreate update={false} />
         </SheetContent>
       </Sheet>
     </div>
@@ -125,7 +125,7 @@ export default function MyTenders() {
             <DialogTitle>Создание нового тендера</DialogTitle>
           </DialogHeader>
           <ScrollArea>
-            <TenderCreate/>
+            <TenderCreate update={false} />
           </ScrollArea>
         </DialogContent>
       </Dialog>

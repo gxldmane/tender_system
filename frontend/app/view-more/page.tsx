@@ -131,7 +131,7 @@ export default function ViewMore() {
 
   return (
     <div className="container flex flex-col mt-10 ">
-      <div className="flex-1 flex-col space-y-4 px-8 pt-6 bg-gradient-to-r from-gray-50 to-neutral-50 rounded border-2 ">
+      <div className="flex-1 flex-col space-y-4 px-8 pt-6  bg-stone-100 drop-shadow-xl  rounded-xl border-2 mb-5">
         <div className="flex items-center justify-between space-y-2  px-2 py-6">
           {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory ? (
             <Skeleton className="h-24 w-full rounded-md" />
@@ -149,7 +149,7 @@ export default function ViewMore() {
         {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory || isRegionFetching || !tenderRegion ? (
           <Skeleton className="h-24 w-full rounded-md" />
         ) : 
-        (<div className='text-3xl font-medium tracking-tight px-2 py-3 rounded-md border w-fit'>
+        (<div className='text-3xl font-medium tracking-tight px-2 py-3 w-fit'>
         {tenderDetails.name}
         </div>)}
         <Tabs defaultValue="overview" className="space-y-4">
@@ -158,8 +158,8 @@ export default function ViewMore() {
               <Skeleton className="h-24 w-full rounded-md" />
             ) : (
               <>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  <Card>
+                <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 grid-cols-3">
+                  <Card className='border-0 drop-shadow-md'>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
                         Начальная цена
@@ -170,7 +170,7 @@ export default function ViewMore() {
                       <div className="text-2xl font-bold">₽ {(tenderDetails.start_price).toLocaleString('ru')}</div>
                     </CardContent>
                   </Card>
-                  <Card>
+                  <Card className='border-0 drop-shadow-md'>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
                         Категория тендера
@@ -181,7 +181,7 @@ export default function ViewMore() {
                       <div className="text-2xl font-bold">{tenderCategory.name}</div>
                     </CardContent>
                   </Card>
-                  <Card>
+                  <Card className='border-0 drop-shadow-md'>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
                         Регион
@@ -195,8 +195,8 @@ export default function ViewMore() {
                     </CardContent>
                   </Card>
                 </div>
-                <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-3 min-h-40">
-                  <Card className='col-span-2'>
+                <div className="grid gap-4 grid-cols-3 md:grid-cols-3 lg:grid-cols-3 sm:grid-cols-1 min-h-40">
+                  <Card className='col-span-2  border-0 drop-shadow-md'>
                     <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                       <CardTitle className='text-sm font-medium'>
                         Описание тендера
@@ -208,14 +208,14 @@ export default function ViewMore() {
                       </div>
                     </CardContent>
                   </Card>
-                  <Card>
+                  <Card className='col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-1 border-0 drop-shadow-md'>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
                         Создан:
                       </CardTitle>
                       <CalendarFold size={23} />
                     </CardHeader>
-                    <CardContent className='pb-0'>
+                    <CardContent className='pb-6'>
                       <div className="text-2xl font-bold">{new Date(tenderDetails.createdAt).toLocaleDateString()}</div>
                       <p className="text-xs text-muted-foreground pt-4">
                         До окончания: {getRemainingTime(tenderDetails.untilDate)}
@@ -230,9 +230,9 @@ export default function ViewMore() {
         {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory ? (
           <Skeleton className="h-24 w-full rounded-md" />
         ) : (
-          <div className='flex pb-5'>
+          <div className='flex pb-5 justify-between items-center'>
             <ActionList tenderId={currentTenderId} userRole={userDetails?.role} isBidded={hasBid}
-              isCreator={tenderDetails.customerId === userDetails?.id} filesList={tenderDetails.files} />
+              isCreator={tenderDetails.customerId === userDetails?.id} filesList={tenderDetails.files} defaultValues={{ name: tenderDetails.name, description: tenderDetails.description, start_price: tenderDetails.start_price.toString(), category_id: tenderDetails.categoryId, region_id: tenderDetails.regionId, until_date: tenderDetails.untilDate }}/>
           </div>)}
       </div>
     </div>
