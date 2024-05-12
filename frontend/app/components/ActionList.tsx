@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link"
 import httpClient from "@/app/http";
-import { Loader2 } from "lucide-react";
+import { Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -97,7 +97,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
 
   };
   return (
-    <div className="flex items-center gap-4 pt-4 flex-wrap">
+    <div className="flex items-center gap-4 pt-4 flex-wrap pb-4">
       {actions().map((action) => {
         const href = `/${action}`;
 
@@ -139,7 +139,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
             return (
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="default" className='min-w-36' key={action}>Скачать файлы</Button>
+                  <Button variant="default" className='' key={action}>Файлы</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
@@ -149,7 +149,8 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
                     </DialogDescription>
                   </DialogHeader>
                   <div className="pt-5 flex flex-col gap-y-2">
-                    {filesList.map((file) => {
+                    {
+                    filesList.map((file) => {
                       return (
                         <div className="flex justify-between align-center">
                           <div className="flex items-center gap-x-2.5">
@@ -170,21 +171,21 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
           case 'applications':
             return (
               <Link href={href}>
-                <Button className='min-w-36' key={action}>Список заявок</Button>
+                <Button className='' key={action}>Заявки</Button>
               </Link>
             );
           case 'delete':
             return (
               <Link href={href}>
-                <Button className='min-w-36' key={action}>
-                  Удалить тендер
+                <Button variant='default' key={action}>
+                  <Trash2 className="p-1"size={36} color="#ffffff" strokeWidth={1.5} />
                 </Button>
               </Link>
             );
           case 'edit':
             return (
               <Link href={href}>
-                <Button className='min-w-36' key={action}>Изменить тендер</Button>
+                <Button variant='default'key={action}><Pencil size={30} color="#ffffff" strokeWidth={1.5} /></Button>
               </Link>
             );
           case 'withdraw':
@@ -220,7 +221,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
             return (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button className="min-w-1/2" variant="default">Отозвать заявку</Button>
+                  <Button className="" variant="default">Отозвать заявку</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
@@ -274,6 +275,11 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
                 });
                 return;
               }
+              toast({
+                variant: "default",
+                title: "Заявка успешно подана",
+                description: "Вы можете отслеживать ее статус в своем профиле",
+              });
               setOpen(false);
               await queryClient.refetchQueries({ queryKey: ['hasBid'], type: 'active' })
             }
@@ -282,7 +288,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
               <Form {...form}>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
-                    <Button className="min-w-1/2" variant='secondary' key={href}>Подать заявку</Button>
+                    <Button className="border-2" variant='secondary' key={href}>Подать заявку</Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

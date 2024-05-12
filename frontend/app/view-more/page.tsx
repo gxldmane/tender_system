@@ -10,10 +10,29 @@ import { Card, CardContent, CardHeader, CardTitle, } from "@/components/ui/card"
 import httpClient from '../http';
 import ActionList from '../components/ActionList';
 import { useQuery } from "@tanstack/react-query";
-import { ITenderDetails } from "@/app/http/types";
+import { Category, ICategoryResponse, ITenderDetails, Region } from "@/app/http/types";
 import useUser from "@/app/components/useUser";
-import { DollarSign } from "lucide-react";
+import { RussianRuble, FolderIcon, CalendarFold, ShieldCheck, AlarmClock, MapPin } from 'lucide-react';
 import useToken from "@/app/components/useToken";
+import { Separator } from "@/components/ui/separator"
+
+function parseStatus(status) {
+  switch (status) {
+    case 'active':
+      return (
+        <div className='flex justify-center items-center gap-x-2'>
+          <h2 className='text-3xl font-normal tracking-tight'>Активен</h2>
+          <ShieldCheck size={36} color="#37c84f" strokeWidth={1.5} />
+        </div>
+      )
+    case 'pending':
+      return (
+        <div className='flex justify-center items-center gap-x-1'>
+          <h2 className='text-3xl font-normal tracking-tight'>Выбор подрядчика</h2>
+          <AlarmClock size={36} color="#4f4f4f" strokeWidth={1.5} />
+        </div>)
+  }
+}
 
 function daysSinceTenderCreation(createdAt) {
   const tenderDate = new Date(createdAt);
@@ -43,6 +62,9 @@ function getRemainingTime(untilDate: string): string {
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
   let remainingText = "";
+  if (diff < 0) {
+    return "0"
+  }
   if (days > 0) {
     remainingText += `${days} дней, `;
   }
@@ -75,7 +97,20 @@ export default function ViewMore() {
   const { data: tenderDetails, isFetching, isError } = useQuery({
     queryKey: ['tender'],
     queryFn: () => httpClient.getTenderInfo(currentTenderId),
-    select: response => response?.data?.data as ITenderDetails & { files: {id: string, tenderId: string, url: string, name:string;}[] },
+    select: response => response?.data?.data as ITenderDetails & { files: { id: string, tenderId: string, url: string, name: string; }[] },
+  });
+
+
+  const { data: tenderCategory, isFetching: isCategoryFetching, isError: isCategoryError } = useQuery({
+    queryKey: ['category'],
+    queryFn: () => httpClient.getCategoryById(tenderDetails.categoryId),
+    select: response => response?.data?.data as Category
+  });
+
+  const { data: tenderRegion, isFetching: isRegionFetching, isError: isRegionError } = useQuery({
+    queryKey: ['region'],
+    queryFn: () => httpClient.getRegionById(tenderDetails.categoryId),
+    select: response => response?.data?.data as Region
   });
 
   const { data: hasBid, isFetching: isHasBidFetching, isError: isHasBidErrors } = useQuery({
@@ -92,35 +127,47 @@ export default function ViewMore() {
     return;
   }
 
+
+
   return (
-    <div className="container flex flex-col">
-      <div className="flex-1 space-y-4 p-8 pt-6">
-        <div className="flex items-center justify-between space-y-2">
-          {isFetching || !tenderDetails ? (
+    <div className="container flex flex-col mt-10 ">
+      <div className="flex-1 flex-col space-y-4 px-8 pt-6 bg-gradient-to-r from-gray-50 to-neutral-50 rounded border-2 ">
+        <div className="flex items-center justify-between space-y-2  px-2 py-6">
+          {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory ? (
             <Skeleton className="h-24 w-full rounded-md" />
           ) : (
-            <h2 className="text-3xl font-bold tracking-tight">Тендер: {tenderDetails.name}</h2>
+            <>
+              <h2 className="text-3xl font-bold tracking-tight">Карточка тендера</h2>
+              <h2 className="flex text-3xl font-bold tracking-tight">
+                {parseStatus(tenderDetails.status)}
+              </h2>
+            </>
           )}
         </div>
+        <Separator />
+
+        {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory || isRegionFetching || !tenderRegion ? (
+          <Skeleton className="h-24 w-full rounded-md" />
+        ) : 
+        (<div className='text-3xl font-medium tracking-tight px-2 py-3 rounded-md border w-fit'>
+        {tenderDetails.name}
+        </div>)}
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsContent value="overview" className="space-y-4">
-            {isUserFetching || isFetching || !tenderDetails ? (
+            {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory || isRegionFetching || !tenderRegion ? (
               <Skeleton className="h-24 w-full rounded-md" />
             ) : (
               <>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
                         Начальная цена
                       </CardTitle>
-                      <DollarSign />
+                      <RussianRuble size={23} />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">₽ {(tenderDetails.start_price).toLocaleString('ru')}</div>
-                      <p className="text-xs text-muted-foreground">
-                        Цена установленая заказчиком
-                      </p>
                     </CardContent>
                   </Card>
                   <Card>
@@ -128,70 +175,65 @@ export default function ViewMore() {
                       <CardTitle className="text-sm font-medium">
                         Категория тендера
                       </CardTitle>
+                      <FolderIcon size={23} />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">category_name</div>
-                      <p className="text-xs text-muted-foreground">
-                        Категория №{tenderDetails.categoryId}
-                      </p>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Создан:</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{new Date(tenderDetails.createdAt).toLocaleDateString()}</div>
-                      <p className="text-xs text-muted-foreground">
-                        {daysSinceTenderCreation(tenderDetails.createdAt)}
-                      </p>
+                      <div className="text-2xl font-bold">{tenderCategory.name}</div>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
-                        До окончания:
+                        Регион
                       </CardTitle>
+                      <MapPin color="#ff4d4d" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-xl font-bold">{getRemainingTime(tenderDetails.untilDate)}</div>
-                      <p className="text-xs text-muted-foreground">
+                      <div className="text-xl font-bold">{tenderRegion.name}</div>
+                      <p className="text-xs text-muted-foreground pt-1">
                       </p>
                     </CardContent>
                   </Card>
                 </div>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 min-h-40">
-                  <Card>
+                <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-3 min-h-40">
+                  <Card className='col-span-2'>
                     <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                       <CardTitle className='text-sm font-medium'>
                         Описание тендера
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className='h-24 overflow-y-auto p-4'>
+                    <CardContent className='h-24 overflow-y-auto pt-4 pb-1 pl-6 pr-2'>
                       <div className='text-xl font-medium break-words'>
                         {tenderDetails.description}
                       </div>
                     </CardContent>
                   </Card>
-                  <Card className={"pb-8"}>
-                    <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                      <CardTitle className='text-sm font-medium'>
-                        Действия
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Создан:
                       </CardTitle>
+                      <CalendarFold size={23} />
                     </CardHeader>
-                    <CardContent className='px-6 py-0'>
-                      <div className='flex items-center gap-x-2.5'>
-                        <ActionList tenderId={currentTenderId} userRole={userDetails?.role} isBidded={hasBid}
-                          isCreator={tenderDetails.customerId === userDetails?.id} filesList={tenderDetails.files} />
-                      </div>
+                    <CardContent className='pb-0'>
+                      <div className="text-2xl font-bold">{new Date(tenderDetails.createdAt).toLocaleDateString()}</div>
+                      <p className="text-xs text-muted-foreground pt-4">
+                        До окончания: {getRemainingTime(tenderDetails.untilDate)}
+                      </p>
                     </CardContent>
                   </Card>
                 </div>
-
               </>
             )}
           </TabsContent>
         </Tabs>
+        {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory ? (
+          <Skeleton className="h-24 w-full rounded-md" />
+        ) : (
+          <div className='flex pb-5'>
+            <ActionList tenderId={currentTenderId} userRole={userDetails?.role} isBidded={hasBid}
+              isCreator={tenderDetails.customerId === userDetails?.id} filesList={tenderDetails.files} />
+          </div>)}
       </div>
     </div>
   )

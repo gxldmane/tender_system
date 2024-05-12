@@ -92,14 +92,23 @@ export interface ITenderDetails {
   id: string; // Уникальный идентификатор
   name: string;
   description: string; // Описание тендера
-  start_price: number; // Начальная цена
+  start_price: number;
+  status: string; // Начальная цена
   currentPrice: number; // Текущая цена (опционально)
-  categoryId: number; // Идентификатор категории
+  categoryId: number;
+  regionId: number; // Идентификатор категории
   customerId: number; // Идентификатор заказчика
   executorId: number; // Идентификатор исполнителя (опционально)
   untilDate: string; // Дата окончания тендера
   createdAt: string; // Дата создания тендера
   updatedAt: string; // Дата обновления тендера
+}
+
+export interface ICategoryResponse {
+  data: {
+    id: number;
+    name: string;
+  }
 }
 
 export interface CreateBidData {
