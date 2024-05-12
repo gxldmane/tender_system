@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TenderService
 {
-    protected FileService $fileService;
+    public FileService $fileService;
 
     public function __construct(FileService $fileService)
     {
@@ -54,6 +54,20 @@ class TenderService
 
         $this->fileService->store($files, $tender, $data);
 
+
+        return new TenderResource($tender->load('files'));
+    }
+
+    public function update(Tender $tender, $data, $files): TenderResource
+    {
+        $data['customer_id'] = Auth::user()->id;
+
+        if ($files) {
+            $tender->files()->delete();
+            $this->fileService->store($files, $tender, $data);
+        }
+
+        $tender->update($data);
 
         return new TenderResource($tender->load('files'));
     }

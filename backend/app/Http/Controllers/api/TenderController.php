@@ -8,6 +8,7 @@ use App\Http\Requests\Tender\TenderUpdateRequest;
 use App\Http\Resources\api\Tender\TenderResource;
 use App\Models\Tender;
 use App\Services\Tender\TenderService;
+use Illuminate\Support\Facades\Auth;
 
 class TenderController extends Controller
 {
@@ -46,9 +47,9 @@ class TenderController extends Controller
     {
         $data = $request->validated();
 
-        $tender->update($data);
-        
-        return new TenderResource($tender->load('files'));
+        $files = $request->file('files');
+
+        return $this->tenderService->update($tender, $data, $files);
     }
 
     public function destroy(Tender $tender)
