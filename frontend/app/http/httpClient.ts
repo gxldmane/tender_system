@@ -16,7 +16,7 @@ import {
   IRegionsResponse,
   ICategoriesResponse,
   Category,
-  ICategoryResponse
+  ICategoryResponse, ISendedBidsResponse
 } from "@/app/http/types";
 
 interface RequestPayload {
@@ -173,6 +173,14 @@ export default class HttpClient {
 
   async getMyTenders(page: number = 1): Promise<AxiosResponse<ITendersResponse | IErrorResponse | any>> {
     return await this.request("GET", "/tenders/my", {
+      params: {
+        page: page,
+      }
+    });
+  }
+
+  async getMyBids(page: number = 1): Promise<AxiosResponse<ISendedBidsResponse | IErrorResponse | any>> {
+    return await this.request("GET", "/bids", {
       params: {
         page: page,
       }
