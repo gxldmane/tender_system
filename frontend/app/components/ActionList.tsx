@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link"
 import httpClient from "@/app/http";
-import { ArrowUpSquare, Loader2, Pencil, Trash2 } from "lucide-react";
+import { ArrowUpSquare, Key, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { util, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -68,6 +68,10 @@ function getFileTypeIconFromUrl(url) {
   return <FileIcon className="h-9 w-9" />; //todo: найти норм картинки pdf docx / починить чтобы работало иф элсе это
 }
 
+function blobToFile(blob: Blob, fileName: string): File {
+  return new File([blob], fileName);
+}
+
 
 interface ActionListProps {
   tenderId: string;
@@ -91,6 +95,40 @@ interface ActionListProps {
 }
 
 export default function ActionList({ tenderId, userRole, isBidded, isCreator, filesList, defaultValues }: ActionListProps) {
+  const getFilesFromFilesList = async (files: ActionListProps['filesList']) => {
+    const fileArray: File[] = [];
+    for (const file of files) {
+      const url = file.url
+      const response = await queryClient.fetchQuery({
+        queryKey: ['download-file'],
+        queryFn: () => httpClient.downloadFile(url),
+      }).then<Blob | IErrorResponse | any>(value => value?.data);
+      console.log("responsik: " + JSON.stringify(response));
+      if (response?.errors) {
+        console.log("Ошибка");
+        toast({
+          variant: "destructive",
+          title: "Что-то пошло не так",
+          description: response.message,
+        });
+        return;
+      }
+      const convertedFile = blobToFile(response, file.name)
+      fileArray.push(convertedFile)
+      console.log(`Файл: ${convertedFile.name} Размер: ${convertedFile.size}`)
+    }
+
+    return fileArray;
+  }
+  const [files, setFiles] = useState<File[] | null>(null);
+
+  useEffect(() => {
+    const fetchFiles = async () => {
+      const fileArray = await getFilesFromFilesList(filesList);
+      setFiles(fileArray);
+    };
+    fetchFiles();
+  }, [filesList]);
   console.log(filesList)
   let queryClient = useQueryClient();
   const router = useRouter()
@@ -199,7 +237,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
                   <SheetHeader>
                     <SheetTitle>Редактирование тендера</SheetTitle>
                   </SheetHeader>
-                  <TenderCreate update={true} tenderId={tenderId} defaultPropValues={defaultValues} />
+                  <TenderCreate update={true} tenderId={tenderId} defaultPropValues={defaultValues} defaultFiles={files} />
                 </SheetContent>
               </Sheet>
 

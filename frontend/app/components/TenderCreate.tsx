@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { DropzoneOptions } from "react-dropzone";
 import { FileInput, FileUploader, FileUploaderContent, FileUploaderItem } from "@/app/components/FileUploader";
+import { fileURLToPath } from "url";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, 'Укажите наименование тендера').max(100, 'Слишком длинное наименование тендера'),
@@ -55,9 +56,10 @@ interface TenderCreateProps {
     region_id: number;
     until_date: string;
   }
+  defaultFiles?: File[]
 }
 
-export default function TenderCreate({ update, defaultPropValues, tenderId}: TenderCreateProps) {
+export default function TenderCreate({ update, defaultPropValues, tenderId, defaultFiles}: TenderCreateProps) {
   const [openCategories, setOpenCategories] = useState(false);
   const [openRegions, setOpenRegions] = useState(false);
   const router = useRouter();
@@ -72,16 +74,9 @@ export default function TenderCreate({ update, defaultPropValues, tenderId}: Ten
       category_id: update ? defaultPropValues.category_id : -1,
       region_id: update ? defaultPropValues.region_id : -1,
       until_date: update ? defaultPropValues.until_date : '',
-      files:  null
+      files:  update ? defaultFiles || null : null
     }
   })
-
-  useEffect(() => {
-    console.log('formState changed:', form.formState);
-  }, [form.formState]);
-
-
-
 
   const dropzone = {
     multiple: true,
@@ -99,6 +94,16 @@ export default function TenderCreate({ update, defaultPropValues, tenderId}: Ten
     queryFn: () => httpClient.getRegions(),
     select: data => data?.data?.data,
   });
+
+  const downloadFile = (file, fileName) => {
+    const url = window.URL.createObjectURL(new Blob([file]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName); // или любое другое имя файла
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
 
   async function onSubmit(values: InputSchema) {

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Skeleton } from "@/components/ui/skeleton";
-
+import Image from 'next/image';
 import { Tabs, TabsContent, } from "@/components/ui/tabs"
 
 import { Card, CardContent, CardHeader, CardTitle, } from "@/components/ui/card"
@@ -137,7 +137,10 @@ export default function ViewMore() {
             <Skeleton className="h-24 w-full rounded-md" />
           ) : (
             <>
+            <div className='flex'>
               <h2 className="text-3xl font-bold tracking-tight">Карточка тендера</h2>
+              <Image className="ml-4" src="/Hammer.svg" alt={'Hammer'} width={30} height={30}/>
+            </div>  
               <h2 className="flex text-3xl font-bold tracking-tight">
                 {parseStatus(tenderDetails.status)}
               </h2>
@@ -158,7 +161,7 @@ export default function ViewMore() {
               <Skeleton className="h-24 w-full rounded-md" />
             ) : (
               <>
-                <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 grid-cols-3">
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
                   <Card className='border-0 drop-shadow-md'>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
@@ -167,7 +170,7 @@ export default function ViewMore() {
                       <RussianRuble size={23} />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">₽ {(tenderDetails.start_price).toLocaleString('ru')}</div>
+                      <div className="text-2xl font-bold">{(tenderDetails.start_price).toLocaleString('ru')}</div>
                     </CardContent>
                   </Card>
                   <Card className='border-0 drop-shadow-md'>
@@ -195,8 +198,8 @@ export default function ViewMore() {
                     </CardContent>
                   </Card>
                 </div>
-                <div className="grid gap-4 grid-cols-3 md:grid-cols-3 lg:grid-cols-3 sm:grid-cols-1 min-h-40">
-                  <Card className='col-span-2  border-0 drop-shadow-md'>
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-3 min-h-40">
+                  <Card className='col-span-1 md:col-span-2  border-0 drop-shadow-md'>
                     <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                       <CardTitle className='text-sm font-medium'>
                         Описание тендера
@@ -204,11 +207,11 @@ export default function ViewMore() {
                     </CardHeader>
                     <CardContent className='h-24 overflow-y-auto pt-4 pb-1 pl-6 pr-2'>
                       <div className='text-xl font-medium break-words'>
-                        {tenderDetails.description}
+                        {tenderDetails.description.charAt(0).toUpperCase() + tenderDetails.description.slice(1)}
                       </div>
                     </CardContent>
                   </Card>
-                  <Card className='col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-1 border-0 drop-shadow-md'>
+                  <Card className='col-span-1 border-0 drop-shadow-md'>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
                         Создан:
