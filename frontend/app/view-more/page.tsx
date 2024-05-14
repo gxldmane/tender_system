@@ -34,6 +34,11 @@ function parseStatus(status) {
   }
 }
 
+function reformatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
 function daysSinceTenderCreation(createdAt) {
   const tenderDate = new Date(createdAt);
   const today = new Date();
@@ -221,7 +226,7 @@ export default function ViewMore() {
                     <CardContent className='pb-6'>
                       <div className="text-2xl font-bold">{new Date(tenderDetails.createdAt).toLocaleDateString()}</div>
                       <p className="text-xs text-muted-foreground pt-4">
-                        До окончания: {getRemainingTime(tenderDetails.untilDate)}
+                        Дата окончания: {reformatDate(tenderDetails.untilDate)}
                       </p>
                     </CardContent>
                   </Card>

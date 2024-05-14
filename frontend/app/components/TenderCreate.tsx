@@ -9,7 +9,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { CheckIcon, ChevronsUpDown, Loader2, Paperclip, UploadCloud } from "lucide-react";
+import { CalendarIcon, CheckIcon, ChevronsUpDown, Loader2, Paperclip, UploadCloud, XIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -20,6 +20,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { DropzoneOptions } from "react-dropzone";
 import { FileInput, FileUploader, FileUploaderContent, FileUploaderItem } from "@/app/components/FileUploader";
 import { fileURLToPath } from "url";
+import { Calendar } from "@/components/ui/calendar"
+import { format } from "date-fns";
+
 
 const formSchema = z.object({
   name: z.string().trim().min(1, 'Укажите наименование тендера').max(100, 'Слишком длинное наименование тендера'),
@@ -41,6 +44,9 @@ const formSchema = z.object({
     .max(5, {
       message: "Maximum 5 files are allowed",
     })
+    .min(1, {
+      message: "You have to upload minimum 1 file to tender"
+    })
     .nullable()
 });
 type InputSchema = z.input<typeof formSchema>;
@@ -59,9 +65,13 @@ interface TenderCreateProps {
   defaultFiles?: File[]
 }
 
-export default function TenderCreate({ update, defaultPropValues, tenderId, defaultFiles}: TenderCreateProps) {
+export default function TenderCreate({ update, defaultPropValues, tenderId, defaultFiles }: TenderCreateProps) {
   const [openCategories, setOpenCategories] = useState(false);
   const [openRegions, setOpenRegions] = useState(false);
+  const [openCalendar, setOpenCalendar] = useState(false);
+  const handleCloseButton = () => {
+    setOpenCalendar(false);
+  }
   const router = useRouter();
   const queryClient = useQueryClient();
   const form = useForm<InputSchema>({
@@ -74,7 +84,7 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
       category_id: update ? defaultPropValues.category_id : -1,
       region_id: update ? defaultPropValues.region_id : -1,
       until_date: update ? defaultPropValues.until_date : '',
-      files:  update ? defaultFiles || null : null
+      files: update ? defaultFiles || null : null
     }
   })
 
@@ -135,6 +145,14 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
       await queryClient.refetchQueries({ queryKey: ['region'], type: 'active' })
     }
     return;
+  };
+  const { control, register } = useForm();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+    const formattedDate = format(date, 'dd.MM.yyyy');
+    register('until_date', { value: formattedDate });
   }
 
 
@@ -332,12 +350,53 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
                 name="until_date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Дата окончания</FormLabel>
-                    <FormControl>
-                      <Input placeholder="01.01.2026" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <div className="flex flex-col">
+                      <FormLabel>Дата окончания</FormLabel>
+                      <div>
+                        <Popover open={openCalendar} onOpenChange={setOpenCalendar}>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                className="w-full justify-between"
+                              >
+                                {selectedDate
+                                  ? format(selectedDate, 'dd.MM.yyyy')
+                                  : 'Выберите дату'}
+                                <CalendarIcon className="ml-auto h-4 w-4" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-5 flex flex-col" align="start">
+                            <div className="flex justify-end w-full">
+                              <Button
+                                variant="ghost"
+                                className="cursor-pointer"
+                                size="icon"
+                                onClick={() => setOpenCalendar(false)}
+                              >
+                                <XIcon width={20} height={20} />
+                              </Button>
+                              </div>
+                              <Calendar
+                                mode="single"
+                                selected={selectedDate}
+                                onSelect={(date) => {
+                                  setSelectedDate(date);
+                                  form.setValue('until_date', format(date, 'yyyy-MM-dd'), { shouldDirty: true });
+                                  form.trigger('until_date');
+                                }}
+                                disabled={(date) =>
+                                  date < new Date()
+                                }
+                              />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      <FormMessage />
+                    </div>
                   </FormItem>
+
                 )}
               />
 

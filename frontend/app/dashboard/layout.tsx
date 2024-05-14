@@ -24,8 +24,8 @@ const sidebarNavItems = [
     },
     {
       title: "Каталог",
-      href: "/browse",
-    },
+      href: "/browse"
+    }
   ]
 
 interface SettingsLayoutProps {

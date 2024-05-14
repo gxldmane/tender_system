@@ -121,7 +121,14 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
     return fileArray;
   }
   const [files, setFiles] = useState<File[] | null>(null);
-
+  const [open, setOpen] = useState(false);
+  const form = useForm<InputSchema>({
+    resolver: zodResolver(formSchema),
+    mode: 'onChange',
+    defaultValues: {
+      price: '-'
+    }
+  });
   useEffect(() => {
     const fetchFiles = async () => {
       const fileArray = await getFilesFromFilesList(filesList);
@@ -137,7 +144,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
       case 'customer':
         return isCreator ? [
           'download',
-          'applications',
+          'bids',
           'delete',
           'edit',
         ] : ['download'];
@@ -221,9 +228,9 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
                 </DialogContent>
               </Dialog>
             );
-          case 'applications':
+          case 'bids':
             return (
-              <Link href={href}>
+              <Link href={`/view-more/${href}?tenderId=${tenderId}`}>
                 <Button className='' key={action}>Заявки</Button>
               </Link>
             );
@@ -330,7 +337,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
             return (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button className="w-1/3" variant="default">Отозвать заявку</Button>
+                  <Button variant="default">Отозвать заявку</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
@@ -351,15 +358,6 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
               </AlertDialog>
             );
           case 'apply':
-            const [open, setOpen] = useState(false);
-            const form = useForm<InputSchema>({
-              resolver: zodResolver(formSchema),
-              mode: 'onChange',
-              defaultValues: {
-                price: '-'
-              }
-            });
-
             async function onSubmit(values: InputSchema) {
               console.log(JSON.stringify(values));
               console.log(tenderId);
@@ -397,7 +395,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
               <Form {...form}>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
-                    <Button className="border-2 w-1/3" variant='secondary' key={href}>Подать заявку</Button>
+                    <Button className="border-2" variant='ghost' key={href}>Подать заявку</Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
