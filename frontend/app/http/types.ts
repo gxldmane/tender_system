@@ -88,6 +88,20 @@ export interface ITendersResponse extends IPaginated {
   data: ITenderDetails[]
 }
 
+export interface ISendedBidsResponse extends IPaginated {
+  data: ISendedBid[]
+}
+
+export interface ISendedBid {
+  id: number;
+  tenderId: number;
+  companyId: number;
+  userId: number;
+  price: number;
+  status: string;
+  createdAt: string;
+}
+
 export interface ITenderDetails {
   id: string; // Уникальный идентификатор
   name: string;

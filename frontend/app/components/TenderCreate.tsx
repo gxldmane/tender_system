@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import httpClient from "@/app/http";
@@ -9,7 +9,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { CheckIcon, ChevronsUpDown, Loader2, Paperclip, UploadCloud } from "lucide-react";
+import { CalendarIcon, CheckIcon, ChevronsUpDown, Loader2, Paperclip, UploadCloud, XIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -19,6 +19,10 @@ import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { DropzoneOptions } from "react-dropzone";
 import { FileInput, FileUploader, FileUploaderContent, FileUploaderItem } from "@/app/components/FileUploader";
+import { fileURLToPath } from "url";
+import { Calendar } from "@/components/ui/calendar"
+import { format } from "date-fns";
+
 
 const formSchema = z.object({
   name: z.string().trim().min(1, 'Укажите наименование тендера').max(100, 'Слишком длинное наименование тендера'),
@@ -40,29 +44,49 @@ const formSchema = z.object({
     .max(5, {
       message: "Maximum 5 files are allowed",
     })
+    .min(1, {
+      message: "You have to upload minimum 1 file to tender"
+    })
     .nullable()
 });
 type InputSchema = z.input<typeof formSchema>;
 
-export default function TenderCreate() {
+interface TenderCreateProps {
+  update: boolean
+  tenderId?: string
+  defaultPropValues?: {
+    name: string;
+    description: string;
+    start_price: string;
+    category_id: number;
+    region_id: number;
+    until_date: string;
+  }
+  defaultFiles?: File[]
+}
+
+export default function TenderCreate({ update, defaultPropValues, tenderId, defaultFiles }: TenderCreateProps) {
   const [openCategories, setOpenCategories] = useState(false);
   const [openRegions, setOpenRegions] = useState(false);
-
+  const [openCalendar, setOpenCalendar] = useState(false);
+  const handleCloseButton = () => {
+    setOpenCalendar(false);
+  }
   const router = useRouter();
   const queryClient = useQueryClient();
   const form = useForm<InputSchema>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
-      name: '',
-      description: '',
-      start_price: "0",
-      category_id: -1,
-      region_id: -1,
-      until_date: '',
-      files: null,
+      name: update ? defaultPropValues.name : '',
+      description: update ? defaultPropValues.description : '',
+      start_price: update ? defaultPropValues.start_price : "0",
+      category_id: update ? defaultPropValues.category_id : -1,
+      region_id: update ? defaultPropValues.region_id : -1,
+      until_date: update ? defaultPropValues.until_date : '',
+      files: update ? defaultFiles || null : null
     }
-  });
+  })
 
   const dropzone = {
     multiple: true,
@@ -81,10 +105,21 @@ export default function TenderCreate() {
     select: data => data?.data?.data,
   });
 
+  const downloadFile = (file, fileName) => {
+    const url = window.URL.createObjectURL(new Blob([file]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName); // или любое другое имя файла
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+
   async function onSubmit(values: InputSchema) {
     const response = await queryClient.fetchQuery({
-      queryKey: ['new-tender'],
-      queryFn: () => httpClient.createTender(values),
+      queryKey: update ? ['update-tender'] : ['new-tender'],
+      queryFn: update ? () => httpClient.updateTender(values, tenderId) : () => httpClient.createTender(values),
     });
 
     console.log(values);
@@ -104,32 +139,42 @@ export default function TenderCreate() {
       }
     }
     // General error message toast
-    toast({
-      variant: "destructive",
-      title: "Что-то пошло не так",
-      description: response?.data?.message,
-    });
+    if (update) {
+      await queryClient.refetchQueries({ queryKey: ['tender'], type: 'active' })
+      await queryClient.refetchQueries({ queryKey: ['category'], type: 'active' })
+      await queryClient.refetchQueries({ queryKey: ['region'], type: 'active' })
+    }
     return;
+  };
+  const { control, register } = useForm();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+    const formattedDate = format(date, 'dd.MM.yyyy');
+    register('until_date', { value: formattedDate });
   }
+
+
 
   return (
     <div className="flex flex-col items-center justify-center overflow-y-auto">
       {isCategoriesFetching || isRegionsFetching || form.formState.isSubmitting ? (
-          <div className="p-4">
-            <div className="flex items-center justify-between gap-4">
-              <Skeleton className="h-10 w-full max-w-xs"/>
-              <div className="flex space-x-2">
-                <Skeleton className="h-10 w-10 rounded-md"/>
-                <Skeleton className="h-10 w-10 rounded-md"/>
-              </div>
-            </div>
-            <div className="mt-4 flex flex-col gap-4">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <Skeleton key={index} className="h-24 w-full rounded-md"/>
-              ))}
+        <div className="p-4">
+          <div className="flex items-center justify-between gap-4">
+            <Skeleton className="h-10 w-full max-w-xs" />
+            <div className="flex space-x-2">
+              <Skeleton className="h-10 w-10 rounded-md" />
+              <Skeleton className="h-10 w-10 rounded-md" />
             </div>
           </div>
-        ) :
+          <div className="mt-4 flex flex-col gap-4">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Skeleton key={index} className="h-24 w-full rounded-md" />
+            ))}
+          </div>
+        </div>
+      ) :
 
         <div className="flex items-center space-x-4 rounded-md border p-4">
           <Form {...form}>
@@ -143,7 +188,7 @@ export default function TenderCreate() {
                     <FormControl>
                       <Input placeholder="Наименование" {...field} />
                     </FormControl>
-                    <FormMessage/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -156,7 +201,7 @@ export default function TenderCreate() {
                     <FormControl>
                       <Textarea placeholder="Описание" {...field} />
                     </FormControl>
-                    <FormMessage/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -169,7 +214,7 @@ export default function TenderCreate() {
                     <FormControl>
                       <Input placeholder="Стартовая цена" {...field} />
                     </FormControl>
-                    <FormMessage/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -192,7 +237,7 @@ export default function TenderCreate() {
                               )}
                             >
                               {field.value && field.value >= 0 ? categories.find((category) => category.id == field.value)?.name : "Выберите категорию"}
-                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
@@ -211,7 +256,8 @@ export default function TenderCreate() {
                                       value={category.id}
                                       key={category.id}
                                       onSelect={() => {
-                                        form.setValue("category_id", category.id)
+                                        form.setValue("category_id", category.id, { shouldDirty: true })
+                                        form.trigger("category_id")
                                         setOpenCategories(false)
                                       }}
                                     >
@@ -232,7 +278,7 @@ export default function TenderCreate() {
                         </PopoverContent>
                       </Popover>
                     </div>
-                    <FormMessage/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -255,7 +301,7 @@ export default function TenderCreate() {
                               )}
                             >
                               {field.value && field.value >= 0 ? regions.find((company) => company.id === field.value)?.name : "Выберите регион"}
-                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
@@ -273,7 +319,8 @@ export default function TenderCreate() {
                                     value={region.id}
                                     key={region.id}
                                     onSelect={() => {
-                                      form.setValue("region_id", region.id)
+                                      form.setValue("region_id", region.id, { shouldDirty: true })
+                                      form.trigger("region_id")
                                       setOpenRegions(false)
                                     }}
                                   >
@@ -294,7 +341,7 @@ export default function TenderCreate() {
                         </PopoverContent>
                       </Popover>
                     </div>
-                    <FormMessage/>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -303,12 +350,53 @@ export default function TenderCreate() {
                 name="until_date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Стартовая цена</FormLabel>
-                    <FormControl>
-                      <Input placeholder="01.01.2026" {...field} />
-                    </FormControl>
-                    <FormMessage/>
+                    <div className="flex flex-col">
+                      <FormLabel>Дата окончания</FormLabel>
+                      <div>
+                        <Popover open={openCalendar} onOpenChange={setOpenCalendar}>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                className="w-full justify-between"
+                              >
+                                {selectedDate
+                                  ? format(selectedDate, 'dd.MM.yyyy')
+                                  : 'Выберите дату'}
+                                <CalendarIcon className="ml-auto h-4 w-4" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-5 flex flex-col" align="start">
+                            <div className="flex justify-end w-full">
+                              <Button
+                                variant="ghost"
+                                className="cursor-pointer"
+                                size="icon"
+                                onClick={() => setOpenCalendar(false)}
+                              >
+                                <XIcon width={20} height={20} />
+                              </Button>
+                              </div>
+                              <Calendar
+                                mode="single"
+                                selected={selectedDate}
+                                onSelect={(date) => {
+                                  setSelectedDate(date);
+                                  form.setValue('until_date', format(date, 'yyyy-MM-dd'), { shouldDirty: true });
+                                  form.trigger('until_date');
+                                }}
+                                disabled={(date) =>
+                                  date < new Date()
+                                }
+                              />
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      <FormMessage />
+                    </div>
                   </FormItem>
+
                 )}
               />
 
@@ -326,7 +414,7 @@ export default function TenderCreate() {
                       >
                         <FileInput>
                           <div className="flex items-center justify-center flex-col py-10 w-full px-4">
-                            <UploadCloud className="h-8 w-8 text-muted-foreground"/>
+                            <UploadCloud className="h-8 w-8 text-muted-foreground" />
                             <p className="mb-1 text-sm text-muted-foreground">
                               <span className="font-semibold">Перетащите сюда файлы, чтобы прикрепить их к тендеру</span>
                             </p>
@@ -339,7 +427,7 @@ export default function TenderCreate() {
                           <FileUploaderContent className="flex items-center justify-center flex-col w-full px-4">
                             {field.value.map((file, i) => (
                               <FileUploaderItem index={i} key={i} className="py-4 flex items-center">
-                                <Paperclip className="h-4 w-4 stroke-current"/>
+                                <Paperclip className="h-4 w-4 stroke-current" />
                                 <span>{file.name}</span>
                               </FileUploaderItem>
                             ))}
@@ -361,10 +449,10 @@ export default function TenderCreate() {
 
               <div className={"flex items-center justify-between"}>
                 {form.formState.isSubmitting && (<Button type="button" disabled> <Loader2
-                  className="mr-2 h-4 w-4 animate-spin"/>Зарегистрироваться</Button>)}
+                  className="mr-2 h-4 w-4 animate-spin" />Зарегистрироваться</Button>)}
                 {!form.formState.isSubmitting &&
                   <Button disabled={!form.formState.isDirty || !form.formState.isValid}
-                          type="submit">Создать тендер</Button>}
+                    type="submit">{update ? "Сохранить тендер" : "Создать тендер"}</Button>}
               </div>
             </form>
           </Form>

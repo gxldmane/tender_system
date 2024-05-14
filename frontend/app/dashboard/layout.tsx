@@ -11,11 +11,21 @@ const sidebarNavItems = [
     {
       title: "Мои тендеры",
       href: "/dashboard/tenders",
+      role: "customer"
+    },
+    {
+      title: "Мои поданные заявки",
+      href: "/dashboard/bids",
+      role: "executor"
     },
     {
       title: "Уведомления",
       href: "/dashboard/notifications",
     },
+    {
+      title: "Каталог",
+      href: "/browse"
+    }
   ]
 
 interface SettingsLayoutProps {

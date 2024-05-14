@@ -16,7 +16,7 @@ import {
   IRegionsResponse,
   ICategoriesResponse,
   Category,
-  ICategoryResponse
+  ICategoryResponse, ISendedBidsResponse
 } from "@/app/http/types";
 
 interface RequestPayload {
@@ -110,15 +110,21 @@ export default class HttpClient {
     return await this.request("POST", `/tenders/${tenderId}/bids`, { data });
   }
 
-  async deleteBid(tenderId: string): Promise<AxiosResponse<CreateBidResponse | IErrorResponse | any>>{
+  async deleteBid(tenderId: string): Promise<AxiosResponse<CreateBidResponse | IErrorResponse | any>> {
     return await this.request("DELETE", `/tenders/${tenderId}/bids`);
   }
+
+  async deleteTender(tenderId: string): Promise<AxiosResponse<CreateBidResponse | IErrorResponse | any>> {
+    return await this.request("DELETE", `/tenders/${tenderId}`);
+  }
+
+
 
   async createTender(request: ICreateTenderRequest | any): Promise<AxiosResponse<ICreateTenderResponse | IErrorResponse | any>> {
     const data = new FormData();
     for (const key in request) {
-      if (key === "files") {
-        for (let i = 0; i < request.files.length; i++){
+      if (key === "files" && request.files != null) {
+        for (let i = 0; i < request.files.length; i++) {
           data.append("files[]", request.files[i], request.files[i].name);
         }
         continue;
@@ -128,6 +134,22 @@ export default class HttpClient {
 
     return await this.request("POST", `/tenders`, { data });
   }
+
+  async updateTender(request: ICreateTenderRequest | any, tenderId: string): Promise<AxiosResponse<ICreateTenderResponse | IErrorResponse | any>> {
+    const data = new FormData();
+    for (const key in request) {
+      if (key === "files" && request.files != null) {
+        for (let i = 0; i < request.files.length; i++) {
+          data.append("files[]", request.files[i], request.files[i].name);
+        }
+        continue;
+      }
+      data.append(key, request[key]);
+    }
+
+    return await this.request("POST", `/tenders/${tenderId}?_method=PATCH`, {data});
+}
+
 
   async getCompanies(): Promise<AxiosResponse<ICompaniesResponse | IErrorResponse | any>> {
     return await this.request("GET", "/companies");
@@ -157,6 +179,14 @@ export default class HttpClient {
     });
   }
 
+  async getMyBids(page: number = 1): Promise<AxiosResponse<ISendedBidsResponse | IErrorResponse | any>> {
+    return await this.request("GET", "/bids", {
+      params: {
+        page: page,
+      }
+    });
+  }
+
   async getCategoryById(categoryId: number): Promise<AxiosResponse<ICategoryResponse | IErrorResponse | any>> {
     return await this.request("GET", `/categories/${categoryId}`);
   }
@@ -173,9 +203,9 @@ export default class HttpClient {
     return await this.request("GET", `/have-bid/${tenderId}`);
   }
 
-  async downloadFile(fileName: string): Promise<AxiosResponse<Blob | IErrorResponse | any>> {
-    return this.request("GET", `/download?file=${fileName}`);
+  async downloadFile(url: string): Promise<AxiosResponse<Blob | IErrorResponse | any>> {
+    return this.request("GET", `/download?file=${url}`);
   }
-  
+
 
 }

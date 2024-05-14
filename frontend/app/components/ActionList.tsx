@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link"
 import httpClient from "@/app/http";
-import { Loader2, Pencil, Trash2 } from "lucide-react";
+import { ArrowUpSquare, Key, Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { util, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,7 +35,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { CreateBidResponse } from "@/app/http/types";
 import { IErrorResponse } from "@/app/http/httpClient";
 import { Download } from "lucide-react";
-import { File } from "lucide-react";
+import { File as FileIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import TenderCreate from "./TenderCreate";
 
 
 const formSchema = z.object({
@@ -43,6 +46,8 @@ const formSchema = z.object({
 });
 
 type InputSchema = z.input<typeof formSchema>;
+
+
 
 function getFileNameFromUrl(url) {
   var parts = url.split('/');
@@ -58,10 +63,15 @@ function getFileTypeIconFromUrl(url) {
   console.log(url + " url")
 
   if (['pdf'].includes(extension)) {
-    return <File className="h-9 w-9"/>
+    return <FileIcon className="h-9 w-9" />
   }
-  return <File className="h-9 w-9"/>; //todo: найти норм картинки pdf docx / починить чтобы работало иф элсе это
+  return <FileIcon className="h-9 w-9" />; //todo: найти норм картинки pdf docx / починить чтобы работало иф элсе это
 }
+
+function blobToFile(blob: Blob, fileName: string): File {
+  return new File([blob], fileName);
+}
+
 
 interface ActionListProps {
   tenderId: string;
@@ -74,17 +84,67 @@ interface ActionListProps {
     url: string;
     name: string;
   }[];
+  defaultValues: {
+    name: string;
+    description: string;
+    start_price: string;
+    category_id: number;
+    region_id: number;
+    until_date: string;
+  }
 }
 
-export default function ActionList({ tenderId, userRole, isBidded, isCreator, filesList }: ActionListProps) {
+export default function ActionList({ tenderId, userRole, isBidded, isCreator, filesList, defaultValues }: ActionListProps) {
+  const getFilesFromFilesList = async (files: ActionListProps['filesList']) => {
+    const fileArray: File[] = [];
+    for (const file of files) {
+      const url = file.url
+      const response = await queryClient.fetchQuery({
+        queryKey: ['download-file'],
+        queryFn: () => httpClient.downloadFile(url),
+      }).then<Blob | IErrorResponse | any>(value => value?.data);
+      console.log("responsik: " + JSON.stringify(response));
+      if (response?.errors) {
+        console.log("Ошибка");
+        toast({
+          variant: "destructive",
+          title: "Что-то пошло не так",
+          description: response.message,
+        });
+        return;
+      }
+      const convertedFile = blobToFile(response, file.name)
+      fileArray.push(convertedFile)
+      console.log(`Файл: ${convertedFile.name} Размер: ${convertedFile.size}`)
+    }
+
+    return fileArray;
+  }
+  const [files, setFiles] = useState<File[] | null>(null);
+  const [open, setOpen] = useState(false);
+  const form = useForm<InputSchema>({
+    resolver: zodResolver(formSchema),
+    mode: 'onChange',
+    defaultValues: {
+      price: '-'
+    }
+  });
+  useEffect(() => {
+    const fetchFiles = async () => {
+      const fileArray = await getFilesFromFilesList(filesList);
+      setFiles(fileArray);
+    };
+    fetchFiles();
+  }, [filesList]);
   console.log(filesList)
   let queryClient = useQueryClient();
+  const router = useRouter()
   const actions = () => {
     switch (userRole) {
       case 'customer':
         return isCreator ? [
           'download',
-          'applications',
+          'bids',
           'delete',
           'edit',
         ] : ['download'];
@@ -97,7 +157,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
 
   };
   return (
-    <div className="flex items-center gap-4 pt-4 flex-wrap pb-4">
+    <div className="flex items-center w-full gap-4 pt-4 pb-4">
       {actions().map((action) => {
         const href = `/${action}`;
 
@@ -150,43 +210,99 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
                   </DialogHeader>
                   <div className="pt-5 flex flex-col gap-y-2">
                     {
-                    filesList.map((file) => {
-                      return (
-                        <div className="flex justify-between align-center">
-                          <div className="flex items-center gap-x-2.5">
-                            {getFileTypeIconFromUrl(file.url)}
-                            <p>{file.name}</p>
+                      filesList.map((file) => {
+                        return (
+                          <div className="flex justify-between align-center">
+                            <div className="flex items-center gap-x-2.5">
+                              {getFileTypeIconFromUrl(file.url)}
+                              <p>{file.name}</p>
+                            </div>
+                            <div>
+                              <Button size="icon" onClick={(event) => handleDownloadClick(event, file.url, file.name)}><Download className="h-5 w-5" /></Button>
+                            </div>
                           </div>
-                          <div>
-                            <Button size="icon" onClick={(event) => handleDownloadClick(event, file.url, file.name)}><Download className="h-5 w-5" /></Button>
-                          </div>
-                        </div>
-                      )
-                    }
-                    )}
+                        )
+                      }
+                      )}
                   </div>
                 </DialogContent>
               </Dialog>
             );
-          case 'applications':
+          case 'bids':
             return (
-              <Link href={href}>
+              <Link href={`/view-more/${href}?tenderId=${tenderId}`}>
                 <Button className='' key={action}>Заявки</Button>
-              </Link>
-            );
-          case 'delete':
-            return (
-              <Link href={href}>
-                <Button variant='default' key={action}>
-                  <Trash2 className="p-1"size={36} color="#ffffff" strokeWidth={1.5} />
-                </Button>
               </Link>
             );
           case 'edit':
             return (
-              <Link href={href}>
-                <Button variant='default'key={action}><Pencil size={30} color="#ffffff" strokeWidth={1.5} /></Button>
-              </Link>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant='ghost' size='icon' key={action}><Pencil size={30} color="#000000" strokeWidth={1.5} /></Button>
+                </SheetTrigger>
+                <SheetContent className={"p-8 min-w-fit overflow-y-scroll"}>
+                  <SheetHeader>
+                    <SheetTitle>Редактирование тендера</SheetTitle>
+                  </SheetHeader>
+                  <TenderCreate update={true} tenderId={tenderId} defaultPropValues={defaultValues} defaultFiles={files} />
+                </SheetContent>
+              </Sheet>
+
+            );
+          case 'delete':
+            const handleDeleteTenderClick = async (event) => {
+              const response = await queryClient.fetchQuery({
+                queryKey: ['delete-tender'],
+                queryFn: () => httpClient.deleteTender(tenderId),
+              }).then<CreateBidResponse | IErrorResponse | any>(value => value?.data);
+              console.log("responsik: " + JSON.stringify(response));
+              if (response?.errors) {
+                console.log("Ошибка")
+                for (const [field, messages] of Object.entries(response.errors)) {
+                  form.setError(field as any, {
+                    type: 'manual',
+                    message: (messages as string[]).join(", ")
+                  }, { shouldFocus: true });
+                }
+                toast({
+                  variant: "destructive",
+                  title: "Что-то пошло не так",
+                  description: response.message,
+                });
+                return;
+              }
+              toast({
+                variant: "default",
+                title: "Тендер успешно удален",
+                description: "Это действие безвозвратно",
+              });
+              router.push("/tenders");
+              return;
+            }
+            return (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" className="ml-auto" size="icon" key={action}>
+                    <Trash2 className="p-1" size={36} color="#ffffff" strokeWidth={1.5} />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Вы уверены, что хотите удалить тендер?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Вы не сможете отменить это действие.<br /> Тендер будет удален <b>навсегда</b> и <b>безвозвратно!</b>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="min-w-16">Нет</AlertDialogCancel>
+                    <AlertDialogAction asChild>
+                      <Button className="min-w-16" variant="default" onClick={handleDeleteTenderClick}>
+                        Да
+                      </Button>
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             );
           case 'withdraw':
             const handleClick = async (event) => {
@@ -221,7 +337,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
             return (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button className="" variant="default">Отозвать заявку</Button>
+                  <Button variant="default">Отозвать заявку</Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
@@ -242,15 +358,6 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
               </AlertDialog>
             );
           case 'apply':
-            const [open, setOpen] = useState(false);
-            const form = useForm<InputSchema>({
-              resolver: zodResolver(formSchema),
-              mode: 'onChange',
-              defaultValues: {
-                price: '-'
-              }
-            });
-
             async function onSubmit(values: InputSchema) {
               console.log(JSON.stringify(values));
               console.log(tenderId);
@@ -288,7 +395,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
               <Form {...form}>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
-                    <Button className="border-2" variant='secondary' key={href}>Подать заявку</Button>
+                    <Button className="border-2" variant='ghost' key={href}>Подать заявку</Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -327,7 +434,11 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
               </Form>
             );
           default:
-            return null;
+            return (
+              <div>
+                Такого тендера не существует
+              </div>
+            )
         }
       })}
     </div >
