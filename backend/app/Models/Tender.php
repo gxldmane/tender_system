@@ -39,12 +39,12 @@ class Tender extends Model
 
     public function customer()
     {
-        return User::query()->where('id', $this->customer_id);
+        return  User::query()->where('id', $this->customer_id)->first()->get();
     }
 
     public function executor()
     {
-        return User::query()->where('id', $this->executor_id);
+        return User::query()->where('id', $this->executor_id)->first()->get();
     }
 
     public function bids(): HasMany
