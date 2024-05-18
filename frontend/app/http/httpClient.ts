@@ -16,7 +16,9 @@ import {
   IRegionsResponse,
   ICategoriesResponse,
   Category,
-  ICategoryResponse, ISendedBidsResponse
+  ICategoryResponse, ISendedBidsResponse,
+  Company,
+  ISendedBid
 } from "@/app/http/types";
 
 interface RequestPayload {
@@ -207,5 +209,20 @@ export default class HttpClient {
     return this.request("GET", `/download?file=${url}`);
   }
 
+  async getTenderBids(tenderId: string, page: number = 1): Promise<AxiosResponse<ISendedBidsResponse | IErrorResponse | any>> {
+    return await this.request("GET", `/bids/${tenderId}`, {
+      params: {
+        page: page,
+      }
+    });
+  }
+
+  async getCompanyById(companyId: number): Promise<AxiosResponse<Company | IErrorResponse | any>> {
+    return await this.request("GET", `/companies/${companyId}`);
+  }
+
+  async acceptBid(tenderId: number, bidId: number): Promise<AxiosResponse<ISendedBid | IErrorResponse | any>> {
+    return await this.request("GET", `bids/${tenderId}/${bidId}`);
+  }
 
 }

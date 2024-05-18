@@ -1,3 +1,5 @@
+import { string } from "zod";
+
 export interface IRegisterData {
   name: string;
   email: string;
@@ -59,7 +61,7 @@ export interface ICategoriesResponse {
 }
 
 export interface ITenderResponse {
-  data: ITenderDetails & { files: {id: string, tenderId: string, url: string, name: string}[] }
+  data: ITenderDetails & { files: { id: string, tenderId: string, url: string, name: string }[] }
 }
 
 export interface IPaginated {
@@ -95,6 +97,9 @@ export interface ISendedBidsResponse extends IPaginated {
 export interface ISendedBid {
   id: number;
   tenderId: number;
+  tenderName: string;
+  tenderCustomerName: string;
+  tenderCompanyName: string;
   companyId: number;
   userId: number;
   price: number;

@@ -17,7 +17,7 @@ function DottedBackground({ children }: { children: React.ReactNode }) {
   return (
     <span className="dot-mask">
       <div
-        className="absolute inset-0 h-fit w-full bg-white dark:bg-stone-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#0f172a_1px,transparent_1px)] [background-size:16px_16px]">
+        className="absolute inset-0 h-full w-full bg-white dark:bg-stone-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#0f172a_1px,transparent_1px)] [background-size:16px_16px]">
         {children}
       </div>
     </span>

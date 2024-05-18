@@ -69,9 +69,6 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
   const [openCategories, setOpenCategories] = useState(false);
   const [openRegions, setOpenRegions] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
-  const handleCloseButton = () => {
-    setOpenCalendar(false);
-  }
   const router = useRouter();
   const queryClient = useQueryClient();
   const form = useForm<InputSchema>({
@@ -146,15 +143,6 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
     }
     return;
   };
-  const { control, register } = useForm();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-
-  const handleDateChange = (date: Date) => {
-    setSelectedDate(date);
-    const formattedDate = format(date, 'dd.MM.yyyy');
-    register('until_date', { value: formattedDate });
-  }
-
 
 
   return (
@@ -350,56 +338,39 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
                 name="until_date"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex flex-col">
                       <FormLabel>Дата окончания</FormLabel>
-                      <div>
-                        <Popover open={openCalendar} onOpenChange={setOpenCalendar}>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className="w-full justify-between"
-                              >
-                                {selectedDate
-                                  ? format(selectedDate, 'dd.MM.yyyy')
-                                  : 'Выберите дату'}
-                                <CalendarIcon className="ml-auto h-4 w-4" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-5 flex flex-col" align="start">
-                            <div className="flex justify-end w-full">
-                              <Button
-                                variant="ghost"
-                                className="cursor-pointer"
-                                size="icon"
-                                onClick={() => setOpenCalendar(false)}
-                              >
-                                <XIcon width={20} height={20} />
-                              </Button>
-                              </div>
-                              <Calendar
-                                mode="single"
-                                selected={selectedDate}
-                                onSelect={(date) => {
-                                  setSelectedDate(date);
-                                  form.setValue('until_date', format(date, 'yyyy-MM-dd'), { shouldDirty: true });
-                                  form.trigger('until_date');
-                                }}
-                                disabled={(date) =>
-                                  date < new Date()
-                                }
-                              />
-                          </PopoverContent>
-                        </Popover>
-                      </div>
+                      <Popover open={openCalendar} onOpenChange={setOpenCalendar}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="w-full justify-between"
+                            >
+                              {field.value
+                                ? format(field.value, 'dd.MM.yyyy')
+                                : 'Выберите дату'}
+                              <CalendarIcon className="ml-auto h-4 w-4" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-5 flex flex-col">
+                          <Calendar
+                            mode="single"
+                            selected={new Date(field.value)}
+                            onSelect={(date) => {
+                              form.setValue('until_date', format(date, 'yyyy-MM-dd'), { shouldDirty: true });
+                              form.trigger('until_date');
+                              setTimeout(() => setOpenCalendar(false), 150);
+                            }}
+                            disabled={(date) => date < new Date()}
+                          />
+                        </PopoverContent>
+                      </Popover>
                       <FormMessage />
-                    </div>
                   </FormItem>
-
                 )}
               />
-
               <div
                 className={`w-full flex items-center justify-center gap-x-2 rounded-md border-2 border-dashed border-muted-foreground/10 px-2 pb-1 ${form.watch("files") !== null ? "pt-4" : "pt-2"}`}>
                 <FormField
@@ -448,7 +419,7 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
               )}
 
               <div className={"flex items-center justify-between"}>
-                {form.formState.isSubmitting && (<Button type="button" disabled> <Loader2
+                {form.formState.isSubmitting && (<Button type="submit" disabled> <Loader2
                   className="mr-2 h-4 w-4 animate-spin" />Зарегистрироваться</Button>)}
                 {!form.formState.isSubmitting &&
                   <Button disabled={!form.formState.isDirty || !form.formState.isValid}

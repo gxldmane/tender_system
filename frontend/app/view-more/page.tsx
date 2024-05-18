@@ -12,7 +12,7 @@ import ActionList from '../components/ActionList';
 import { useQuery } from "@tanstack/react-query";
 import { Category, ICategoryResponse, ITenderDetails, Region } from "@/app/http/types";
 import useUser from "@/app/components/useUser";
-import { RussianRuble, FolderIcon, CalendarFold, ShieldCheck, AlarmClock, MapPin } from 'lucide-react';
+import { RussianRuble, FolderIcon, CalendarFold, ShieldCheck, AlarmClock, MapPin, CircleX } from 'lucide-react';
 import useToken from "@/app/components/useToken";
 import { Separator } from "@/components/ui/separator"
 
@@ -30,6 +30,12 @@ function parseStatus(status) {
         <div className='flex justify-center items-center gap-x-1'>
           <h2 className='text-3xl font-normal tracking-tight'>Выбор подрядчика</h2>
           <AlarmClock size={36} color="#4f4f4f" strokeWidth={1.5} />
+        </div>)
+    case 'closed': 
+      return (
+        <div className='flex justify-center items-center gap-x-1'>
+          <h2 className='text-3xl font-normal tracking-tight'>Тендер закрыт</h2>
+          <CircleX size={36} color="#ff0000" strokeWidth={1.5}/>
         </div>)
   }
 }
@@ -136,7 +142,7 @@ export default function ViewMore() {
 
   return (
     <div className="container flex flex-col mt-10 ">
-      <div className="flex-1 flex-col space-y-4 px-8 pt-6  bg-stone-100 drop-shadow-xl  rounded-xl border-2 mb-5">
+      <div className="flex-1 flex-col space-y-4 px-8 pt-6 bg-white drop-shadow  rounded-xl border-2 mb-5">
         <div className="flex items-center justify-between space-y-2  px-2 py-6">
           {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory ? (
             <Skeleton className="h-24 w-full rounded-md" />
