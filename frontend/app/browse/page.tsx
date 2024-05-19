@@ -29,17 +29,6 @@ export default function Browse() {
     select: data => data?.data as ITendersResponse,
   });
 
-  const {data: categoriesResponse, isFetching: isCategoriesFetching, isError: isCategoriesError} = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => httpClient.getCategories(),
-    select: data => data?.data as ICategoriesResponse,
-  });
-
-  const {data: regionsResponse, isFetching: isRegionsFetching, isError: isRegionsError} = useQuery({
-    queryKey: ['regions'],
-    queryFn: () => httpClient.getRegions(),
-    select: data => data?.data as IRegionsResponse,
-  });
 
   const { isFetching: isTokenFetching, authToken } = useToken();
   if (isTokenFetching) return;
@@ -71,7 +60,7 @@ export default function Browse() {
           <Skeleton className="h-24 w-full rounded-md" />
         ) : (
           <div>
-            <TendersCard items={response.data} categories={categoriesResponse?.data} regions={regionsResponse?.data}/>
+            <TendersCard items={response.data}/>
           </div>
         )}
       </div>

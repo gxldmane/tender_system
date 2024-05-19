@@ -85,7 +85,7 @@ export default function MyTenders() {
         <span className="text-2xl font-semibold mx-auto mb-4">Мои
           тендеры {response.meta.from ?? 0}-{response.meta.to ?? 0} из {response.meta.total}</span>
       }
-      <div className="md:w-full space-y-6 p-10 bg-white border-2 rounded-md">
+      <div className="md:w-full">
         {isFetching || !response ? (
           <Skeleton className="h-24 w-full rounded-md"/>
         ) : (

@@ -2,8 +2,10 @@ import React from "react"
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Category, ITenderDetails, Region } from "@/app/http/types";
+import { Category, ICategoriesResponse, IRegionsResponse, ITenderDetails, Region } from "@/app/http/types";
 import { AlarmClock, CircleX, Info, ShieldCheck } from "lucide-react";
+import httpClient from "../http";
+import { useQuery } from "@tanstack/react-query";
 
 function findCategoryName(categories: Category[], id: number) {
   return categories.find((category) => category.id === id)?.name;
@@ -72,19 +74,28 @@ function parseStatus(status) {
 
 interface TenderCardProps {
   items: ITenderDetails[];
-  categories: Category[];
-  regions: Region[];
 }
 
-export default function TendersCard({ items, categories, regions, ...props }: TenderCardProps) {
+export default function TendersCard({ items, ...props }: TenderCardProps) {
+  const {data: categoriesResponse, isFetching: isCategoriesFetching, isError: isCategoriesError} = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => httpClient.getCategories(),
+    select: data => data?.data as ICategoriesResponse,
+  });
+
+  if (isCategoriesFetching) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
-      {items.map((item) => (
+    
+      {!isCategoriesFetching && items.map((item) => (
         <div className="grid gap-4 grid-cols-4 min-h-40 bg-white drop-shadow rounded-xl h-full border-0 p-7 mb-5" key={item.id}>
           <div className="col-span-2 flex flex-col flex-grow gap-y-6">
             <h1 className="text-base font-bold">{item.name}</h1>
             <div className="flex flex-col gap-y-2">
-              <h2 className="text-base text-sm">{findCategoryName(categories, item.categoryId)}</h2>
+              <h2 className="text-base text-sm">{findCategoryName(categoriesResponse?.data, item.categoryId)}</h2>
               <h3 className="text-xs text-muted-foreground font-light">Тендер {generatePseudoRandomString(item.id)}</h3>
             </div>
           </div>
@@ -92,7 +103,7 @@ export default function TendersCard({ items, categories, regions, ...props }: Te
             <h1>
               {(item.start_price).toLocaleString('ru')} ₽
             </h1>
-            {item.status === 'pending' &&
+            {item.status === 'active' &&
               <div className="flex flex-col">
                 <h2 className="text-base text-sm">Подача заявок</h2>
                 <h3 className="text-base">до {item.untilDate.toLocaleString()}</h3>
