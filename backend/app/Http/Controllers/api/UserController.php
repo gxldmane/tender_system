@@ -66,9 +66,9 @@ class UserController extends Controller
         $user = auth()->user();
         $notifications = $user->notifications;
 
-        return $notifications->map(function ($notification) {
-            return NotificationResourceFactory::make($notification);
-        });
+        return ['data' => $notifications->map(function ($notification) {
+        return NotificationResourceFactory::make($notification);
+        })];
     }
 
     public function getUnreadNotifications()
@@ -76,9 +76,9 @@ class UserController extends Controller
         $user = auth()->user();
         $notifications = $user->unreadNotifications;
 
-        return $notifications->map(function ($notification) {
+        return ['data' => $notifications->map(function ($notification) {
             return NotificationResourceFactory::make($notification);
-        });
+        })];
     }
 
     /**
