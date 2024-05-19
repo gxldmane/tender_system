@@ -37,9 +37,9 @@ class Tender extends Model
         return $this->hasMany(File::class);
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
-        return  User::query()->where('id', $this->customer_id)->first()->get();
+        return $this->belongsTo(User::class, 'customer_id');
     }
 
     public function executor()

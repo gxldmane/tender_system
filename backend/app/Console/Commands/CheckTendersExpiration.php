@@ -15,13 +15,20 @@ class CheckTendersExpiration extends Command
 
     public function handle()
     {
-        $tenders = Tender::where('until_date', '<', Carbon::now())->get();
+        $tenders = Tender::where('until_date', '<', Carbon::now())
+            ->whereNotIn('status', ['pending', 'closed'])
+            ->get();
+
+        if ($tenders->count() === 0) {
+            $this->info('No tenders found to be expired.');
+            return;
+        }
 
         foreach ($tenders as $tender) {
             $tender->status = 'pending';
             $tender->save();
 
-            $user = $tender->customer()->first();
+            $user = $tender->customer;
             $user->notify(new TenderClosed($tender));
         }
 
