@@ -87,7 +87,7 @@ export default function TenderBids() {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                            <CustomerTenderBidCard status={status} items={response.data} />
+                                <CustomerTenderBidCard status={status} items={response.data} />
                             </CardContent>
                         </Card>
                     </>

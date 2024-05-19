@@ -29,7 +29,7 @@ const formSchema = z.object({
   email: z.string().trim().email({ message: "Указан неверный email-адрес" }).endsWith(".ru", { message: 'Требуется российский email-адрес' }).toLowerCase().min(1, 'Укажите email-адрес').max(100, 'Слишком длинный email-адрес'),
   password: z.string().min(8, "Пароль должен содержать не менее 8 символов.")
     .max(40, "Пароль должен состоять не более чем из 40 символов."),
-    // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])(.{8,})$/, "Пароль должен состоять как минимум из одной строчной буквы, как минимум одной прописной буквы, как минимум одной цифры и как минимум одного специального символа."),
+  // .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])(.{8,})$/, "Пароль должен состоять как минимум из одной строчной буквы, как минимум одной прописной буквы, как минимум одной цифры и как минимум одного специального символа."),
   confirm: z.string(),
   role: z.string(),
   company_id: z.number(),
@@ -67,6 +67,7 @@ export default function Register() {
       queryKey: ['register'],
       queryFn: () => httpClient.register(values, saveUserData, saveAuthToken),
     });
+    console.log(response)
 
     if (response.status === 200) {
       if (!response?.data?.data?.token) return;
@@ -74,8 +75,15 @@ export default function Register() {
       router.push("/dashboard");
       return;
     }
+    if (response.status === 401) {
+      toast({
+        variant: "destructive",
+        title: "Что-то пошло не так",
+        description: "Неверный логин или пароль",
+      });
+      return;
+    }
     if (response?.data?.errors) {
-      // Highlight form errors
       for (const [field, messages] of Object.entries(response?.data?.errors)) {
         form.setError(field as any, {
           type: 'manual',
@@ -83,11 +91,10 @@ export default function Register() {
         }, { shouldFocus: true });
       }
     }
-    // General error message toast
     toast({
       variant: "destructive",
       title: "Что-то пошло не так",
-      description: response?.data?.message,
+      description: "",
     });
     return;
   }
@@ -109,21 +116,21 @@ export default function Register() {
         </CardHeader>
         <CardContent className="grid gap-8">
           {isFetching || form.formState.isSubmitting ? (
-              <div className="p-4">
-                <div className="flex items-center justify-between gap-4">
-                  <Skeleton className="h-10 w-full max-w-xs"/>
-                  <div className="flex space-x-2">
-                    <Skeleton className="h-10 w-10 rounded-md"/>
-                    <Skeleton className="h-10 w-10 rounded-md"/>
-                  </div>
-                </div>
-                <div className="mt-4 flex flex-col gap-4">
-                  {Array.from({ length: 3 }).map((_, index) => (
-                    <Skeleton key={index} className="h-24 w-full rounded-md"/>
-                  ))}
+            <div className="p-4">
+              <div className="flex items-center justify-between gap-4">
+                <Skeleton className="h-10 w-full max-w-xs" />
+                <div className="flex space-x-2">
+                  <Skeleton className="h-10 w-10 rounded-md" />
+                  <Skeleton className="h-10 w-10 rounded-md" />
                 </div>
               </div>
-            ) :
+              <div className="mt-4 flex flex-col gap-4">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <Skeleton key={index} className="h-24 w-full rounded-md" />
+                ))}
+              </div>
+            </div>
+          ) :
             <div className="flex items-center space-x-4 rounded-md border p-4">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-8">
@@ -136,7 +143,7 @@ export default function Register() {
                         <FormControl>
                           <Input placeholder="ФИО" {...field} />
                         </FormControl>
-                        <FormMessage/>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -149,11 +156,11 @@ export default function Register() {
                         <FormControl>
                           <Input placeholder="Email-адрес" autoComplete="username" {...field} />
                         </FormControl>
-                        <FormMessage/>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <Separator/>
+                  <Separator />
                   <FormField
                     control={form.control}
                     name="password"
@@ -168,7 +175,7 @@ export default function Register() {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage/>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -186,11 +193,11 @@ export default function Register() {
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage/>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <Separator/>
+                  <Separator />
                   <FormField
                     control={form.control}
                     name="company_id"
@@ -210,7 +217,7 @@ export default function Register() {
                                   )}
                                 >
                                   {field.value ? companies.find((company) => company.id === field.value)?.name : "Выберите компанию"}
-                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50"/>
+                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                               </FormControl>
                             </PopoverTrigger>
@@ -252,7 +259,7 @@ export default function Register() {
                         <FormDescription>
                           {companies[form.getValues('company_id')]?.description}
                         </FormDescription>
-                        <FormMessage/>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -265,7 +272,7 @@ export default function Register() {
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger className={"w-[400px]"}>
-                              <SelectValue placeholder="Выберите роль"/>
+                              <SelectValue placeholder="Выберите роль" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className={"w-[400px]"}>
@@ -277,16 +284,16 @@ export default function Register() {
                           {form.getValues('role') === 'customer' && "Заказчик может размещать тендеры"}
                           {form.getValues('role') === 'executor' && "Подрядчик может исполнять тендеры"}
                         </FormDescription>
-                        <FormMessage/>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
                   <div className={"flex items-center justify-between"}>
                     {form.formState.isSubmitting && (<Button type="button" disabled> <Loader2
-                      className="mr-2 h-4 w-4 animate-spin"/>Зарегистрироваться</Button>)}
+                      className="mr-2 h-4 w-4 animate-spin" />Зарегистрироваться</Button>)}
                     {!form.formState.isSubmitting &&
-                        <Button disabled={!form.formState.isDirty || !form.formState.isValid}
-                                type="submit">Зарегистрироваться</Button>}
+                      <Button disabled={!form.formState.isDirty || !form.formState.isValid}
+                        type="submit">Зарегистрироваться</Button>}
                   </div>
                 </form>
               </Form>

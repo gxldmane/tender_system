@@ -18,7 +18,9 @@ import {
   Category,
   ICategoryResponse, ISendedBidsResponse,
   Company,
-  ISendedBid
+  ISendedBid,
+  IGetNotificationsResponse,
+  IGetNotificationResponse
 } from "@/app/http/types";
 
 interface RequestPayload {
@@ -223,6 +225,18 @@ export default class HttpClient {
 
   async acceptBid(tenderId: number, bidId: number): Promise<AxiosResponse<ISendedBid | IErrorResponse | any>> {
     return await this.request("GET", `bids/${tenderId}/${bidId}`);
+  }
+
+  async getAllNotifications() : Promise<AxiosResponse<IGetNotificationsResponse | IErrorResponse | any>> { 
+    return await this.request("GET", `/profile/notifications`);
+  }
+
+  async getUnreadNotifications() : Promise<AxiosResponse<IGetNotificationsResponse | IErrorResponse | any>> {
+    return await this.request("GET", `/profile/unread`);
+  }
+
+  async getNotifications(notificationId: string) : Promise<AxiosResponse<IGetNotificationResponse | IErrorResponse | any>> {
+    return await this.request("GET", `/profile/notifications/${notificationId}`);
   }
 
 }

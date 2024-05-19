@@ -27,17 +27,17 @@ function DottedBackground({ children }: { children: React.ReactNode }) {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-    <body className={`${inter.className}`}>
-    <StrictMode>
-      <InternalQueryClientProvider>
-        <DottedBackground>
-          <Header/>
-          {children}
-          <Toaster/>
-        </DottedBackground>
-      </InternalQueryClientProvider>
-    </StrictMode>
-    </body>
+      <body className={`${inter.className}`}>
+        <StrictMode>
+          <InternalQueryClientProvider>
+            <DottedBackground>
+              <Header />
+              {children}
+              <Toaster />
+            </DottedBackground>
+          </InternalQueryClientProvider>
+        </StrictMode>
+      </body>
     </html>
   );
 }
