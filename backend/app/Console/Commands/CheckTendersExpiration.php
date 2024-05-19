@@ -15,7 +15,7 @@ class CheckTendersExpiration extends Command
 
     public function handle()
     {
-        $tenders = Tender::where('until_date', '<', Carbon::now())
+        $tenders = Tender::where('until_date', '<=', Carbon::now())
             ->whereNotIn('status', ['pending', 'closed'])
             ->get();
 
