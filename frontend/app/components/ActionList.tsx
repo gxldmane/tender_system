@@ -25,10 +25,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { util, z } from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast"
 import { useQueryClient } from "@tanstack/react-query";
@@ -78,6 +77,7 @@ interface ActionListProps {
   userRole: string;
   isBidded: boolean;
   isCreator: boolean;
+  status: string;
   filesList: {
     id: string;
     tenderId: string;
@@ -94,7 +94,7 @@ interface ActionListProps {
   }
 }
 
-export default function ActionList({ tenderId, userRole, isBidded, isCreator, filesList, defaultValues }: ActionListProps) {
+export default function ActionList({ tenderId, userRole, isBidded, isCreator, status, filesList, defaultValues }: ActionListProps) {
   const getFilesFromFilesList = async (files: ActionListProps['filesList']) => {
     const fileArray: File[] = [];
     for (const file of files) {
@@ -230,8 +230,8 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
             );
           case 'bids':
             return (
-              <Link href={`/view-more/${href}?tenderId=${tenderId}`}>
-                <Button className='' key={action}>Заявки</Button>
+              <Link href={`/view-more/${href}?tenderId=${tenderId}&status=${status}`}>
+                <Button key={action}>Заявки</Button>
               </Link>
             );
           case 'edit':
