@@ -30,6 +30,7 @@ import { SquareCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 interface TenderCardProps {
     items: ISendedBid[];
+    status: string;
 }
 
 const fetchStatus = (status: string) => {
@@ -43,7 +44,7 @@ const fetchStatus = (status: string) => {
     }
 }
 
-export default function CustomerTenderBidCard({ items, ...props }: TenderCardProps) {
+export default function CustomerTenderBidCard({ items, status, ...props }: TenderCardProps) {
     //TODO: починить, делает вечные запросы
     const queryClient = useQueryClient();
     const router = useRouter();
@@ -119,7 +120,6 @@ export default function CustomerTenderBidCard({ items, ...props }: TenderCardPro
                     <TableHead className="hidden md:table-cell text-center">
                         Дата подачи
                     </TableHead>
-                    <TableHead className="sr-only">Принять</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -141,7 +141,8 @@ export default function CustomerTenderBidCard({ items, ...props }: TenderCardPro
                             <TableCell className="hidden md:table-cell text-center">
                                 {new Date(item.createdAt).toLocaleDateString()}
                             </TableCell>
-                            <TableCell>
+                            {status == "pending" && 
+                            <TableCell className="text-center">
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <Button size="icon" aria-haspopup="dialog" variant="ghost">
@@ -165,7 +166,8 @@ export default function CustomerTenderBidCard({ items, ...props }: TenderCardPro
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>
-                            </TableCell>
+                            </TableCell>}
+                            
                         </TableRow>
                     </>
                 ))}

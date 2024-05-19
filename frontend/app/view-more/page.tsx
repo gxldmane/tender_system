@@ -246,7 +246,7 @@ export default function ViewMore() {
         ) : (
           <div className='flex pb-5 justify-between items-center'>
             <ActionList tenderId={currentTenderId} userRole={userDetails?.role} isBidded={hasBid}
-              isCreator={tenderDetails.customerId === userDetails?.id} filesList={tenderDetails.files} defaultValues={{ name: tenderDetails.name, description: tenderDetails.description, start_price: tenderDetails.start_price.toString(), category_id: tenderDetails.categoryId, region_id: tenderDetails.regionId, until_date: tenderDetails.untilDate }}/>
+              isCreator={tenderDetails.customerId === userDetails?.id} status={tenderDetails.status} filesList={tenderDetails.files} defaultValues={{ name: tenderDetails.name, description: tenderDetails.description, start_price: tenderDetails.start_price.toString(), category_id: tenderDetails.categoryId, region_id: tenderDetails.regionId, until_date: tenderDetails.untilDate }}/>
           </div>)}
       </div>
     </div>

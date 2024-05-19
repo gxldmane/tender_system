@@ -77,6 +77,7 @@ interface ActionListProps {
   userRole: string;
   isBidded: boolean;
   isCreator: boolean;
+  status: string;
   filesList: {
     id: string;
     tenderId: string;
@@ -93,7 +94,7 @@ interface ActionListProps {
   }
 }
 
-export default function ActionList({ tenderId, userRole, isBidded, isCreator, filesList, defaultValues }: ActionListProps) {
+export default function ActionList({ tenderId, userRole, isBidded, isCreator, status, filesList, defaultValues }: ActionListProps) {
   const getFilesFromFilesList = async (files: ActionListProps['filesList']) => {
     const fileArray: File[] = [];
     for (const file of files) {
@@ -229,8 +230,8 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, fi
             );
           case 'bids':
             return (
-              <Link href={`/view-more/${href}?tenderId=${tenderId}`}>
-                <Button className='' key={action}>Заявки</Button>
+              <Link href={`/view-more/${href}?tenderId=${tenderId}&status=${status}`}>
+                <Button key={action}>Заявки</Button>
               </Link>
             );
           case 'edit':

@@ -30,6 +30,7 @@ export default function TenderBids() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const tenderId = searchParams.get('tenderId');
+    const status = searchParams.get('status');
     const { data: response, isFetching, isError } = useQuery({
         queryKey: ['tender-bids'],
         queryFn: () => httpClient.getTenderBids(tenderId),
@@ -86,7 +87,7 @@ export default function TenderBids() {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                            <CustomerTenderBidCard items={response.data} />
+                            <CustomerTenderBidCard status={status} items={response.data} />
                             </CardContent>
                         </Card>
                     </>
