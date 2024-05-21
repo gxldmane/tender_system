@@ -65,7 +65,7 @@ function parseStatus(status) {
     case 'closed':
       return (
         <div className='flex justify-center items-center gap-x-1'>
-          <h2 className='text-3xl font-normal tracking-tight'>Тендер закрыт</h2>
+          <h2 className='font-normal tracking-tight'>Тендер закрыт</h2>
           <CircleX color="#ff0000" />
         </div>)
   }
@@ -89,8 +89,7 @@ export default function TendersCard({ items, ...props }: TenderCardProps) {
 
   return (
     <>
-    
-      {!isCategoriesFetching && items.map((item) => (
+      {items.map((item) => (
         <div className="grid gap-4 grid-cols-4 min-h-40 bg-white drop-shadow rounded-xl h-full border-0 p-7 mb-5" key={item.id}>
           <div className="col-span-2 flex flex-col flex-grow gap-y-6">
             <h1 className="text-base font-bold">{item.name}</h1>

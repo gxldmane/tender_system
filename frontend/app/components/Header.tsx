@@ -17,8 +17,8 @@ import { Loader, LogIn, User } from "lucide-react";
 export default function Header() {
   const { userDetails, isFetching } = useUser();
   return (
-    <header className="py-4 bg-white">
-      <div className="container mx-auto  flex items-center justify-between">
+    <header className="py-4 bg-transparent">
+      <div className="container mx-auto flex items-center justify-between">
         <div>
           <Link href="/">
             <Image src="/logo.svg" alt="Logo" width={0} height={0} layout="responsive" />

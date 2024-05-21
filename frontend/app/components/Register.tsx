@@ -45,7 +45,7 @@ export default function Register() {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const { saveUserData } = useUser();
-  const { saveAuthToken } = useToken();
+  const { authToken, saveAuthToken } = useToken();
   const form = useForm<InputSchema>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
@@ -61,6 +61,12 @@ export default function Register() {
     queryFn: () => httpClient.getCompanies(),
     select: data => data?.data?.data,
   });
+
+  if (authToken) {
+    // if user is authenticated
+    router.push("/dashboard");
+    return;
+  }
 
   async function onSubmit(values: InputSchema) {
     const response = await queryClient.fetchQuery({
