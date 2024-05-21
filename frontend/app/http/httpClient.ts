@@ -86,6 +86,10 @@ export default class HttpClient {
     saveUserData(response?.data?.data?.user)
   }
 
+  private saveNotificationsData(response: AxiosResponse<any, any>, saveNotifications: (notifications: IGetNotificationsResponse) => void) {
+    saveNotifications(response?.data.data)
+  }
+
   async register(request: any, saveUserData: (userDetails: IUserDetails) => void, saveAuthToken: (authToken: string) => void): Promise<AxiosResponse<any>> {
     const data = new FormData();
     for (const key in request) {
@@ -121,8 +125,6 @@ export default class HttpClient {
   async deleteTender(tenderId: string): Promise<AxiosResponse<CreateBidResponse | IErrorResponse | any>> {
     return await this.request("DELETE", `/tenders/${tenderId}`);
   }
-
-
 
   async createTender(request: ICreateTenderRequest | any): Promise<AxiosResponse<ICreateTenderResponse | IErrorResponse | any>> {
     const data = new FormData();
@@ -227,12 +229,14 @@ export default class HttpClient {
     return await this.request("GET", `bids/${tenderId}/${bidId}`);
   }
 
-  async getAllNotifications() : Promise<AxiosResponse<IGetNotificationsResponse | IErrorResponse | any>> { 
-    return await this.request("GET", `/profile/notifications`);
+  async getUnreadNotifications(saveNotificationsData: (notificationDetails: IGetNotificationsResponse) => void) : Promise<AxiosResponse<any>> { 
+    const response = await this.request("GET", `/profile/unread`);
+    this.saveNotificationsData(response, saveNotificationsData);
+    return response;
   }
 
-  async getUnreadNotifications() : Promise<AxiosResponse<IGetNotificationsResponse | IErrorResponse | any>> {
-    return await this.request("GET", `/profile/unread`);
+  async getAllNotifications() : Promise<AxiosResponse<IGetNotificationsResponse | IErrorResponse | any>> {
+    return await this.request("GET", `/profile/notifications`);
   }
 
   async getNotifications(notificationId: string) : Promise<AxiosResponse<IGetNotificationResponse | IErrorResponse | any>> {

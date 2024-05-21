@@ -12,9 +12,11 @@ import httpClient from "@/app/http";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip"
 import { InfoIcon } from "lucide-react";
+import useNotifications from "../components/useNotifications";
 
 export default function DashboardPage(props) {
   const { userDetails, isFetching, invalidateUserData } = useUser();
+  const { invalidateNotificationsData } = useNotifications();
   const router = useRouter();
   const { data: companies, isFetching: isCompaniesFetching, isError } = useQuery({
     queryKey: ['companies'],
@@ -34,6 +36,7 @@ export default function DashboardPage(props) {
   const handleSignOut = async () => {
     invalidateUserData();
     invalidateToken();
+    invalidateNotificationsData();
     router.push("/");
     location.reload();
   }
