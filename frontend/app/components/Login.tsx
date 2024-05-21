@@ -43,7 +43,7 @@ export default function Register() {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const { saveUserData } = useUser();
-  const { saveAuthToken } = useToken();
+  const { authToken, saveAuthToken } = useToken();
   const form = useForm<InputSchema>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
@@ -52,6 +52,12 @@ export default function Register() {
       password: '',
     }
   });
+
+  if (authToken) {
+    // if user is authenticated
+    router.push("/dashboard");
+    return;
+  }
 
   async function onSubmit(values: InputSchema) {
     const response = await queryClient.fetchQuery({
@@ -62,6 +68,7 @@ export default function Register() {
     if (response.status === 200) {
       if (!response?.data?.data?.token) return;
       queryClient.setQueryData(['user_data'], response?.data?.data?.details);
+      location.reload();
       router.push("/dashboard");
       return;
     }

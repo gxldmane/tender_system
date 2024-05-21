@@ -36,7 +36,7 @@ interface TenderCardProps {
 const fetchStatus = (status: string) => {
     switch (status) {
         case "accepted":
-            return (<Badge variant="destructive" className="align-center">Принята</Badge>);
+            return (<Badge variant="success" className="align-center">Принята</Badge>);
         case "pending":
             return (<Badge variant="outline" className="align-center">Ожидание</Badge>);
         case "rejected":

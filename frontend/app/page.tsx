@@ -52,7 +52,7 @@ export default function Home() {
               <div className="grid grid-cols-3 gap-8">
                 {features.map((feature, index) => (
                   <div key={index} className="flex flex-col items-center space-y-2 border-gray-800 p-4 rounded-lg">
-                    <div className="p-2 bg-black rounded-full">
+                    <div className="p-2 bg-black rounded-full shadow-lg shadow-slate-800/50">
                       <feature.icon className="text-white h-6 w-6" />
                     </div>
                     <h2 className="text-xl font-bold text-black">{feature.title}</h2>
