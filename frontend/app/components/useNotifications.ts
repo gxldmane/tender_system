@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 async function fetchNotificationsData(): Promise<IGetNotificationsResponse> {
   const notificationsData = await localStorage.getItem('notifications_data');
-  if (!notificationsData || notificationsData == "undefined") {
+  if (!notificationsData || notificationsData == "undefined" || notificationsData.length != 0) {
     invalidateNotificationsData()
     return null;
   }
@@ -12,8 +12,25 @@ async function fetchNotificationsData(): Promise<IGetNotificationsResponse> {
 
 function saveNotificationsData(notificationsDetails: IGetNotificationsResponse): void {
   const notificationsData = localStorage.getItem('notifications_data');
-  if (notificationsData) {const parsedData = JSON.parse(notificationsData);}
-  localStorage.setItem('notifications_data', JSON.stringify(notificationsDetails));
+    const parsedData = JSON.parse(notificationsData);
+    if (parsedData) {
+    const newNotifications = notificationsDetails.data.filter(
+      (newNotification) =>
+        !parsedData.notifications.some(
+          (existingNotification) =>
+            existingNotification.id === newNotification.id
+        )
+    );
+    console.log(newNotifications);
+  }
+    
+    else {
+      const newNotifications = notificationsDetails;
+      console.log("Новые уведомления");
+      console.log(newNotifications);
+      localStorage.setItem('notifications_data', JSON.stringify(notificationsDetails));
+      localStorage.setItem('new_notifications', JSON.stringify(newNotifications));
+    }
 }
 
 function invalidateNotificationsData(): void {

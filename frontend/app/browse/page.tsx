@@ -33,7 +33,6 @@ export default function Browse() {
   const { isFetching: isTokenFetching, authToken } = useToken();
   if (isTokenFetching) return;
   if (!authToken) {
-    // if user is not authenticated
     router.push("/login");
     return;
   }
@@ -49,45 +48,46 @@ export default function Browse() {
     return Array.from({ length: maxPages }, (_, i) => i + 1);
   };
 
-  
+
 
   return (
-    <div className='container'>
-      {!isFetching &&
-        <h3 className=" flex text-xl font-medium leading-none tracking-tight w-full p-4 pt-8">Тендеры {response.meta.from}-{response.meta.to} из {response.meta.total}</h3>}
-      <div className="mx-auto px-4 ">
-        {isFetching || !response ? (
-          <Skeleton className="h-24 w-full rounded-md" />
-        ) : (
-          <div>
-            <TendersCard items={response.data}/>
-          </div>
-        )}
-      </div>
-      <div className="my-6">
-        <Pagination>
-          {!isFetching && <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious className={cn(!response.links.prev && "invisible")}
-                href={createPageURL(currentPage - 1)} />
-            </PaginationItem>
-            {
-              createPageNumbers(response.meta.last_page).map(
-                page => (
-                  <PaginationItem key={page}>
-                    <PaginationLink href={createPageURL(page)} isActive={page === currentPage}>{page}</PaginationLink>
-                  </PaginationItem>
+      <div className="container px-4 grid gap-6 px-6 w-full py-12 md:py-16 lg:py-20">
+        {!isFetching &&
+          <div className="grid gap-2">
+            <h3 className="text-2xl font-bold tracking-tight md:text-3xl">Тендеры {response.meta.from}-{response.meta.to} из {response.meta.total}</h3>
+            <p className="text-gray-500 dark:text-gray-400">Browse through our list of upcoming tenders.</p>
+          </div>}
+          {isFetching || !response ? (
+            <Skeleton className="h-24 w-full rounded-md" />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <TendersCard items={response.data} />
+            </div>
+          )}
+        <div className="my-6">
+          <Pagination>
+            {!isFetching && <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious className={cn(!response.links.prev && "invisible")}
+                  href={createPageURL(currentPage - 1)} />
+              </PaginationItem>
+              {
+                createPageNumbers(response.meta.last_page).map(
+                  page => (
+                    <PaginationItem key={page}>
+                      <PaginationLink href={createPageURL(page)} isActive={page === currentPage}>{page}</PaginationLink>
+                    </PaginationItem>
+                  )
                 )
-              )
+              }
+              <PaginationItem>
+                <PaginationNext className={cn(!response.links.next && "invisible")}
+                  href={createPageURL(currentPage + 1)} />
+              </PaginationItem>
+            </PaginationContent>
             }
-            <PaginationItem>
-              <PaginationNext className={cn(!response.links.next && "invisible")}
-                href={createPageURL(currentPage + 1)} />
-            </PaginationItem>
-          </PaginationContent>
-          }
-        </Pagination>
+          </Pagination>
+        </div>
       </div>
-    </div>
   );
 }

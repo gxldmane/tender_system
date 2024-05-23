@@ -65,7 +65,7 @@ export default function MyTenders() {
       <Sheet>
         <SheetTrigger asChild>
           <Button className='min-w-36' variant={"default"}>
-            <CirclePlus className="mr-2 h-4 w-4"/>
+            <CirclePlus className="mr-2 h-4 w-4" />
             Создать новый
           </Button>
         </SheetTrigger>
@@ -80,62 +80,65 @@ export default function MyTenders() {
   }
 
   return (
-    <div className={"flex flex-col justify-center items-center"}>
-      {!isFetching &&
-        <span className="text-2xl font-semibold mx-auto mb-4">Мои
-          тендеры {response.meta.from ?? 0}-{response.meta.to ?? 0} из {response.meta.total}</span>
-      }
-      <div className="md:w-full">
-        {isFetching || !response ? (
-          <Skeleton className="h-24 w-full rounded-md"/>
-        ) : (
-          <div>
-            <TendersCard items={response.data}/>
+    <section className="w-full px-5 py-2">
+      <div className="container mx-auto grid gap-6 md:px-6">
+        {!isFetching &&
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col gap-2">
+            <h3 className="font-bold tracking-tight md:text-2xl">Мои Тендеры {response.meta.from}-{response.meta.to} из {response.meta.total}</h3>
+            <p className="text-gray-500 dark:text-gray-400">Отслеживайте свои тендеры здесь</p>
           </div>
-        )}
-      </div>
-      <div className="mt-6 mb-6">
-        <Pagination>
-          {!isFetching && <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious className={cn(!response.links.prev && "invisible")}
-                                  href={createPageURL(currentPage - 1)}/>
-            </PaginationItem>
-            {
-              createPageNumbers(response.meta.last_page).map(
-                page => (
-                  <PaginationItem key={page}>
-                    <PaginationLink href={createPageURL(page)} isActive={page === currentPage}>{page}</PaginationLink>
-                  </PaginationItem>
+          <Dialog>
+          <DialogTrigger asChild>
+            <Button className='min-w-36' variant={"default"}>
+              <CirclePlus className="mr-2 h-4 w-4" />
+              Создать новый
+            </Button>
+          </DialogTrigger>
+          <DialogContent className={"p-8 min-w-fit h-screen"}>
+            <DialogHeader>
+              <DialogTitle>Создание нового тендера</DialogTitle>
+            </DialogHeader>
+            <ScrollArea>
+              <TenderCreate update={false} />
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
+        </div>}
+        <div className="grid gap-4 md:grid-cols-2">
+          {isFetching || !response ? (
+            <Skeleton className="h-24 w-full rounded-md" />
+          ) : (
+            <>
+              <TendersCard items={response.data} />
+            </>
+          )}
+        </div>
+        <div className="mt-6 mb-6">
+          <Pagination>
+            {!isFetching && <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious className={cn(!response.links.prev && "invisible")}
+                  href={createPageURL(currentPage - 1)} />
+              </PaginationItem>
+              {
+                createPageNumbers(response.meta.last_page).map(
+                  page => (
+                    <PaginationItem key={page}>
+                      <PaginationLink href={createPageURL(page)} isActive={page === currentPage}>{page}</PaginationLink>
+                    </PaginationItem>
+                  )
                 )
-              )
+              }
+              <PaginationItem>
+                <PaginationNext className={cn(!response.links.next && "invisible")}
+                  href={createPageURL(currentPage + 1)} />
+              </PaginationItem>
+            </PaginationContent>
             }
-            <PaginationItem>
-              <PaginationNext className={cn(!response.links.next && "invisible")}
-                              href={createPageURL(currentPage + 1)}/>
-            </PaginationItem>
-          </PaginationContent>
-          }
-        </Pagination>
+          </Pagination>
+        </div>
       </div>
-
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button className='min-w-36' variant={"default"}>
-            <CirclePlus className="mr-2 h-4 w-4"/>
-            Создать новый
-          </Button>
-        </DialogTrigger>
-        <DialogContent className={"p-8 min-w-fit h-screen"}>
-          <DialogHeader>
-            <DialogTitle>Создание нового тендера</DialogTitle>
-          </DialogHeader>
-          <ScrollArea>
-            <TenderCreate update={false} />
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
-
-    </div>
+    </section>
   );
 }

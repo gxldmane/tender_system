@@ -41,7 +41,9 @@ const formSchema = z.object({
 type InputSchema = z.input<typeof formSchema>;
 
 export default function Register() {
+
   const router = useRouter();
+  
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const { saveUserData } = useUser();
@@ -62,8 +64,7 @@ export default function Register() {
     select: data => data?.data?.data,
   });
 
-  if (authToken) {
-    // if user is authenticated
+  if ( authToken ) {
     router.push("/dashboard");
     return;
   }
@@ -78,6 +79,7 @@ export default function Register() {
     if (response.status === 200) {
       if (!response?.data?.data?.token) return;
       queryClient.setQueryData(['user_data'], response?.data?.data?.details);
+      location.reload();
       router.push("/dashboard");
       return;
     }
@@ -106,9 +108,9 @@ export default function Register() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-start py-4">
       <Card
-        className={cn("w-screen max-w-lg h-screen border-none", form.formState.isSubmitting && "animate-pulse")}>
+        className={cn("w-screen max-w-lg border-none", form.formState.isSubmitting && "animate-pulse")}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className={cn(form.formState.isSubmitting && "animate-bounce")}>

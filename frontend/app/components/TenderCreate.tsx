@@ -363,7 +363,7 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
                               form.trigger('until_date');
                               setTimeout(() => setOpenCalendar(false), 150);
                             }}
-                            disabled={(date) => date < new Date().setHours(0, 0, 0, 0)}
+                            disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                           />
                         </PopoverContent>
                       </Popover>

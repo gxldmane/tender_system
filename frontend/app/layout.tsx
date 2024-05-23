@@ -16,12 +16,10 @@ export const metadata: Metadata = {
 
 function DottedBackground({ children }: { children: React.ReactNode }) {
   return (
-    <span className="dot-mask">
-      <div
-        className="absolute inset-0 я w-full bg-white dark:bg-stone-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#0f172a_1px,transparent_1px)] [background-size:16px_16px]">
+      <div className="bg-gray-50">
+        {/* // className="absolute inset-0 w-full h-full bg-gray-100 bg-white dark:bg-stone-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#0f172a_1px,transparent_1px)] [background-size:16px_16px] bg-repeat"> */}
         {children}
       </div>
-    </span>
   );
 }
 

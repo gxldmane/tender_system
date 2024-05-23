@@ -149,7 +149,10 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, st
           'edit',
         ] : ['download'];
       case 'executor':
-        return isBidded ? ['download', 'withdraw'] : ['download', 'apply'];
+        if (status == "active") {
+          return isBidded ? ['download', 'withdraw'] : ['download', 'apply']
+        };
+        return ['download'];
       default:
         return [];
     }

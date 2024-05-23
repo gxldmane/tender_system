@@ -44,6 +44,7 @@ export default function Register() {
   const queryClient = useQueryClient();
   const { saveUserData } = useUser();
   const { authToken, saveAuthToken } = useToken();
+
   const form = useForm<InputSchema>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
@@ -54,10 +55,10 @@ export default function Register() {
   });
 
   if (authToken) {
-    // if user is authenticated
     router.push("/dashboard");
     return;
   }
+
 
   async function onSubmit(values: InputSchema) {
     const response = await queryClient.fetchQuery({
@@ -91,9 +92,8 @@ export default function Register() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
       <Card
-        className={cn("w-screen max-w-lg h-screen border-none", form.formState.isSubmitting && "animate-pulse")}>
+        className={cn("w-screen max-w-lg h-fit border-none", form.formState.isSubmitting && "animate-pulse")}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className={cn(form.formState.isSubmitting && "animate-bounce")}>
@@ -169,6 +169,5 @@ export default function Register() {
           }
         </CardContent>
       </Card>
-    </div>
   );
 }

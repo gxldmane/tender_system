@@ -62,7 +62,7 @@ export default function MyBids() {
   };
 
   if (isFetching || response.data?.length === 0) {
-    return <div/>;
+    return <div className="font-bold text-lg text-center">Вы не подали ни одной заявки</div>;
   }
 
   return (
