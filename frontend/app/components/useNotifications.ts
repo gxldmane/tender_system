@@ -12,8 +12,9 @@ async function fetchNotificationsData(): Promise<IGetNotificationsResponse> {
 
 function saveNotificationsData(notificationsDetails: IGetNotificationsResponse): void {
   const notificationsData = localStorage.getItem('notifications_data');
-    const parsedData = JSON.parse(notificationsData);
-    if (parsedData) {
+  const currentNewNotifications = localStorage.getItem('new_notifications')
+  const parsedData = JSON.parse(notificationsData);
+  if (parsedData) {
     const newNotifications = notificationsDetails.data.filter(
       (newNotification) =>
         !parsedData.notifications.some(
@@ -21,16 +22,15 @@ function saveNotificationsData(notificationsDetails: IGetNotificationsResponse):
             existingNotification.id === newNotification.id
         )
     );
-    console.log(newNotifications);
   }
-    
-    else {
-      const newNotifications = notificationsDetails;
-      console.log("Новые уведомления");
-      console.log(newNotifications);
-      localStorage.setItem('notifications_data', JSON.stringify(notificationsDetails));
-      localStorage.setItem('new_notifications', JSON.stringify(newNotifications));
-    }
+
+  else {
+    const newNotifications = notificationsDetails;
+    console.log("Новые уведомления");
+    console.log(newNotifications);
+    localStorage.setItem('notifications_data', JSON.stringify(notificationsDetails));
+    localStorage.setItem('new_notifications', JSON.stringify(newNotifications));
+  }
 }
 
 function invalidateNotificationsData(): void {
@@ -56,7 +56,7 @@ export default function useNotifications(): UseNotificationsHook {
     };
     fetchNotifications();
   }, []);
-  
+
 
 
   return { notificationsDetails, isFetching: isLoading, saveNotificationsData, invalidateNotificationsData };

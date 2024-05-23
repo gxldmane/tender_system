@@ -20,6 +20,7 @@ class BidResource extends JsonResource
             'tenderName' => $this->tender->name,
             'tenderCustomerName' => $this->tender->customer()->first()->name,
             'tenderCompanyName' => $this->tender->customer()->first()->company->name,
+            'tenderStatus' => $this->tender->status,
             'companyId' => $this->company_id,
             'userId' => $this->user_id,
             'price' => $this->price,

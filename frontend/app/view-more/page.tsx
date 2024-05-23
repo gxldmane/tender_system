@@ -133,7 +133,6 @@ export default function ViewMore() {
   const { isFetching: isTokenFetching, authToken } = useToken();
   if (isTokenFetching) return;
   if (!authToken) {
-    // if user is not authenticated
     router.push("/login");
     return;
   }
@@ -166,7 +165,6 @@ export default function ViewMore() {
           )}
         </div>
         <Separator />
-
         {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory || isRegionFetching || !tenderRegion ? (
           <Skeleton className="h-24 w-full rounded-md" />
         ) :

@@ -3,8 +3,18 @@ import React from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ISendedBid, ITenderDetails } from "@/app/http/types";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation";
+import { ArrowRight, Ellipsis } from "lucide-react";
 
 interface TenderCardProps {
   items: ISendedBid[];
@@ -21,51 +31,60 @@ const fetchStatus = (status: string) => {
   }
 }
 
+const handleRowClick = (id: number) => {
+  const router = useRouter()
+  router.push(`/view-more?tenderId=${id}`)
+}
+
 export default function TenderBidCard({ items, ...props }: TenderCardProps) {
   return (
-    <>
-      {/*{items.map((item) => (*/}
-      {/*  <div className="flex justify-between items-center pb-4" key={item.id}> /!* Use item.id for unique keys *!/*/}
-      {/*    <div>*/}
-      {/*      <p>Айди тендера: {item.tenderId}</p>*/}
-      {/*      <p>Предложенная цена: {item.price}₽</p>*/}
-      {/*    </div>*/}
-      {/*    <Button>*/}
-      {/*      <Link href={`/view-more?tenderId=${item.tenderId}`}>*/}
-      {/*        Дополнительно*/}
-      {/*      </Link>*/}
-      {/*    </Button>*/}
-      {/*  </div>*/}
-      {/*))}*/}
-      {items.map((item) => (
-        <div className="grid gap-4 grid-cols-4 min-h-40 bg-white drop-shadow rounded-xl h-full border-0 p-7 mb-5" key={item.id}>
-          <div className="col-span-2 flex flex-col flex-grow gap-y-6">
-            <h1 className="text-base font-bold">{item.tenderName}</h1>
-            <div className="flex flex-col gap-y-2">
-              <h2 className="text-base text-sm">{ "Заказчик: " + item.tenderCustomerName}</h2>
-              <h3 className="text-xs text-muted-foreground font-light">{"Компания: " + item.tenderCompanyName}</h3>
-            </div>
-          </div>
-          <div className="col-span-1 flex flex-col flex-grow justify-between">
-            <h1>
-              {(item.price).toLocaleString('ru')} ₽
-            </h1>
-          </div>
-          <div className="flex flex-col items-end justify-between">
-            <div>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="text-center">№</TableHead>
+          <TableHead className="text-center">Тендер</TableHead>
+          <TableHead className="text-center">Компания</TableHead>
+          <TableHead className="text-center">Цена</TableHead>
+          <TableHead className="text-center">
+            Статус
+          </TableHead>
+          <TableHead className="text-center">
+            Дата подачи
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {items.map((item, index) => (
+          <TableRow key={index} className='cursor-pointer'>
+            <TableCell className="font-medium text-muted-foreground text-center">
+              {index + 1}
+            </TableCell>
+            <TableCell className="font-medium text-center max-w-52 truncate">
+              {item.tenderName}
+            </TableCell>
+            <TableCell className="font-medium text-center">
+              {item.tenderCompanyName}
+            </TableCell>
+            <TableCell className="font-medium text-center">
+              {item.price}
+            </TableCell>
+            <TableCell className="font-medium text-center pl-5">
               {fetchStatus(item.status)}
-            </div>
-            <Button asChild className="flex gap-x-1" variant="outline">
-              <div>
-                <Link href={`/view-more?tenderId=${item.tenderId}`}>
-                  Доп. информация
-                </Link>
-              </div>
-            </Button>
-          </div>
-        </div >
-      ))
-      }
-    </>
+            </TableCell>
+            <TableCell className="font-medium text-center">
+              {new Date(item.createdAt).toLocaleDateString()}
+            </TableCell>
+            <TableCell className="text-center">
+              <Link href={`/view-more?tenderId=${item.tenderId}`}>
+                <Button variant="ghost" size='icon'>
+                <ArrowRight />
+                </Button>
+              </Link>
+            </TableCell>
+          </TableRow>
+        ))
+        }
+      </TableBody>
+    </Table>
   );
 }

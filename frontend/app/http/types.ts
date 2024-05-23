@@ -105,6 +105,7 @@ export interface ISendedBid {
   price: number;
   status: string;
   createdAt: string;
+  tenderStatus: string;
 }
 
 export interface ITenderDetails {

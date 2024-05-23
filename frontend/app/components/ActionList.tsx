@@ -149,7 +149,8 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, st
           'edit',
         ] : ['download'];
       case 'executor':
-        if (status == "active") {
+        if (status === "active") {
+          console.log(status)
           return isBidded ? ['download', 'withdraw'] : ['download', 'apply']
         };
         return ['download'];
@@ -233,7 +234,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, st
             );
           case 'bids':
             return (
-              <Link href={`/view-more/${href}?tenderId=${tenderId}&status=${status}`}>
+              <Link href={`/view-more/${href}?tenderId=${tenderId}`}>
                 <Button key={action}>Заявки</Button>
               </Link>
             );
