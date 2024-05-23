@@ -21,9 +21,9 @@ class TenderController extends Controller
     }
 
 
-    public function index()
+    public function getActiveTenders()
     {
-        return $this->tenderService->index();
+        return $this->tenderService->getActiveTenders();
     }
 
     public function myTenders()

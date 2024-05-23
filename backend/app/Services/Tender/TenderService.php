@@ -22,9 +22,12 @@ class TenderService
     }
 
 
-    public function index(): TenderCollection
+    public function getActiveTenders(): TenderCollection
     {
-        $tenders = Tender::query()->paginate(12);
+        $tenders = Tender::query()
+            ->where('status', 'active')
+            ->orderByDesc('created_at')
+            ->paginate(12);
         return new TenderCollection($tenders);
     }
 
