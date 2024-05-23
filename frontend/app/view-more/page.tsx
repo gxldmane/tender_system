@@ -12,7 +12,7 @@ import ActionList from '../components/ActionList';
 import { useQuery } from "@tanstack/react-query";
 import { Category, ICategoryResponse, ITenderDetails, Region } from "@/app/http/types";
 import useUser from "@/app/components/useUser";
-import { RussianRuble, FolderIcon, CalendarFold, ShieldCheck, AlarmClock, MapPin, CircleX } from 'lucide-react';
+import { RussianRuble, FolderIcon, CalendarFold, ShieldCheck, AlarmClock, MapPin, CircleX, Bird } from 'lucide-react';
 import useToken from "@/app/components/useToken";
 import { Separator } from "@/components/ui/separator"
 
@@ -31,11 +31,11 @@ function parseStatus(status) {
           <h2 className='text-3xl font-normal tracking-tight'>Выбор подрядчика</h2>
           <AlarmClock size={36} color="#4f4f4f" strokeWidth={1.5} />
         </div>)
-    case 'closed': 
+    case 'closed':
       return (
         <div className='flex justify-center items-center gap-x-1'>
           <h2 className='text-3xl font-normal tracking-tight'>Тендер закрыт</h2>
-          <CircleX size={36} color="#ff0000" strokeWidth={1.5}/>
+          <CircleX size={36} color="#ff0000" strokeWidth={1.5} />
         </div>)
   }
 }
@@ -138,6 +138,13 @@ export default function ViewMore() {
     return;
   }
 
+  if (!tenderDetails && !isFetching) return (
+  <div className="container h-4/5 flex flex-col justify-center items-center gap-y-2">
+    <h1 className="flex flex-col text-2xl font-extrabold">Такого тендера не существует</h1>
+    <Bird width={40} height={40} className="animate-pulse " />
+  </div>
+  )
+
 
 
   return (
@@ -148,10 +155,10 @@ export default function ViewMore() {
             <Skeleton className="h-24 w-full rounded-md" />
           ) : (
             <>
-            <div className='flex'>
-              <h2 className="text-3xl font-bold tracking-tight">Карточка тендера</h2>
-              <Image className="ml-4" src="/Hammer.svg" alt={'Hammer'} width={30} height={30}/>
-            </div>  
+              <div className='flex'>
+                <h2 className="text-3xl font-bold tracking-tight">Карточка тендера</h2>
+                <Image className="ml-4" src="/Hammer.svg" alt={'Hammer'} width={30} height={30} />
+              </div>
               <h2 className="flex text-3xl font-bold tracking-tight">
                 {parseStatus(tenderDetails.status)}
               </h2>
@@ -162,10 +169,10 @@ export default function ViewMore() {
 
         {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory || isRegionFetching || !tenderRegion ? (
           <Skeleton className="h-24 w-full rounded-md" />
-        ) : 
-        (<div className='text-3xl font-medium tracking-tight px-2 py-3 w-fit'>
-        {tenderDetails.name}
-        </div>)}
+        ) :
+          (<div className='text-3xl font-medium tracking-tight px-2 py-3 w-fit'>
+            {tenderDetails.name}
+          </div>)}
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsContent value="overview" className="space-y-4">
             {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory || isRegionFetching || !tenderRegion ? (
@@ -246,7 +253,7 @@ export default function ViewMore() {
         ) : (
           <div className='flex pb-5 justify-between items-center'>
             <ActionList tenderId={currentTenderId} userRole={userDetails?.role} isBidded={hasBid}
-              isCreator={tenderDetails.customerId === userDetails?.id} status={tenderDetails.status} filesList={tenderDetails.files} defaultValues={{ name: tenderDetails.name, description: tenderDetails.description, start_price: tenderDetails.start_price.toString(), category_id: tenderDetails.categoryId, region_id: tenderDetails.regionId, until_date: tenderDetails.untilDate }}/>
+              isCreator={tenderDetails.customerId === userDetails?.id} status={tenderDetails.status} filesList={tenderDetails.files} defaultValues={{ name: tenderDetails.name, description: tenderDetails.description, start_price: tenderDetails.start_price.toString(), category_id: tenderDetails.categoryId, region_id: tenderDetails.regionId, until_date: tenderDetails.untilDate }} />
           </div>)}
       </div>
     </div>

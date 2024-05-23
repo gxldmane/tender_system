@@ -71,7 +71,6 @@ export default function MyBids() {
         <span className="text-2xl font-semibold mx-auto mb-4">Мои
           заявки {response.meta.from ?? 0}-{response.meta.to ?? 0} из {response.meta.total}</span>
       }
-      <div className="md:w-full space-y-6 p-10 bg-white border-2 rounded-md">
         {isFetching || !response ? (
           <Skeleton className="h-24 w-full rounded-md"/>
         ) : (
@@ -79,7 +78,6 @@ export default function MyBids() {
             <TenderBidCard items={response.data}/>
           </div>
         )}
-      </div>
       <div className="mt-6 mb-6">
         <Pagination>
           {!isFetching && <PaginationContent>

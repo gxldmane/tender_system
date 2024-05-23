@@ -36,7 +36,7 @@ interface TenderCardProps {
 const fetchStatus = (status: string) => {
     switch (status) {
         case "accepted":
-            return (<Badge variant="destructive" className="bg-green align-center">Принята</Badge>);
+            return (<Badge variant="success" className="align-center">Принята</Badge>);
         case "pending":
             return (<Badge variant="outline" className="align-center">Ожидание</Badge>);
         case "rejected":
@@ -45,9 +45,7 @@ const fetchStatus = (status: string) => {
 }
 
 export default function CustomerTenderBidCard({ items, status, ...props }: TenderCardProps) {
-    //TODO: починить, делает вечные запросы
     const queryClient = useQueryClient();
-    const router = useRouter();
     async function getCompanyMap(): Promise<{ [key: number]: string }> {
         const companyMap: { [key: number]: string } = {};
         for (const item of items) {

@@ -12,15 +12,16 @@ import {
 } from "@/components/ui/navigation-menu"
 import useUser from "@/app/components/useUser";
 import { cn } from "@/lib/utils";
+import { Loader, LogIn, User } from "lucide-react";
 
 export default function Header() {
   const { userDetails, isFetching } = useUser();
   return (
-    <header className="py-4">
+    <header className="py-4 bg-transparent">
       <div className="container mx-auto flex items-center justify-between">
         <div>
           <Link href="/">
-            <Image src="/logo.svg" alt="Logo" width={0} height={0} layout="responsive"/>
+            <Image src="/logo.svg" alt="Logo" width={0} height={0} layout="responsive" />
           </Link>
         </div>
 
@@ -37,20 +38,26 @@ export default function Header() {
         {/*</NavigationMenu>*/}
 
         {isFetching ? <div className="md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
-          <Button disabled className='ml-auto'>
-            Личный кабинет
+          <Button variant='ghost' disabled className='ml-auto animate-spin'>
+            <Loader />
           </Button>
         </div> : !userDetails ?
           <div className="md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
-            <Button asChild>
+            <Button asChild variant='ghost'>
               <Link href="/register" className='ml-auto'>
-                Регистрация
+                <div className='flex justify-center items-center gap-x-1'>
+                  <p className='sm:hidden md:inline-flex'>Регистрация</p>
+                  <LogIn />
+                </div>
               </Link>
             </Button>
           </div> : <div className="md:flex md:w-1/5 absolute right-4 md:relative md:right-0">
-            <Button asChild>
+            <Button asChild variant='ghost'>
               <Link href="/dashboard" className='ml-auto'>
-                Личный кабинет
+                <div className='flex justify-center items-center gap-x-1'>
+                  <p className='sm:hidden md:inline-flex'>Личный кабинет</p>
+                  <User />
+                </div>
               </Link>
             </Button>
           </div>

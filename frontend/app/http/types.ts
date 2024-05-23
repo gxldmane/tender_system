@@ -171,3 +171,20 @@ export interface ICreatedTenderDetails {
 export interface ICreateTenderResponse {
   data: ICreatedTenderDetails
 }
+
+export interface Notification {
+  id: string,
+  type: string,
+  userId: number,
+  tenderId: number,
+  message: string,
+  readaAt: string
+}
+
+export interface IGetNotificationResponse{
+  data: Notification
+}
+
+export interface IGetNotificationsResponse {
+  data: Notification[]
+}

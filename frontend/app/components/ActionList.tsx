@@ -276,7 +276,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, st
                 title: "Тендер успешно удален",
                 description: "Это действие безвозвратно",
               });
-              router.push("/tenders");
+              router.push("/dashboard/tenders");
               return;
             }
             return (

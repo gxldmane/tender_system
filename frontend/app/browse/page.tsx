@@ -13,7 +13,7 @@ import {
   PaginationPrevious
 } from "@/components/ui/pagination";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ITendersResponse } from "@/app/http/types";
+import { ICategoriesResponse, ICompaniesResponse, IRegionsResponse, ITendersResponse } from "@/app/http/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import useToken from "@/app/components/useToken";
@@ -29,7 +29,8 @@ export default function Browse() {
     select: data => data?.data as ITendersResponse,
   });
 
-  const { isFetching: isTokenFetching , authToken } = useToken();
+
+  const { isFetching: isTokenFetching, authToken } = useToken();
   if (isTokenFetching) return;
   if (!authToken) {
     // if user is not authenticated
@@ -48,26 +49,27 @@ export default function Browse() {
     return Array.from({ length: maxPages }, (_, i) => i + 1);
   };
 
+  
+
   return (
-    <div className="container">
+    <div className='container'>
       {!isFetching &&
-        <h3
-          className="text-2xl font-semibold leading-none tracking-tight mx-auto flex w-full justify-center p-4">Тендеры {response.meta.from}-{response.meta.to} из {response.meta.total}</h3>}
-      <div className="container mx-auto md:w-1/2 space-y-6 p-10 bg-white border-2 rounded-md ">
+        <h3 className=" flex text-xl font-medium leading-none tracking-tight w-full p-4 pt-8">Тендеры {response.meta.from}-{response.meta.to} из {response.meta.total}</h3>}
+      <div className="mx-auto px-4 ">
         {isFetching || !response ? (
-          <Skeleton className="h-24 w-full rounded-md"/>
+          <Skeleton className="h-24 w-full rounded-md" />
         ) : (
           <div>
             <TendersCard items={response.data}/>
           </div>
         )}
       </div>
-      <div className="pt-6">
+      <div className="my-6">
         <Pagination>
           {!isFetching && <PaginationContent>
             <PaginationItem>
               <PaginationPrevious className={cn(!response.links.prev && "invisible")}
-                                  href={createPageURL(currentPage - 1)}/>
+                href={createPageURL(currentPage - 1)} />
             </PaginationItem>
             {
               createPageNumbers(response.meta.last_page).map(
@@ -80,7 +82,7 @@ export default function Browse() {
             }
             <PaginationItem>
               <PaginationNext className={cn(!response.links.next && "invisible")}
-                              href={createPageURL(currentPage + 1)}/>
+                href={createPageURL(currentPage + 1)} />
             </PaginationItem>
           </PaginationContent>
           }
