@@ -116,8 +116,11 @@ export interface ITenderDetails {
   status: string; // Начальная цена
   currentPrice: number; // Текущая цена (опционально)
   categoryId: number;
+  categoryName: string;
   regionId: number; // Идентификатор категории
   customerId: number; // Идентификатор заказчика
+  customerName: string; // customerName
+  companyName: string; // companyName
   executorId: number; // Идентификатор исполнителя (опционально)
   untilDate: string; // Дата окончания тендера
   createdAt: string; // Дата создания тендера
