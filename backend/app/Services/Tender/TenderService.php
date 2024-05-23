@@ -24,7 +24,7 @@ class TenderService
 
     public function index(): TenderCollection
     {
-        $tenders = Tender::query()->paginate(12);
+        $tenders = Tender::query()->orderByDesc('created_at')->paginate(12);
         return new TenderCollection($tenders);
     }
 
