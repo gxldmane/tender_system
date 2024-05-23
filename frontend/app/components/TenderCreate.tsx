@@ -77,7 +77,7 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
     defaultValues: {
       name: update ? defaultPropValues.name : '',
       description: update ? defaultPropValues.description : '',
-      start_price: update ? defaultPropValues.start_price : "0",
+      start_price: update ? defaultPropValues.start_price : "",
       category_id: update ? defaultPropValues.category_id : -1,
       region_id: update ? defaultPropValues.region_id : -1,
       until_date: update ? defaultPropValues.until_date : '',

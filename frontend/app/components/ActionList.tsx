@@ -399,7 +399,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, st
               <Form {...form}>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
-                    <Button className="border-2" variant='ghost' key={href}>Подать заявку</Button>
+                    <Button className="border-2" variant='default' key={href}>Подать заявку</Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

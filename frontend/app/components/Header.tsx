@@ -13,6 +13,7 @@ import {
 import useUser from "@/app/components/useUser";
 import { cn } from "@/lib/utils";
 import { Loader, LogIn, User } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 export default function Header() {
   const { userDetails, isFetching } = useUser();
@@ -44,8 +45,8 @@ export default function Header() {
 
                 <Button asChild>
                   <Link href="/register" className='ml-auto'>
-                      <p className='hidden md:inline-flex text-white'>Регистрация</p>
-                      <LogIn color='#ffffff' className='inline-flex'/>
+                    <p className='hidden md:inline-flex text-white'>Войти</p>
+                    <LogIn color='#ffffff' className='inline-flex'/>
                   </Link>
                 </Button>
                 :

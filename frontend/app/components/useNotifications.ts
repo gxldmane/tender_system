@@ -1,4 +1,4 @@
-import { IGetNotificationsResponse, Notification } from "@/app/http/types";
+import { IGetNotificationsResponse } from "@/app/http/types";
 import { useEffect, useState } from "react";
 
 async function fetchNotificationsData(): Promise<IGetNotificationsResponse> {
@@ -11,26 +11,7 @@ async function fetchNotificationsData(): Promise<IGetNotificationsResponse> {
 }
 
 function saveNotificationsData(notificationsDetails: IGetNotificationsResponse): void {
-  const notificationsData = localStorage.getItem('notifications_data');
-  const currentNewNotifications = localStorage.getItem('new_notifications')
-  const parsedData = JSON.parse(notificationsData);
-  if (parsedData) {
-    const newNotifications = notificationsDetails.data.filter(
-      (newNotification) =>
-        !parsedData.notifications.some(
-          (existingNotification) =>
-            existingNotification.id === newNotification.id
-        )
-    );
-  }
-
-  else {
-    const newNotifications = notificationsDetails;
-    console.log("Новые уведомления");
-    console.log(newNotifications);
-    localStorage.setItem('notifications_data', JSON.stringify(notificationsDetails));
-    localStorage.setItem('new_notifications', JSON.stringify(newNotifications));
-  }
+  localStorage.setItem('notifications_data', JSON.stringify(notificationsDetails));
 }
 
 function invalidateNotificationsData(): void {
@@ -56,7 +37,6 @@ export default function useNotifications(): UseNotificationsHook {
     };
     fetchNotifications();
   }, []);
-
 
 
   return { notificationsDetails, isFetching: isLoading, saveNotificationsData, invalidateNotificationsData };

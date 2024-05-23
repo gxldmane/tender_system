@@ -55,7 +55,7 @@ export default function Browse() {
         {!isFetching &&
           <div className="grid gap-2">
             <h3 className="text-2xl font-bold tracking-tight md:text-3xl">Тендеры {response.meta.from}-{response.meta.to} из {response.meta.total}</h3>
-            <p className="text-gray-500 dark:text-gray-400">Browse through our list of upcoming tenders.</p>
+            <p className="text-gray-500 dark:text-gray-400">Ознакомьтесь со списком активных тендеров.</p>
           </div>}
           {isFetching || !response ? (
             <Skeleton className="h-24 w-full rounded-md" />

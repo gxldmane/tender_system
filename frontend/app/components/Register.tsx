@@ -265,7 +265,7 @@ export default function Register() {
                           </Popover>
                         </div>
                         <FormDescription>
-                          {companies[form.getValues('company_id')]?.description}
+                          {companies[form.getValues('company_id')-1]?.description}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>

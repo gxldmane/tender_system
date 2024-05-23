@@ -237,7 +237,7 @@ export default function ViewMore() {
                     <CardContent className='pb-6'>
                       <div className="text-2xl font-bold">{new Date(tenderDetails.createdAt).toLocaleDateString()}</div>
                       <p className="text-xs text-muted-foreground pt-4">
-                        Дата окончания: {reformatDate(tenderDetails.untilDate)}
+                        До окончания: {getRemainingTime(tenderDetails.untilDate)}
                       </p>
                     </CardContent>
                   </Card>
