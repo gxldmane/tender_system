@@ -235,11 +235,16 @@ export default class HttpClient {
     return response;
   }
 
+  async getUnreadNotificationsForPage(): Promise<AxiosResponse<IGetNotificationsResponse | IErrorResponse | any>> {
+    return await this.request("GET", `/profile/unread`);
+    
+  }
+
   async getAllNotifications() : Promise<AxiosResponse<IGetNotificationsResponse | IErrorResponse | any>> {
     return await this.request("GET", `/profile/notifications`);
   }
 
-  async getNotifications(notificationId: string) : Promise<AxiosResponse<IGetNotificationResponse | IErrorResponse | any>> {
+  async getNotification(notificationId: string) : Promise<AxiosResponse<IGetNotificationResponse | IErrorResponse | any>> {
     return await this.request("GET", `/profile/notifications/${notificationId}`);
   }
 
