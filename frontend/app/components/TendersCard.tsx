@@ -67,7 +67,7 @@ export default function TendersCard({ items, ...props }: TenderCardProps) {
   })
 
   if (isCategoriesFetching || isRegionsFetching) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
 
   return (

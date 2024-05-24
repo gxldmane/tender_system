@@ -65,10 +65,13 @@ export default function TenderBids() {
 
     if (response.data?.length === 0) {
         return (
-            <div className="container h-4/5 flex flex-col justify-center items-center gap-y-2">
-                <h1 className="flex flex-col text-2xl font-extrabold">Заявок на тендер пока нет</h1>
-                <Bird width={40} height={40} className="animate-pulse " />
+            <div className="flex justify-center items-center mt-52">
+                <div className="container flex flex-col justify-center items-center gap-y-2">
+                    <h1 className="flex flex-col text-2xl font-extrabold">Заявок на тендер пока нет</h1>
+                    <Bird width={40} height={40} className="animate-pulse" />
+                </div>
             </div>
+
         );
     }
     return (

@@ -66,7 +66,7 @@ export default function MyBids() {
   }
 
   if (!response || response.data?.length === 0) {
-    return <div className="font-bold text-lg text-center">Вы не подали ни одной заявки</div>;
+    return <div className="text-2xl font-bold tracking-tight sm:text-3xl md:text-3xl">Вы не подали ни одной заявки</div>;
   }
 
   return (
@@ -86,7 +86,7 @@ export default function MyBids() {
         <Pagination>
           {!isFetching && <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious className={cn(!response.links.prev && "invisible")}
+              <PaginationPrevious className={cn(!response.links.prev && "hidden")}
                                   href={createPageURL(currentPage - 1)}/>
             </PaginationItem>
             {
@@ -99,7 +99,7 @@ export default function MyBids() {
               )
             }
             <PaginationItem>
-              <PaginationNext className={cn(!response.links.next && "invisible")}
+              <PaginationNext className={cn(!response.links.next && "hidden")}
                               href={createPageURL(currentPage + 1)}/>
             </PaginationItem>
           </PaginationContent>

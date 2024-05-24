@@ -182,7 +182,7 @@ export interface Notification {
   userId: number,
   tenderId: number,
   message: string,
-  readaAt: string
+  readAt: string
 }
 
 export interface IGetNotificationResponse{

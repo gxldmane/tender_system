@@ -92,7 +92,7 @@ export default function CustomerTenderBidCard({ items, ...props }: TenderCardPro
             title: "Заявка успешно принята",
             description: "Статус тендера и статус остальных заявок обновлены",
         });
-        //   router.push(`/view-more?tenderId=${tenderId}`);
+        await queryClient.refetchQueries({ queryKey: ['tender-bids'], type: 'active' })
         return;
     }
 

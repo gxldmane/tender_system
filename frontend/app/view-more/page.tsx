@@ -138,10 +138,11 @@ export default function ViewMore() {
   }
 
   if (!tenderDetails && !isFetching) return (
-  <div className="container h-4/5 flex flex-col justify-center items-center gap-y-2">
-    <h1 className="flex flex-col text-2xl font-extrabold">Такого тендера не существует</h1>
-    <Bird width={40} height={40} className="animate-pulse " />
-  </div>
+    <div className="container h-screen flex flex-col justify-center items-center">
+      <h1 className="text-2xl font-extrabold">Такого тендера не существует</h1>
+      <Bird width={40} height={40} className="animate-pulse" />
+    </div>
+
   )
 
 
@@ -183,7 +184,7 @@ export default function ViewMore() {
                       <CardTitle className="text-sm font-medium">
                         Начальная цена
                       </CardTitle>
-                      <RussianRuble size={23}/>
+                      <RussianRuble size={23} />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">{(tenderDetails.start_price).toLocaleString('ru')}</div>
@@ -194,7 +195,7 @@ export default function ViewMore() {
                       <CardTitle className="text-sm font-medium">
                         Категория тендера
                       </CardTitle>
-                      <FolderIcon size={23}/>
+                      <FolderIcon size={23} />
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">{tenderCategory.name}</div>
@@ -205,7 +206,7 @@ export default function ViewMore() {
                       <CardTitle className="text-sm font-medium">
                         Регион
                       </CardTitle>
-                      <MapPin color="#ff4d4d"/>
+                      <MapPin color="#ff4d4d" />
                     </CardHeader>
                     <CardContent>
                       <div className="text-xl font-bold">{tenderRegion.name}</div>
@@ -232,7 +233,7 @@ export default function ViewMore() {
                       <CardTitle className="text-sm font-medium">
                         Создан
                       </CardTitle>
-                      <CalendarFold size={23}/>
+                      <CalendarFold size={23} />
                     </CardHeader>
                     <CardContent className='pb-6'>
                       <div className="text-2xl font-bold">{new Date(tenderDetails.createdAt).toLocaleDateString()}</div>
@@ -261,19 +262,19 @@ export default function ViewMore() {
           </TabsContent>
         </Tabs>
         {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory ? (
-          <Skeleton className="h-24 w-full rounded-md"/>
+          <Skeleton className="h-24 w-full rounded-md" />
         ) : (
           <div className='flex pb-5 justify-between items-center'>
             <ActionList tenderId={currentTenderId} userRole={userDetails?.role} isBidded={hasBid}
-                        isCreator={tenderDetails.customerId === userDetails?.id} status={tenderDetails.status}
-                        filesList={tenderDetails.files} defaultValues={{
-              name: tenderDetails.name,
-              description: tenderDetails.description,
-              start_price: tenderDetails.start_price.toString(),
-              category_id: tenderDetails.categoryId,
-              region_id: tenderDetails.regionId,
-              until_date: tenderDetails.untilDate
-            }}/>
+              isCreator={tenderDetails.customerId === userDetails?.id} status={tenderDetails.status}
+              filesList={tenderDetails.files} defaultValues={{
+                name: tenderDetails.name,
+                description: tenderDetails.description,
+                start_price: tenderDetails.start_price.toString(),
+                category_id: tenderDetails.categoryId,
+                region_id: tenderDetails.regionId,
+                until_date: tenderDetails.untilDate
+              }} />
           </div>)}
       </div>
     </div>
