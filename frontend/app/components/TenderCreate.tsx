@@ -13,15 +13,13 @@ import { CalendarIcon, CheckIcon, ChevronsUpDown, Loader2, Paperclip, UploadClou
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { toast } from "@/components/ui/use-toast";
-import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { DropzoneOptions } from "react-dropzone";
 import { FileInput, FileUploader, FileUploaderContent, FileUploaderItem } from "@/app/components/FileUploader";
-import { fileURLToPath } from "url";
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns";
+import { TimePickerDemo } from "./TimePicker";
 
 
 const formSchema = z.object({
@@ -338,36 +336,44 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
                 name="until_date"
                 render={({ field }) => (
                   <FormItem>
-                      <FormLabel>Дата окончания</FormLabel>
-                      <Popover open={openCalendar} onOpenChange={setOpenCalendar}>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className="w-full justify-between"
-                            >
-                              {field.value
-                                ? format(field.value, 'dd.MM.yyyy')
-                                : 'Выберите дату'}
-                              <CalendarIcon className="ml-auto h-4 w-4" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-5 flex flex-col">
-                          <Calendar
-                            mode="single"
-                            selected={new Date(field.value)}
-                            onSelect={(date) => {
-                              form.setValue('until_date', format(date, 'yyyy-MM-dd'), { shouldDirty: true });
-                              form.trigger('until_date');
-                              setTimeout(() => setOpenCalendar(false), 150);
+                    <FormLabel>Дата окончания</FormLabel>
+                    <Popover open={openCalendar} onOpenChange={setOpenCalendar}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full justify-between"
+                          >
+                            {field.value
+                              ? format(field.value, 'dd.MM.yyyy, HH:mm:ss')
+                              : 'Выберите дату'}
+                            <CalendarIcon className="ml-auto h-4 w-4" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-5 flex flex-col">
+                        <Calendar
+                          mode="single"
+                          selected={new Date(field.value)}
+                          onSelect={(date) => {
+                            form.setValue('until_date', format(date, 'yyyy-MM-dd'), { shouldDirty: true });
+                            form.trigger('until_date');
+                            setTimeout(() => setOpenCalendar(false), 150);
+                          }}
+                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                        />
+                        <div className="p-3 border-t border-border">
+                          <TimePickerDemo
+                            setDate={(date) => {
+                              console.log(date)
                             }}
-                            disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                            date={new Date(field.value)}
                           />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

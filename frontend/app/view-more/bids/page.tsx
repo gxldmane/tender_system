@@ -119,5 +119,4 @@ export default function TenderBids() {
                     </Pagination>
                 </div>
             </div>
-        </div>)
-}
+        </div>)}

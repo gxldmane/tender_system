@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link"
 import httpClient from "@/app/http";
-import { ArrowUpSquare, Key, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose
 } from "@/components/ui/dialog"
 import {
   AlertDialog,
@@ -70,7 +68,6 @@ function getFileTypeIconFromUrl(url) {
 function blobToFile(blob: Blob, fileName: string): File {
   return new File([blob], fileName);
 }
-
 
 interface ActionListProps {
   tenderId: string;

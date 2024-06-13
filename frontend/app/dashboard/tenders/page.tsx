@@ -40,7 +40,6 @@ export default function MyTenders() {
   const { isFetching: isTokenFetching, authToken } = useToken();
   if (isTokenFetching) return;
   if (!authToken) {
-    // if user is not authenticated
     router.push("/login");
     return;
   }
@@ -82,7 +81,7 @@ export default function MyTenders() {
   }
 
   return (
-    <section className="w-full px-5 py-2">
+    <section className="w-full px-5 py-2 flex-grow">
       <div className="container mx-auto grid gap-6 md:px-6">
         {!isFetching &&
         <div className="flex items-start justify-between">
@@ -116,8 +115,8 @@ export default function MyTenders() {
             </>
           )}
         </div>
-        <div className="mt-6 mb-6">
-          <Pagination>
+        <div className="mt-6 mb-6 flex justify-end grow">
+          <Pagination className="mt-auto">
             {!isFetching && <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious className={cn(!response.links.prev && "invisible")}

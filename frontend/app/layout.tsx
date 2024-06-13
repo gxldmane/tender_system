@@ -27,7 +27,7 @@ function Footer() {
 
 function DottedBackground({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen flex flex-col flex-grow">
       {/* // className="absolute inset-0 w-full h-full bg-gray-100 bg-white dark:bg-stone-950 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#0f172a_1px,transparent_1px)] [background-size:16px_16px] bg-repeat"> */}
       {children}
     </div>

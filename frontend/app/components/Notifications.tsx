@@ -20,28 +20,15 @@ function formatTenderText(text) {
 }
 
 function generatePseudoRandomString(seed) {
-    // Создаем объект для генерации псевдо-случайных чисел
     const seedRandom = mulberry32(seed);
-  
-    // Функция для генерации случайных символов из заданного набора
     const getRandomChar = () => allowedChars[Math.floor(seedRandom() * allowedChars.length)];
-  
-    // Допустимые символы
     const allowedChars = 'ABCEHKMOPTX0123456789';
-  
-    // Генерируем первую часть строки (8 символов)
     let result = Array.from({ length: 4 }, getRandomChar).join('');
-  
-    // Добавляем seed
     result += `-${seed}-`;
-  
-    // Генерируем последнюю часть строки (6 символов)
     result += Array.from({ length: 4 }, getRandomChar).join('');
-  
     return result;
   }
-  
-  // Вспомогательная функция для генерации псевдо-случайных чисел
+
   function mulberry32(seed) {
     return function () {
       let t = seed += 0x6D2B79F5;
@@ -124,8 +111,7 @@ export default function NotificationsComponent({ notifications }: NotificationsP
                                         event.preventDefault();
                                     }}>
                                         Отметить как прочитанное
-                                    </Button>
-                                }
+                                    </Button>}
                             </CardFooter>
                         </Card>
                     </Link>))

@@ -7,7 +7,6 @@ import {
   CreateBidResponse,
   IAuthResponse,
   ILoginData,
-  IRegisterData,
   ITendersResponse,
   ITenderResponse,
   IUserDetails,

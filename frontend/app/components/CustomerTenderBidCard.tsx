@@ -1,6 +1,5 @@
 "use client"
 import React, { useEffect, useState } from "react"
-
 import { Button } from "@/components/ui/button"
 import { Company, ISendedBid } from "@/app/http/types";
 import {

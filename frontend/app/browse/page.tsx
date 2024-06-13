@@ -51,9 +51,9 @@ export default function Browse() {
 
 
   return (
-      <div className="container px-4 grid gap-6 px-6 w-full py-12 md:py-16 lg:py-20">
-        {!isFetching &&
-          <div className="grid gap-2">
+      <div className="container px-4 flex flex-col flex-grow gap-6 px-6 w-full py-12 md:py-16 lg:py-20">
+        {!isFetching && response.data.length != 0 &&
+          <div className="grid gap-2 ">
             <h3 className="text-2xl font-bold tracking-tight md:text-3xl">Тендеры {response.meta.from}-{response.meta.to} из {response.meta.total}</h3>
             <p className="text-gray-500 dark:text-gray-400">Ознакомьтесь со списком активных тендеров.</p>
           </div>}
@@ -64,15 +64,14 @@ export default function Browse() {
               <TendersCard items={response.data} />
             </div>
           )}
-        <div className="my-6">
-          <Pagination>
+        <div className="flex justify-end grow">
+          <Pagination className='mt-auto'>
             {!isFetching && <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious className={cn(!response.links.prev && "invisible")}
                   href={createPageURL(currentPage - 1)} />
               </PaginationItem>
-              {
-                createPageNumbers(response.meta.last_page).map(
+              {createPageNumbers(response.meta.last_page).map(
                   page => (
                     <PaginationItem key={page}>
                       <PaginationLink href={createPageURL(page)} isActive={page === currentPage}>{page}</PaginationLink>

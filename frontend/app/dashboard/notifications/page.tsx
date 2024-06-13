@@ -73,17 +73,6 @@ export default function SettingsNotificationsPage() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {/* <div className="flex items-center gap-4">
-        <h1 className="text-2xl font-bold">Уведомления</h1>
-        <div className="flex items-center gap-2">
-          <Button className={cn("px-3 py-1 rounded-md", chosenShowType === "unread" && "bg-gray-200")} size="sm" variant="ghost" onClick={() => handleClick('unread')}>
-            Непрочитанные
-          </Button>
-          <Button className={cn("px-3 py-1 rounded-md", chosenShowType === "all" && "bg-gray-200")} size="sm" variant="ghost" onClick={() => handleClick('all')}>
-            Все
-          </Button>
-        </div>
-      </div> */}
       </header>
       {isFetching || isUnreadFetching ? <div></div> : 
         <div className="grid gap-4">
