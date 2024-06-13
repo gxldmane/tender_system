@@ -11,20 +11,30 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class TenderService
 {
     public function getActiveTenders(): TenderCollection
     {
-        $tenders = Tender::active()
-            ->orderByDesc('created_at')
-            ->paginate(12);
+        $tenders = QueryBuilder::for(Tender::active())
+            ->defaultSort('-created_at')
+            ->allowedSorts(['start_price', 'created_at', 'until_date'])
+            ->allowedFilters(['category_id', 'region_id'])
+            ->paginate(12)
+        ;
+
         return new TenderCollection($tenders);
     }
 
     public function myTenders(): TenderCollection
     {
-        $tenders = Tender::query()->where('customer_id', Auth::user()->id)->paginate(10);
+        $tenders = QueryBuilder::for(Tender::query()->where('customer_id', Auth::user()->id))
+            ->defaultSort('-created_at')
+            ->allowedSorts(['start_price', 'created_at', 'until_date'])
+            ->allowedFilters(['category_id', 'region_id'])
+            ->paginate(12)
+            ;
         return new TenderCollection($tenders);
     }
 

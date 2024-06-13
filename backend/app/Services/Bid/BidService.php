@@ -12,6 +12,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class BidService
 {
@@ -24,6 +25,11 @@ class BidService
         }
 
         $bids = $tender->bids()->paginate(10);
+
+        $bids = QueryBuilder::for($tender->bids())
+            ->defaultSort('-price')
+            ->paginate(10);
+
 
         return new BidCollection($bids);
     }
