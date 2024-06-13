@@ -22,6 +22,7 @@
 -------------------------
 ![image](https://github.com/gxldmane/tender_system/assets/86232485/81d27c7b-0b91-4e2a-9699-f8d9529260df)
 ![image](https://github.com/gxldmane/tender_system/assets/86232485/92fc3d52-7023-48a6-95b0-82d82108911b)
+![image](https://github.com/gxldmane/tender_system/assets/86232485/dbe468d5-1e6a-4172-bc96-18526266bcfc)
 ![image](https://github.com/gxldmane/tender_system/assets/86232485/0d0a43f9-b095-49ee-95dd-eda3314cc710)
 
 
