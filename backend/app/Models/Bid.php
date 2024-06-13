@@ -11,6 +11,9 @@ class Bid extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'tender_id',
         'user_id',
@@ -19,18 +22,35 @@ class Bid extends Model
         'status'
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function tender(): BelongsTo
     {
         return $this->belongsTo(Tender::class);
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsToMany
+     */
     public function companies(): BelongsToMany
     {
         return $this->belongsToMany(Company::class);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function ScopeActive()
+    {
+        return $this->where('status', 'active');
     }
 }

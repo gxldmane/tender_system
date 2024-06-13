@@ -46,16 +46,25 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
     public function tenders()
     {
         return Tender::query()->where('customer_id', $this->id)->get();
     }
 
+    /**
+     * @return HasMany
+     */
     public function bids(): HasMany
     {
         return $this->hasMany(Bid::class);
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);

@@ -12,6 +12,9 @@ class Tender extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'name',
         'description',
@@ -23,31 +26,49 @@ class Tender extends Model
         'until_date',
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function files(): HasMany
     {
         return $this->hasMany(File::class);
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function customer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'customer_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder[]|Collection|Model[]|null[]|object[]
+     */
     public function executor()
     {
         return User::query()->where('id', $this->executor_id)->first()->get();
     }
 
+    /**
+     * @return HasMany
+     */
     public function bids(): HasMany
     {
         return $this->hasMany(Bid::class);

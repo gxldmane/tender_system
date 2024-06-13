@@ -13,7 +13,7 @@ class CheckTendersExpiration extends Command
 
     protected $description = 'Check tenders expiration and update their status';
 
-    public function handle()
+    public function handle(): void
     {
         $tenders = Tender::where('until_date', '<=', Carbon::now())
             ->whereNotIn('status', ['pending', 'closed'])

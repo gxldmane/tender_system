@@ -10,6 +10,9 @@ class File extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'url',
         'tender_id',
@@ -17,6 +20,9 @@ class File extends Model
         'name',
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function tender(): BelongsTo
     {
         return $this->belongsTo(Tender::class);
