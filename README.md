@@ -77,9 +77,9 @@ Cперва клонируйте репозиторий: `git clone https://gith
 **Авторы**
 ---------
 
-- **gxldmane**: thodotaev@gmail.com
-- **ivoxy**:
-- **glowgrew**:
+- **gxldmane** (backend developer): thodotaev@gmail.com
+- **ivoxy** (frontend developer):
+- **glowgrew** (frontend developer):
 
 **Благодарности**
 ----------------
