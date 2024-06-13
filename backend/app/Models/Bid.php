@@ -45,12 +45,4 @@ class Bid extends Model
     {
         return $this->belongsToMany(Company::class);
     }
-
-    /**
-     * @return mixed
-     */
-    public function ScopeActive()
-    {
-        return $this->where('status', 'active');
-    }
 }
