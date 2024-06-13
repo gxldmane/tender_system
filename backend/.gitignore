@@ -19,3 +19,6 @@ yarn-error.log
 /.vscode
 .mysql
 mysql
+../.gitignore
+../yarn.lock
+../.idea
