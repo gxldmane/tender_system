@@ -89,7 +89,8 @@ Cперва клонируйте репозиторий: `git clone https://gith
 ---------
 
 - **gxldmane** (backend developer): thodotaev@gmail.com
-- **ivoxy** (frontend developer):
+- **ivoxi** (frontend developer):
+ilya.vokhmyanin@yandex.ru
 - **glowgrew** (frontend developer):
 
 **Благодарности**
