@@ -28,11 +28,7 @@ const formSchema = z.object({
   start_price: z.string().regex(/^[-]?\d*\.?\d+$/, "Должно быть число").pipe(z.coerce.number().int("Должно быть целое число").positive("Должно быть положительное число")),
   category_id: z.number().min(0, 'Укажите категорию'),
   region_id: z.number().min(0, 'Укажите регион'),
-  until_date: z
-    .string()
-    .min(1, 'Укажите дату')
-    .transform((v) => v.split('.').reverse().join('-'))
-    .pipe(z.coerce.date().transform(arg => arg.toISOString().split('T')[0])),
+  until_date: z.date() || z.string(),
   files: z
     .array(
       z.instanceof(File).refine((file) => file.size < 4 * 1024 * 1024, {
@@ -63,6 +59,12 @@ interface TenderCreateProps {
   defaultFiles?: File[]
 }
 
+function convertUTCToLocal(utcDateTime) {
+  const localDateTime = new Date(utcDateTime.getTime() + (utcDateTime.getTimezoneOffset() * 60 * 1000));
+
+  return localDateTime;
+}
+
 export default function TenderCreate({ update, defaultPropValues, tenderId, defaultFiles }: TenderCreateProps) {
   const [openCategories, setOpenCategories] = useState(false);
   const [openRegions, setOpenRegions] = useState(false);
@@ -78,7 +80,7 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
       start_price: update ? defaultPropValues.start_price : "",
       category_id: update ? defaultPropValues.category_id : -1,
       region_id: update ? defaultPropValues.region_id : -1,
-      until_date: update ? defaultPropValues.until_date : '',
+      until_date: update ? new Date(defaultPropValues.until_date) : new Date(),
       files: update ? defaultFiles || null : null
     }
   })
@@ -112,6 +114,7 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
 
 
   async function onSubmit(values: InputSchema) {
+    values.until_date = format(convertUTCToLocal(values.until_date), 'yyyy-MM-dd HH:mm:ss')
     const response = await queryClient.fetchQuery({
       queryKey: update ? ['update-tender'] : ['new-tender'],
       queryFn: update ? () => httpClient.updateTender(values, tenderId) : () => httpClient.createTender(values),
@@ -352,23 +355,17 @@ export default function TenderCreate({ update, defaultPropValues, tenderId, defa
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-5 flex flex-col">
+                      <PopoverContent className="w-auto p-5 flex flex-col overflow-y-auto">
                         <Calendar
                           mode="single"
-                          selected={new Date(field.value)}
-                          onSelect={(date) => {
-                            form.setValue('until_date', format(date, 'yyyy-MM-dd'), { shouldDirty: true });
-                            form.trigger('until_date');
-                            setTimeout(() => setOpenCalendar(false), 150);
-                          }}
+                          selected={field.value ? new Date(field.value) : new Date()}
+                          onSelect={field.onChange}
                           disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                         />
                         <div className="p-3 border-t border-border">
                           <TimePickerDemo
-                            setDate={(date) => {
-                              console.log(date)
-                            }}
-                            date={new Date(field.value)}
+                            setDate={field.onChange}
+                            date={field.value}
                           />
                         </div>
                       </PopoverContent>
