@@ -168,13 +168,15 @@ export default class HttpClient {
     return await this.request("GET", "/categories");
   }
 
-  async getAllTenders(page: number = 1): Promise<AxiosResponse<ITendersResponse | IErrorResponse | any>> {
+  async getAllTenders(page: number = 1, filters: Record<string, any> = {}): Promise<AxiosResponse<ITendersResponse | IErrorResponse | any>> {
     return await this.request("GET", "/tenders", {
       params: {
         page: page,
+        ...filters,
       }
     });
   }
+  
 
   async getMyTenders(page: number = 1): Promise<AxiosResponse<ITendersResponse | IErrorResponse | any>> {
     return await this.request("GET", "/tenders/my", {

@@ -95,7 +95,7 @@ export default function TendersCard({ items, ...props }: TenderCardProps) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm">
                   <TagIcon className="h-4 w-4" />
-                  <span>{generatePseudoRandomString(item.id)}</span>
+                  <span>{item.id}</span>
                 </div>
                 <div className="flex items-center gap-1 text-sm font-bold">
                   <span>{item.start_price.toLocaleString('ru')}</span>
