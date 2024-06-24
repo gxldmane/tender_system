@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('region_id')->constrained('regions')->onDelete('cascade');
             $table->foreignId('customer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('executor_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->date('until_date');
+            $table->dateTime('until_date');
             $table->timestamps();
         });
     }

@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Category;
 use App\Models\Region;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -28,7 +29,7 @@ class TenderFactory extends Factory
             'status' => $this->faker->randomElement(['active', 'pending']),
             'customer_id' => User::query()->inRandomOrder()->first()->id,
             'executor_id' => User::query()->inRandomOrder()->first()->id,
-            'until_date' => $this->faker->date('Y-m-d', 'now'),
+            'until_date' => $this->faker->dateTime(),
         ];
     }
 }

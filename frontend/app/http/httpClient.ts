@@ -7,7 +7,6 @@ import {
   CreateBidResponse,
   IAuthResponse,
   ILoginData,
-  IRegisterData,
   ITendersResponse,
   ITenderResponse,
   IUserDetails,
@@ -169,13 +168,15 @@ export default class HttpClient {
     return await this.request("GET", "/categories");
   }
 
-  async getAllTenders(page: number = 1): Promise<AxiosResponse<ITendersResponse | IErrorResponse | any>> {
+  async getAllTenders(page: number = 1, filters: Record<string, any> = {}): Promise<AxiosResponse<ITendersResponse | IErrorResponse | any>> {
     return await this.request("GET", "/tenders", {
       params: {
         page: page,
+        ...filters,
       }
     });
   }
+  
 
   async getMyTenders(page: number = 1): Promise<AxiosResponse<ITendersResponse | IErrorResponse | any>> {
     return await this.request("GET", "/tenders/my", {
@@ -235,11 +236,16 @@ export default class HttpClient {
     return response;
   }
 
+  async getUnreadNotificationsForPage(): Promise<AxiosResponse<IGetNotificationsResponse | IErrorResponse | any>> {
+    return await this.request("GET", `/profile/unread`);
+    
+  }
+
   async getAllNotifications() : Promise<AxiosResponse<IGetNotificationsResponse | IErrorResponse | any>> {
     return await this.request("GET", `/profile/notifications`);
   }
 
-  async getNotifications(notificationId: string) : Promise<AxiosResponse<IGetNotificationResponse | IErrorResponse | any>> {
+  async getNotification(notificationId: string) : Promise<AxiosResponse<IGetNotificationResponse | IErrorResponse | any>> {
     return await this.request("GET", `/profile/notifications/${notificationId}`);
   }
 

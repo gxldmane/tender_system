@@ -2,6 +2,7 @@
 
 namespace App\Services\Bid;
 
+use App\Actions\RejectBidsAction;
 use App\Http\Resources\api\Bid\BidCollection;
 use App\Models\Bid;
 use App\Models\Tender;
@@ -11,27 +12,24 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class BidService
 {
-    protected OtherBidsService $otherBidsService;
-
-    public function __construct(OtherBidsService $otherBidsService)
-    {
-        $this->otherBidsService = $otherBidsService;
-    }
-
-
-    public function getTenderBids(Tender $tender): Application|Response|BidCollection|\Illuminate\Contracts\Foundation\Application|ResponseFactory
+    public function getTenderBids(Tender $tender): Application|Response|BidCollection|\Illuminate\Contracts\Foundation\Application|ResponseFactory|null
     {
         $user = Auth::user();
+
         if ($tender->customer_id != $user->id) {
-            return response([
-                'message' => 'Not found'
-            ], 404);
+            return null;
         }
 
         $bids = $tender->bids()->paginate(10);
+
+        $bids = QueryBuilder::for($tender->bids())
+            ->defaultSort('-price')
+            ->paginate(10);
+
 
         return new BidCollection($bids);
     }
@@ -43,18 +41,12 @@ class BidService
         return new BidCollection($bids);
     }
 
-    public function store($data, User $user, Tender $tender)
+    public function store($data, User $user, Tender $tender): object|null
     {
-        if ($tender->status === 'closed' || $tender->status === 'pending') {
-            return response()->json(['message' => 'Tender is pending or closed.'], 403);
-        }
-
         $existingBid = Bid::query()->where('user_id', $user->id)->where('tender_id', $tender->id)->first();
 
         if ($existingBid) {
-            return response([
-                'message' => 'bid already exists'
-            ], 401);
+            return $existingBid;
         }
 
         $data['tender_id'] = $tender->id;
@@ -63,20 +55,12 @@ class BidService
         $data['status'] = 'pending';
         $tender->bids()->create($data);
 
-        return response()->json([
-            'message' => 'bid created successfully',
-        ]);
+        return null;
+
     }
 
-    public function acceptBid(Tender $tender, Bid $bid)
+    public function acceptBid(Tender $tender, Bid $bid, RejectBidsAction $action): void
     {
-        if ($tender->status === "closed" || $tender->status === "active") {
-            return response()->json(['message' => 'Tender is closed or active.'], 403);
-        }
-        if ($tender->customer_id !== Auth::id() || !$tender->bids->contains($bid)) {
-            return response()->json(['message' => 'You are not allowed.'], 403);
-        }
-
         $bid->status = "accepted";
         $tender->status = "closed";
         $tender->executor_id = $bid->user_id;
@@ -91,34 +75,24 @@ class BidService
 
         $otherBids = $tender->bids->where('id', '!=', $bid->id);
 
-        $this->otherBidsService->rejectBids($otherBids);
-
-        return response()->json([
-            'message' => 'bid accepted successfully',
-        ], 200);
-
-
+        $action->handle($otherBids);
     }
 
 
-    public function destroy(Tender $tender, User $user)
+    public function destroy(Tender $tender, User $user): object|null
     {
-
         $bid = Bid::query()->where('user_id', $user->id)->where('tender_id', $tender->id)->first();
+
         if (!$bid) {
-            return response([
-                'message' => 'Not found'
-            ], 404);
+            return null;
         }
 
         $bid->delete();
 
-        return response()->json([
-            'message' => 'bid deleted successfully'
-        ], 200);
+        return $bid;
     }
 
-    public function haveBid(Tender $tender)
+    public function haveBid(Tender $tender): bool
     {
         $user = Auth::user();
         $bid = $tender->bids()->where('user_id', $user->id)->first();

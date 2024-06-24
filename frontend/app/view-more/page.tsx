@@ -133,16 +133,16 @@ export default function ViewMore() {
   const { isFetching: isTokenFetching, authToken } = useToken();
   if (isTokenFetching) return;
   if (!authToken) {
-    // if user is not authenticated
     router.push("/login");
     return;
   }
 
   if (!tenderDetails && !isFetching) return (
-  <div className="container h-4/5 flex flex-col justify-center items-center gap-y-2">
-    <h1 className="flex flex-col text-2xl font-extrabold">Такого тендера не существует</h1>
-    <Bird width={40} height={40} className="animate-pulse " />
-  </div>
+    <div className="container h-screen flex flex-col justify-center items-center">
+      <h1 className="text-2xl font-extrabold">Такого тендера не существует</h1>
+      <Bird width={40} height={40} className="animate-pulse" />
+    </div>
+
   )
 
 
@@ -166,7 +166,6 @@ export default function ViewMore() {
           )}
         </div>
         <Separator />
-
         {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory || isRegionFetching || !tenderRegion ? (
           <Skeleton className="h-24 w-full rounded-md" />
         ) :
@@ -232,15 +231,29 @@ export default function ViewMore() {
                   <Card className='col-span-1 border-0 drop-shadow-md'>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
-                        Создан:
+                        Создан
                       </CardTitle>
                       <CalendarFold size={23} />
                     </CardHeader>
                     <CardContent className='pb-6'>
                       <div className="text-2xl font-bold">{new Date(tenderDetails.createdAt).toLocaleDateString()}</div>
                       <p className="text-xs text-muted-foreground pt-4">
-                        Дата окончания: {reformatDate(tenderDetails.untilDate)}
+                        До окончания {getRemainingTime(tenderDetails.untilDate)}
                       </p>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-3 min-h-40">
+                  <Card className='col-span-1 border-0 drop-shadow-md'>
+                    <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                      <CardTitle className='text-sm font-medium'>
+                        Заказчик
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className='h-24 overflow-y-auto pt-4 pb-1 pl-6 pr-2'>
+                      <div className='text-xl font-medium break-words'>
+                        {tenderDetails.companyName}
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -253,7 +266,15 @@ export default function ViewMore() {
         ) : (
           <div className='flex pb-5 justify-between items-center'>
             <ActionList tenderId={currentTenderId} userRole={userDetails?.role} isBidded={hasBid}
-              isCreator={tenderDetails.customerId === userDetails?.id} status={tenderDetails.status} filesList={tenderDetails.files} defaultValues={{ name: tenderDetails.name, description: tenderDetails.description, start_price: tenderDetails.start_price.toString(), category_id: tenderDetails.categoryId, region_id: tenderDetails.regionId, until_date: tenderDetails.untilDate }} />
+              isCreator={tenderDetails.customerId === userDetails?.id} status={tenderDetails.status}
+              filesList={tenderDetails.files} defaultValues={{
+                name: tenderDetails.name,
+                description: tenderDetails.description,
+                start_price: tenderDetails.start_price.toString(),
+                category_id: tenderDetails.categoryId,
+                region_id: tenderDetails.regionId,
+                until_date: tenderDetails.untilDate
+              }} />
           </div>)}
       </div>
     </div>

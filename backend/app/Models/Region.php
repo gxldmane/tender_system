@@ -10,10 +10,16 @@ class Region extends Model
 {
     use HasFactory;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
       'name'
     ];
 
+    /**
+     * @return HasMany
+     */
     public function tenders(): HasMany
     {
         return $this->hasMany(Tender::class);

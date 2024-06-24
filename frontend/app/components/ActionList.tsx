@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link"
 import httpClient from "@/app/http";
-import { ArrowUpSquare, Key, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose
 } from "@/components/ui/dialog"
 import {
   AlertDialog,
@@ -70,7 +68,6 @@ function getFileTypeIconFromUrl(url) {
 function blobToFile(blob: Blob, fileName: string): File {
   return new File([blob], fileName);
 }
-
 
 interface ActionListProps {
   tenderId: string;
@@ -149,7 +146,8 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, st
           'edit',
         ] : ['download'];
       case 'executor':
-        if (status == "active") {
+        if (status === "active") {
+          console.log(status)
           return isBidded ? ['download', 'withdraw'] : ['download', 'apply']
         };
         return ['download'];
@@ -233,7 +231,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, st
             );
           case 'bids':
             return (
-              <Link href={`/view-more/${href}?tenderId=${tenderId}&status=${status}`}>
+              <Link href={`/view-more/${href}?tenderId=${tenderId}`}>
                 <Button key={action}>Заявки</Button>
               </Link>
             );
@@ -398,7 +396,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, st
               <Form {...form}>
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
-                    <Button className="border-2" variant='ghost' key={href}>Подать заявку</Button>
+                    <Button className="border-2" variant='default' key={href}>Подать заявку</Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

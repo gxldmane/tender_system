@@ -61,20 +61,24 @@ export default function MyBids() {
     return Array.from({ length: maxPages }, (_, i) => i + 1);
   };
 
-  if (isFetching || response.data?.length === 0) {
-    return <div className="font-bold text-lg text-center">Вы не подали ни одной заявки</div>;
+  if (isFetching) {
+    return <div className="font-bold text-lg text-center">Загрузка...</div>
+  }
+
+  if (!response || response.data?.length === 0) {
+    return <div className="text-2xl font-bold tracking-tight sm:text-3xl md:text-3xl">Вы не подали ни одной заявки</div>;
   }
 
   return (
-    <div className={"flex flex-col justify-center items-center"}>
+    <div className={"flex flex-col justify-start items-start min-h-screen"}>
       {!isFetching &&
-        <span className="text-2xl font-semibold mx-auto mb-4">Мои
+        <span className="text-2xl font-semibold mb-4">Мои
           заявки {response.meta.from ?? 0}-{response.meta.to ?? 0} из {response.meta.total}</span>
       }
         {isFetching || !response ? (
           <Skeleton className="h-24 w-full rounded-md"/>
         ) : (
-          <div>
+          <div className="bg-white w-full rounded-md border-2">
             <TenderBidCard items={response.data}/>
           </div>
         )}
@@ -82,7 +86,7 @@ export default function MyBids() {
         <Pagination>
           {!isFetching && <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious className={cn(!response.links.prev && "invisible")}
+              <PaginationPrevious className={cn(!response.links.prev && "hidden")}
                                   href={createPageURL(currentPage - 1)}/>
             </PaginationItem>
             {
@@ -95,7 +99,7 @@ export default function MyBids() {
               )
             }
             <PaginationItem>
-              <PaginationNext className={cn(!response.links.next && "invisible")}
+              <PaginationNext className={cn(!response.links.next && "hidden")}
                               href={createPageURL(currentPage + 1)}/>
             </PaginationItem>
           </PaginationContent>

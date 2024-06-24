@@ -1,30 +1,37 @@
-import {useState} from "react";
+import { useState } from 'react';
 
-export interface UseLocalStorage {
-  value: string | null;
-  getItem: (key: string) => string | null;
-  setItem: (key: string, value: string) => void;
-  removeItem: (key: string) => void;
+function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
+  const readValue = () => {
+    if (typeof window === 'undefined') {
+      return initialValue;
+    }
+
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.warn(`Error reading localStorage key “${key}”:`, error);
+      return initialValue;
+    }
+  };
+
+  const [storedValue, setStoredValue] = useState<T>(readValue);
+
+  const setValue = (value: T) => {
+    try {
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+
+      setStoredValue(valueToStore);
+
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      }
+    } catch (error) {
+      console.warn(`Error setting localStorage key “${key}”:`, error);
+    }
+  };
+
+  return [storedValue, setValue];
 }
 
-export default function useLocalStorage(): UseLocalStorage {
-  const [value, setValue] = useState<string | null>(null);
-
-  const setItem = (key: string, value: string) => {
-    localStorage.setItem(key, value);
-    setValue(value);
-  };
-
-  const getItem = (key: string) => {
-    const value = localStorage.getItem(key);
-    setValue(value);
-    return value;
-  };
-
-  const removeItem = (key: string) => {
-    localStorage.removeItem(key);
-    setValue(null);
-  };
-
-  return { value, setItem, getItem, removeItem };
-}
+export default useLocalStorage;

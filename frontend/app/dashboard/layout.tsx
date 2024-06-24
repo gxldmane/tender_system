@@ -1,7 +1,6 @@
 import React from "react"
 import { SidebarNav } from "../components/SideBar"
 import { Bell, Briefcase, FileText, Grid, User } from "lucide-react";
-import useToken from "../components/useToken";
 
 const sidebarNavItems = [
   {

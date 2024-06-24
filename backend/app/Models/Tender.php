@@ -75,4 +75,12 @@ class Tender extends Model
     {
         return $this->hasMany(Bid::class);
     }
+
+    /**
+     * @return mixed
+     */
+    public function ScopeActive()
+    {
+        return $this->where('status', 'active');
+    }
 }

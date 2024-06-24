@@ -7,29 +7,29 @@ use App\Http\Requests\Auth\AuthLoginRequest;
 use App\Http\Requests\Auth\AuthRegisterRequest;
 use App\Http\Resources\api\User\UserResource;
 use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public AuthService $service;
+
+    public function __construct(AuthService $service)
+    {
+        $this->service = $service;
+    }
+
     public function register(AuthRegisterRequest $request)
     {
         $data = $request->validated();
 
-        $user = User::query()->create($data);
-
-        if ($user->role == 'customer') {
-            $token = $user->createToken('customer', ['customer'])->plainTextToken;
-        } else {
-            $token = $user->createToken('executor', ['executor'])->plainTextToken;
-        }
-
-        Auth::login($user);
+        $data = $this->service->register($data);
 
         return response()->json([
             'message' => 'Registration successful',
             'data' => [
-                'user' => new UserResource($user),
-                'token' => $token
+                'user' => new UserResource($data['user']),
+                'token' => $data['token']
             ],
         ]);
 
@@ -37,9 +37,9 @@ class AuthController extends Controller
 
     public function login(AuthLoginRequest $request)
     {
+        $user = $this->service->login($request);
 
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
+        if ($user) {
             return response()->json([
                 'message' => 'Login successful',
                 'data' => [

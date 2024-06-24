@@ -1,18 +1,12 @@
 <?php
 
-namespace App\Services\Bid;
+namespace App\Actions;
 
-use App\Models\Bid;
 use App\Notifications\BidRejected;
-use Illuminate\Support\Collection;
 
-/**
- * @param Collection|Bid[] $bids
- */
-
-class OtherBidsService
+class RejectBidsAction
 {
-    public function rejectBids($bids)
+    public function handle($bids): void
     {
         foreach ($bids as $bid) {
             $bid->status = "rejected";

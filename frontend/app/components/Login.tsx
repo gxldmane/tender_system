@@ -86,7 +86,7 @@ export default function Register() {
     toast({
       variant: "destructive",
       title: "Что-то пошло не так",
-      description: response?.data?.message,
+      description: "Неправильный логин или пароль",
     });
     return;
   }
