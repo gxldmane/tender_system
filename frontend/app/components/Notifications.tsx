@@ -42,7 +42,7 @@ function generatePseudoRandomString(seed) {
 
 const parseStatus = (status: string, unread: boolean) => {
     console.log('unread: ' + unread)
-    switch (status) {
+  switch (status) {
         case 'tenderClosed':
             return (
                 <div className="flex items-center gap-2">
@@ -57,8 +57,8 @@ const parseStatus = (status: string, unread: boolean) => {
                     <span className="font-medium">Заявка принята</span>
                     {unread && <span className="bg-green-500 text-white px-2 py-1 rounded-md text-xs font-medium">Новое</span>}
                 </div>)
-        case 'bid_declined':
-            <div className="flex items-center gap-2">
+        case 'bid_rejected':
+            return <div className="flex items-center gap-2">
                 <Ban className="h-5 w-5" color="#ff0000" />
                 <span className="font-medium">Заявка отклонена</span>
                 {unread && <span className="bg-red-500 text-white px-2 py-1 rounded-md text-xs font-medium">Новое</span>}
