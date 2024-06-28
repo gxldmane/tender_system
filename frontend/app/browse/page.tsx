@@ -27,6 +27,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import useToken from "@/app/components/useToken";
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp, ListOrderedIcon } from 'lucide-react';
+import { Separator } from "@/components/ui/separator";
 
 export default function Browse() {
   const pathname = usePathname();
@@ -44,7 +45,7 @@ export default function Browse() {
 
   const [filters, setFilters] = useState(initialState);
 
-  const { data: response, isLoading: isTendersLoading } = useQuery({
+  const { data: response, isLoading: isTendersLoading, isPlaceholderData: isTendersPlaceholderData } = useQuery({
     queryKey: ['tenders', currentPage, filters],
     queryFn: () => httpClient.getAllTenders(currentPage, {
       sort: `${filters.sortOrder === 'desc' ? '-' : ''}${filters.sort}`,
@@ -101,8 +102,8 @@ export default function Browse() {
     return Array.from({ length: maxPages }, (_, i) => i + 1);
   };
 
-  const [openCategories, setOpenCategories] = useState(false)
-  const [openRegions, setOpenRegions] = useState(false)
+  const [openCategories, setOpenCategories] = useState(true)
+  const [openRegions, setOpenRegions] = useState(true)
   const handleClickCategories = () => {
     setOpenCategories(!openCategories)
   }
@@ -149,6 +150,8 @@ export default function Browse() {
 
   if (isTokenFetching || !authToken) return null;
 
+  const hasFiltersEnabled = Object.values(filters).some(filter => Array.isArray(filter) && filter.length > 0);
+
   return (
     <div className="container flex flex-col flex-grow gap-6 px-4 py-12 md:py-16 lg:py-20">
       <div>
@@ -156,7 +159,7 @@ export default function Browse() {
         <div className="grid gap-2">
           <div className="flex justify-between">
             <h3
-              className="text-2xl font-bold tracking-tight md:text-3xl">{!isTendersLoading && response.data.length != 0 ? `Тендеры ${response?.meta?.from ?? 0}-${response?.meta?.to ?? 0} из ${response?.meta?.total ?? 0}` : "Тендеры"}</h3>
+              className={cn("text-2xl font-bold tracking-tight md:text-3xl", isTendersPlaceholderData && "animate-pulse")}>{!isTendersLoading && response.data.length != 0 ? `Тендеры ${response?.meta?.from ?? 0}-${response?.meta?.to ?? 0} из ${response?.meta?.total ?? 0}` : "Тендеры не найдены"}</h3>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="flex items-center gap-2">
@@ -184,12 +187,17 @@ export default function Browse() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <p className="text-gray-500 dark:text-gray-400">Ознакомьтесь со списком активных тендеров.</p>
+          <p className="text-gray-500 dark:text-gray-400">{!isTendersLoading && response.data.length != 0 ? `Ознакомьтесь со списком активных тендеров.` : "Попробуйте очистить фильтры"}</p>
         </div>
       </div>
       <div className="flex gap-6">
         <div className="w-1/4 flex flex-col gap-4">
-          <div className='flex flex-col'>
+          <div className={cn('flex flex-col', {/*isTendersPlaceholderData && "animate-pulse"*/})}>
+            <div className={"flex flex-col gap-2"}>
+              <Button variant='link' className='p-0 w-full flex justify-between text-gray-500'>
+                Фильтры {hasFiltersEnabled  ? "•" : ""}
+              </Button>
+            </div>
             <div>
               <Button variant='link' className='p-0 w-full flex justify-between h-7' onClick={handleClickCategories}>
                 <h4>Категории</h4>
@@ -207,6 +215,7 @@ export default function Browse() {
                 {!isCategoriesFetching && categoriesResponse.data.map(category => (
                   <div key={category.id} className='flex gap-2 items-center'>
                     <Checkbox
+                      // disabled={isTendersPlaceholderData}
                       checked={filters.filterCategories.includes(category.id.toString())}
                       onCheckedChange={() => handleFilterChange('filterCategories', category.id.toString())}
                     />
@@ -240,12 +249,13 @@ export default function Browse() {
                 ))}
               </div>
             </div>
+            {hasFiltersEnabled &&<>
             <div>
               <Button variant='link' className='p-0 w-full flex justify-between text-red-700'
                       onClick={handleRemoveFilters}>
                 Очистить фильтры
               </Button>
-            </div>
+            </div></>}
           </div>
         </div>
 

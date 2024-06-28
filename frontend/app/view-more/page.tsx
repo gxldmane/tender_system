@@ -106,26 +106,13 @@ export default function ViewMore() {
   // https://dreamix.eu/insights/tanstack-query-v5-migration-made-easy-key-aspects-breaking-changes/
 
   const { data: tenderDetails, isFetching, isError } = useQuery({
-    queryKey: ['tender'],
+    queryKey: ['tender', currentTenderId],
     queryFn: () => httpClient.getTenderInfo(currentTenderId),
     select: response => response?.data?.data as ITenderDetails & { files: { id: string, tenderId: string, url: string, name: string; }[] },
   });
 
-
-  const { data: tenderCategory, isFetching: isCategoryFetching, isError: isCategoryError } = useQuery({
-    queryKey: ['category'],
-    queryFn: () => httpClient.getCategoryById(tenderDetails.categoryId),
-    select: response => response?.data?.data as Category
-  });
-
-  const { data: tenderRegion, isFetching: isRegionFetching, isError: isRegionError } = useQuery({
-    queryKey: ['region'],
-    queryFn: () => httpClient.getRegionById(tenderDetails.categoryId),
-    select: response => response?.data?.data as Region
-  });
-
   const { data: hasBid, isFetching: isHasBidFetching, isError: isHasBidErrors } = useQuery({
-    queryKey: ['hasBid'],
+    queryKey: ['hasBid', currentTenderId],
     queryFn: () => httpClient.getHasBid(currentTenderId),
     select: response => response?.data as boolean,
   });
@@ -151,7 +138,7 @@ export default function ViewMore() {
     <div className="container flex flex-col mt-10 ">
       <div className="flex-1 flex-col space-y-4 px-8 pt-6 bg-white drop-shadow  rounded-xl border-2 mb-5">
         <div className="flex items-center justify-between space-y-2  px-2 py-6">
-          {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory ? (
+          {isUserFetching || isFetching || !tenderDetails ? (
             <Skeleton className="h-24 w-full rounded-md" />
           ) : (
             <>
@@ -166,7 +153,7 @@ export default function ViewMore() {
           )}
         </div>
         <Separator />
-        {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory || isRegionFetching || !tenderRegion ? (
+        {isUserFetching || isFetching || !tenderDetails ? (
           <Skeleton className="h-24 w-full rounded-md" />
         ) :
           (<div className='text-3xl font-medium tracking-tight px-2 py-3 w-fit'>
@@ -174,7 +161,7 @@ export default function ViewMore() {
           </div>)}
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsContent value="overview" className="space-y-4">
-            {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory || isRegionFetching || !tenderRegion ? (
+            {isUserFetching || isFetching || !tenderDetails ? (
               <Skeleton className="h-24 w-full rounded-md" />
             ) : (
               <>
@@ -198,7 +185,7 @@ export default function ViewMore() {
                       <FolderIcon size={23} />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold">{tenderCategory.name}</div>
+                      <div className="text-2xl font-bold">{tenderDetails.categoryName}</div>
                     </CardContent>
                   </Card>
                   <Card className='border-0 drop-shadow-md'>
@@ -209,7 +196,7 @@ export default function ViewMore() {
                       <MapPin color="#ff4d4d" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-xl font-bold">{tenderRegion.name}</div>
+                      <div className="text-xl font-bold">{tenderDetails.regionName}</div>
                       <p className="text-xs text-muted-foreground pt-1">
                       </p>
                     </CardContent>
@@ -261,7 +248,7 @@ export default function ViewMore() {
             )}
           </TabsContent>
         </Tabs>
-        {isUserFetching || isFetching || !tenderDetails || isCategoryFetching || !tenderCategory ? (
+        {isUserFetching || isFetching || !tenderDetails ? (
           <Skeleton className="h-24 w-full rounded-md" />
         ) : (
           <div className='flex pb-5 justify-between items-center'>

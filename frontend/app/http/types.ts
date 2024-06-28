@@ -118,6 +118,7 @@ export interface ITenderDetails {
   categoryId: number;
   categoryName: string;
   regionId: number; // Идентификатор категории
+  regionName: string;
   customerId: number; // Идентификатор заказчика
   customerName: string; // customerName
   companyName: string; // companyName
