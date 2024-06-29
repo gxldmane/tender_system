@@ -97,7 +97,7 @@ export default function ActionList({ tenderId, userRole, isBidded, isCreator, st
     for (const file of files) {
       const url = file.url
       const response = await queryClient.fetchQuery({
-        queryKey: ['download-file'],
+        queryKey: ['download-file', tenderId],
         queryFn: () => httpClient.downloadFile(url),
       }).then<Blob | IErrorResponse | any>(value => value?.data);
       console.log("responsik: " + JSON.stringify(response));

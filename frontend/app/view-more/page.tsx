@@ -142,8 +142,8 @@ export default function ViewMore() {
             <Skeleton className="h-24 w-full rounded-md" />
           ) : (
             <>
-              <div className='flex'>
-                <h2 className="text-3xl font-bold tracking-tight">Карточка тендера</h2>
+              <div className='hidden sm:flex'>
+                <h2 className=" text-3xl font-bold tracking-tight ">Карточка тендера</h2>
                 <Image className="ml-4" src="/Hammer.svg" alt={'Hammer'} width={30} height={30} />
               </div>
               <h2 className="flex text-3xl font-bold tracking-tight">
@@ -184,7 +184,7 @@ export default function ViewMore() {
                       </CardTitle>
                       <FolderIcon size={23} />
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className={"overflow-y-scroll"}>
                       <div className="text-2xl font-bold">{tenderDetails.categoryName}</div>
                     </CardContent>
                   </Card>

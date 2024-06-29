@@ -6,6 +6,7 @@ import Header from "@/app/components/Header";
 import { Toaster } from "@/components/ui/toaster";
 import InternalQueryClientProvider from "@/app/http/queryClient";
 import NotificationToaster from "./notificationToaster";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,6 +42,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <StrictMode>
       <InternalQueryClientProvider>
         <DottedBackground>
+          <NextTopLoader
+            color="#000000"
+            height={3}
+            showSpinner={false}
+          />
           <Header/>
           {children}
           <Toaster/>
