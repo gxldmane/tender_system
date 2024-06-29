@@ -38,7 +38,7 @@ export default class HttpClient {
 
   constructor() {
     this.client = axios.create({
-      baseURL: "http://localhost:8080/api",
+      baseURL: "http://176.109.105.26/api",
     });
   }
 
